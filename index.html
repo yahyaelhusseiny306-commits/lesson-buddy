@@ -3,88 +3,115 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#14213D">
+<meta name="theme-color" content="#0B1F4B">
 <meta name="mobile-web-app-capable" content="yes">
 <title>رفيق الدروس · Lesson Buddy</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
-:root{--ink:#14213D;--line:#D9DDE3;--mark:#FFE066;--bg:#fff;--acc:#2563EB}
+:root{--bg1:#0B1F4B;--bg2:#143A8A;--ink:#0F1E3F;--txt:#EAF0FF;--muted:#A9B8DF;--line:#D6DEF5;--mark:#FFE066;--acc:#3B82F6;--card:#FFFFFF;--soft:#EEF3FF}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%}
-body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Arabic",Arial,sans-serif;color:var(--ink);background-color:#fff;
-background-image:linear-gradient(#EEF1F5 1px,transparent 1px),linear-gradient(90deg,#EEF1F5 1px,transparent 1px);background-size:24px 24px;-webkit-tap-highlight-color:transparent}
-button,input,textarea{font:inherit}
-.hdr{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid #e5e7eb;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.hdr .title{font-weight:700;font-size:18px;display:flex;align-items:center;gap:8px}
+html,body{margin:0;min-height:100%}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Arabic",Arial,sans-serif;color:var(--txt);
+background:radial-gradient(1200px 600px at 80% -10%,#2456C7 0%,transparent 60%),radial-gradient(900px 500px at -10% 110%,#1E3F97 0%,transparent 55%),linear-gradient(160deg,var(--bg1),var(--bg2));background-attachment:fixed;-webkit-tap-highlight-color:transparent}
+button,input,textarea,select{font:inherit}
+.hdr{position:sticky;top:0;z-index:10;background:rgba(11,31,75,.85);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.12);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hdr .title{font-weight:700;font-size:18px;display:flex;align-items:center;gap:8px;color:#fff}
 .sw{width:12px;height:12px;border-radius:3px;display:inline-block}
-.ib{background:none;border:1px solid #d1d5db;border-radius:8px;padding:4px 8px;font-size:12px;font-family:ui-monospace,monospace;cursor:pointer}
-.ib.plain{border:none;font-size:20px;padding:2px 6px}
-.wrap{padding:16px;max-width:520px;margin:0 auto}
+.ib{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;padding:5px 9px;font-size:12px;font-family:ui-monospace,monospace;cursor:pointer}
+.ib.plain{border:none;background:none;font-size:20px;padding:2px 6px}
+.wrap{padding:16px;max-width:560px;margin:0 auto}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.tile{aspect-ratio:1;border-radius:14px;color:#fff;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;box-shadow:0 1px 3px rgba(0,0,0,.15);cursor:pointer}
-.tile b{font-size:16px;line-height:1.1}.tile small{opacity:.8;font-size:11px}
-.lbl{font-family:ui-monospace,monospace;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;margin:0 0 6px}
-.inp{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff}
+.tile{aspect-ratio:1;border-radius:16px;color:#fff;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer;transition:transform .1s}
+.tile:active{transform:scale(.96)}
+.tile b{font-size:16px;line-height:1.1}.tile small{opacity:.85;font-size:11px}
+.tools{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px}
+.tool{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-size:13px}
+.tool b{display:block;font-size:22px;margin-bottom:4px}
+.lbl{font-family:ui-monospace,monospace;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 6px}
+.card .lbl{color:#6B7A99}
+.inp{width:100%;padding:10px 12px;border:1px solid rgba(255,255,255,.3);border-radius:10px;background:rgba(255,255,255,.95);color:var(--ink)}
 textarea.inp{resize:vertical}
-.btn{width:100%;padding:12px;border:none;border-radius:10px;color:#fff;font-weight:600;background:var(--ink);cursor:pointer}
-.btn:disabled{opacity:.45}
-.btn.o{background:#fff;color:var(--acc);border:1px solid var(--acc);font-weight:500;font-size:14px;padding:9px}
+.btn{width:100%;padding:12px;border:none;border-radius:12px;color:#fff;font-weight:700;background:linear-gradient(135deg,#F59E0B,#F97316);box-shadow:0 6px 16px rgba(249,115,22,.35);cursor:pointer}
+.btn:disabled{opacity:.45;box-shadow:none}
+.btn.o{background:#fff;color:var(--acc);border:1px solid var(--acc);font-weight:600;font-size:14px;padding:9px;box-shadow:none}
+.btn.g{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);box-shadow:none;font-weight:600;font-size:14px;padding:10px}
 .row{display:flex;gap:8px}.row>*{flex:1}
-.tabs{display:flex;border:1px solid #d1d5db;border-radius:10px;overflow:hidden;background:#fff}
-.tabs button{flex:1;padding:10px;border:none;background:#fff;color:var(--ink);font-weight:500;cursor:pointer}
-.tabs button.on{background:var(--acc);color:#fff}
+.tabs{display:flex;border:1px solid rgba(255,255,255,.3);border-radius:12px;overflow:hidden;background:rgba(255,255,255,.08)}
+.tabs button{flex:1;padding:10px;border:none;background:transparent;color:#fff;font-weight:600;cursor:pointer}
+.tabs button.on{background:var(--acc)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:14px;cursor:pointer}
-.chip.on{background:var(--acc);color:#fff;border-color:var(--acc)}
-.card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.chip{padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;font-size:14px;cursor:pointer}
+.chip.on{background:var(--acc);border-color:var(--acc)}
+.card{background:var(--card);color:var(--ink);border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .card h2{margin:0 0 10px;font-size:20px}
 .card h3{margin:14px 0 4px;font-size:16px;color:var(--acc)}
-.card p{margin:0 0 8px;line-height:1.6;color:#374151;white-space:pre-line}
+.card p{margin:0 0 8px;line-height:1.6;color:#2B3A5C;white-space:pre-line}
 mark{background:var(--mark);color:var(--ink);padding:0 4px;border-radius:2px;font-weight:600}
-.ex{background:#F3F5F9;border-radius:10px;padding:10px;font-size:14px}
-.sum{font-style:italic;border-top:1px solid #e5e7eb;padding-top:10px;color:#4b5563;font-size:14px}
-.verify{background:#FFF8E1;border:1px solid #F5C518;border-radius:10px;padding:10px;font-size:14px;margin-top:10px}
+.ex{background:var(--soft);border-radius:10px;padding:10px;font-size:14px}
+.sum{font-style:italic;border-top:1px solid #E5E9F5;padding-top:10px;color:#4B5A7A;font-size:14px}
+.verify{background:#FFF8E1;border:1px solid #F5C518;border-radius:10px;padding:10px;font-size:14px;margin-top:10px;color:#3A2E00}
 .verify b{color:#8A6100}.verify ul{margin:4px 0 0;padding-inline-start:20px}
-.flag{background:none;border:none;color:#9ca3af;font-size:12px;cursor:pointer;padding:0}
+.flag{background:none;border:none;color:#9AA6C3;font-size:12px;cursor:pointer;padding:0}
 .flag:hover{color:#dc2626}
 .sec-h{display:flex;justify-content:space-between;align-items:center}
-.flagbox{display:flex;gap:6px;margin:6px 0}.flagbox input{flex:1;padding:6px 8px;border:1px solid #d1d5db;border-radius:8px}
+.flagbox{display:flex;gap:6px;margin:6px 0}.flagbox input{flex:1;padding:6px 8px;border:1px solid var(--line);border-radius:8px}
 .flagbox .fx{background:#dc2626;color:#fff;border:none;border-radius:8px;padding:6px 10px}
 .flagbox .cn{background:none;border:none;color:#6b7280}
-.spin{display:flex;align-items:center;gap:8px;color:#6b7280;font-size:14px;padding:12px 0}
-.spin i{width:16px;height:16px;border-radius:50%;border:2px solid #d1d5db;border-top-color:#374151;animation:r 1s linear infinite;display:inline-block}
+.spin{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;padding:12px 0}
+.card .spin{color:#6B7A99}
+.spin i{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:r 1s linear infinite;display:inline-block}
+.card .spin i{border-color:#d1d5db;border-top-color:#374151}
 @keyframes r{to{transform:rotate(360deg)}}
-.err{color:#dc2626;font-size:14px}
+.err{color:#FFB4B4;font-size:14px;background:rgba(220,38,38,.2);border:1px solid rgba(255,120,120,.4);border-radius:10px;padding:8px 10px}
 .chat{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-.msg{font-size:14px;border-radius:10px;padding:8px 12px;max-width:85%;line-height:1.5}
+.msg{font-size:14px;border-radius:12px;padding:8px 12px;max-width:85%;line-height:1.5}
 .msg.u{color:#fff;margin-inline-start:auto;background:var(--acc)}
-.msg.a{background:#fff;border:1px solid #e5e7eb;color:#1f2937}
-.q{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:14px;margin-bottom:12px}
+.msg.a{background:#fff;color:var(--ink)}
+.q{background:#fff;color:var(--ink);border:2px solid transparent;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 6px 18px rgba(0,0,0,.2)}
 .q.ok{border-color:#16A34A}.q.bad{border-color:#DC2626}
-.q .qt{display:flex;gap:8px;align-items:flex-start;font-weight:500}
+.q .qt{display:flex;gap:8px;align-items:flex-start;font-weight:600}
 .q .n{font-family:ui-monospace,monospace;font-size:12px;color:#9ca3af;margin-top:2px}
-.opt{display:block;width:100%;text-align:start;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;margin-top:8px;font-size:14px;cursor:pointer}
+.opt{display:block;width:100%;text-align:start;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;margin-top:8px;font-size:14px;cursor:pointer;color:var(--ink)}
 .opt.on{background:var(--acc);color:#fff;border-color:var(--acc)}
 .fb{font-size:14px;border-top:1px solid #f3f4f6;padding-top:8px;margin-top:8px;color:#4b5563}
-.score{text-align:center;border:2px solid var(--acc);border-radius:14px;padding:14px;background:#fff;margin-bottom:12px}
-.score .big{font-size:40px;font-weight:700;color:var(--acc)}
-.photo{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:8px;margin-top:8px}
+.score{text-align:center;border-radius:16px;padding:14px;background:#fff;color:var(--ink);margin-bottom:12px}
+.score .big{font-size:40px;font-weight:800;color:var(--acc)}
+.photo{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.95);color:var(--ink);border-radius:10px;padding:8px;margin-top:8px}
 .photo img{width:64px;height:64px;object-fit:cover;border-radius:6px}
 .photo button{background:none;border:none;text-align:start;padding:0;font-size:14px;cursor:pointer;display:block}
-.dash{width:100%;margin-top:8px;padding:9px;border:1px dashed #9ca3af;border-radius:10px;background:#fff;font-size:14px;color:#374151;cursor:pointer}
-.hint{font-size:12px;color:#6b7280;margin:4px 0 0}
+.dash{width:100%;margin-top:8px;padding:9px;border:1px dashed rgba(255,255,255,.5);border-radius:10px;background:rgba(255,255,255,.08);font-size:14px;color:#fff;cursor:pointer}
+.hint{font-size:12px;color:var(--muted);margin:4px 0 0}
 .stack>*+*{margin-top:16px}
-.pdfbar{position:sticky;top:0;background:#fff;border-bottom:1px solid #d1d5db;padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;z-index:10}
-.pdfbar .b{padding:8px 12px;border-radius:8px;border:1px solid #9ca3af;background:#fff;font-size:14px;cursor:pointer;text-decoration:none;color:var(--ink)}
-.pdfbar .b.p{background:var(--ink);color:#fff;border-color:var(--ink)}
-.pages{padding:12px;display:flex;flex-direction:column;gap:12px;background:#f3f4f6;min-height:100vh}
-.pages img{width:100%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2);border-radius:4px}
+.pdfbar{position:sticky;top:0;background:rgba(11,31,75,.95);border-bottom:1px solid rgba(255,255,255,.15);padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;z-index:10}
+.pdfbar .b{padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.1);font-size:14px;cursor:pointer;text-decoration:none;color:#fff}
+.pdfbar .b.p{background:#F97316;border-color:#F97316}
+.pages{padding:12px;display:flex;flex-direction:column;gap:12px;min-height:100vh}
+.pages img{width:100%;background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.3);border-radius:6px}
 .hidden{display:none!important}
-.setbox{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px}
+.setbox{background:#fff;color:var(--ink);border-radius:16px;padding:16px}
 .setbox ol{padding-inline-start:20px;font-size:14px;line-height:1.7;color:#374151}
-a{color:var(--acc)}
+.setbox .inp{border-color:#d1d5db}
+.setbox .chip{color:var(--ink);border-color:var(--line);background:#fff}.setbox .chip.on{color:#fff;background:var(--acc);border-color:var(--acc)}
+a{color:#9DC1FF}.setbox a{color:var(--acc)}
+.tog{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid #eef}
+.sw2{width:44px;height:26px;border-radius:13px;background:#cbd5e1;position:relative;cursor:pointer;border:none}
+.sw2.on{background:#16A34A}.sw2::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.15s}
+.sw2.on::after{inset-inline-start:21px}
+.hitem{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px}
+.hitem .t{font-weight:600}.hitem .m{font-size:12px;color:var(--muted)}
+.hitem .del{background:none;border:none;color:#FFB4B4;font-size:18px;cursor:pointer}
+.fc{perspective:1000px;height:260px;cursor:pointer}
+.fc .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.fc.flip .in{transform:rotateY(180deg)}
+.fc .f,.fc .b{position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;font-size:22px;font-weight:700;box-shadow:0 12px 30px rgba(0,0,0,.3)}
+.fc .f{background:#fff;color:var(--ink)}
+.fc .b{background:var(--mark);color:var(--ink);transform:rotateY(180deg);font-size:18px;font-weight:500}
+.fcbar{display:flex;justify-content:space-between;align-items:center;margin:12px 0;font-size:14px;color:var(--muted)}
+.bar{height:10px;border-radius:5px;background:rgba(255,255,255,.15);overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#F59E0B,#22C55E)}
+.gitem{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);padding:6px 0;border-top:1px solid rgba(255,255,255,.1)}
+.genimg{width:100%;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.35);background:#fff}
 </style>
 </head>
 <body>
@@ -111,70 +138,96 @@ const T={
   styles:[["simple","Simply"],["steps","Step by step"],["examples","With examples"],["kid","Like I'm 10"],["summary","Short summary"]],
   goExplain:"Explain this lesson",askFollow:"Ask anything about this lesson…",keyTerms:"Key terms",example:"Example",summary:"In one line",
   customExam:"Describe the exam you want (optional)",customExamPh:"e.g. 10 questions, focus on the second part, essay style…",makeExam:"Create exam",submit:"Submit answers",grading:"Grading…",score:"Your score",newExam:"New exam",tryAgain:"Try again",thinking:"Working on it…",reviewing:"Reviewing for accuracy…",
-  error:"Something went wrong. Check your connection and API key, then try again.",needLesson:"Type the lesson name or add a photo first.",yourAnswer:"Your answer",correctAnswer:"Correct answer",trueL:"True",falseL:"False",back:"Back",
+  error:"Something went wrong.",needLesson:"Type the lesson name or add a photo first.",yourAnswer:"Your answer",correctAnswer:"Correct answer",trueL:"True",falseL:"False",back:"Back",
   addPhoto:"📷 Add a photo of the lesson",changePhoto:"Change photo",removePhoto:"Remove",photoHint:"Take a picture of your book or notes and I'll use it.",
-  pdf:"Save as PDF",pdfQuestions:"PDF: questions only",pdfAnswers:"PDF: with answers",share:"Share / Save PDF",download:"Download PDF",close:"Close",answerKey:"Answer key",name:"Name",date:"Date",
+  pdf:"Save as PDF",pdfQuestions:"PDF: questions only",pdfAnswers:"PDF: with answers",share:"Share / Save",download:"Download",close:"Close",answerKey:"Answer key",name:"Name",date:"Date",
   verify:"Double-check with your teacher",flag:"Report a mistake",flagPh:"What's wrong? (optional)",fix:"Fix it",cancel:"Cancel",
-  settings:"Settings",apiKey:"Gemini API key",apiKeyPh:"Paste your key here",model:"Model",save:"Save",saved:"Saved",noKey:"Add your free Gemini API key in Settings to start.",
+  settings:"Settings",apiKey:"Gemini API key",apiKeyPh:"Paste your key here",model:"Model",save:"Save",noKey:"Add your free Gemini API key in Settings to start.",
   howKey:"How to get a free key",steps:["Open aistudio.google.com and sign in with Google.","Tap “Get API key” → “Create API key”.","Copy the key and paste it above. Don't share it with anyone."],
-  uiLang:"App language"},
+  uiLang:"App language",features:"Optional features",featFlash:"Flashcards after each lesson",featGrades:"Grades log",test:"Test connection",
+  history:"Saved",historyEmpty:"Nothing saved yet. Every lesson and exam is saved here automatically.",deleteSaved:"Delete",
+  flash:"Review with flashcards",flashTap:"Tap the card to flip",known:"I knew it ✅",unknown:"Didn't know ❌",flashDone:"Done! You know all the terms.",again:"Start again",round:"Round",
+  grades:"Grades log",gradesEmpty:"No grades yet. Take an exam and your score will appear here.",avg:"Average",
+  tools:"Tools",imgTool:"Image maker",docTool:"File maker",imgTitle:"Make an image",imgPh:"Describe the image you want… (e.g. a poster about water pollution for a school project)",imgGo:"Generate image",imgRef:"📷 Add a reference photo (optional)",imgNote:"Images are generated by Gemini. If your key doesn't include an image model, an error will show.",
+  docTitle:"Make a file",docType:"File type",docWord:"Word",docPpt:"PowerPoint",docXls:"Excel",docPh:"Describe what you want… (e.g. a 6-slide presentation about volcanoes / a weekly study schedule table / a report on the French revolution)",docGo:"Create file",docUseLesson:"Use the current lesson as the topic",docReady:"Your file is ready",
+ },
  ar:{appName:"رفيق الدروس",tagline:"اختر المادة، اكتب اسم الدرس، وتعلّم بطريقتك.",lessonLabel:"ما هو الدرس الذي أخذته؟",lessonPh:"مثال: قانون نيوتن الثاني، دورة الماء…",explain:"شرح",exam:"امتحان",styleLabel:"اشرحه…",
   styles:[["simple","ببساطة"],["steps","خطوة بخطوة"],["examples","مع أمثلة"],["kid","كأنني في العاشرة"],["summary","ملخّص قصير"]],
   goExplain:"اشرح هذا الدرس",askFollow:"اسأل أي شيء عن هذا الدرس…",keyTerms:"المصطلحات الأساسية",example:"مثال",summary:"في سطر واحد",
   customExam:"اكتب كيف تريد الامتحان (اختياري)",customExamPh:"مثال: ١٠ أسئلة، ركّز على الجزء الثاني، أسئلة مقالية…",makeExam:"أنشئ الامتحان",submit:"أرسل الإجابات",grading:"جارٍ التصحيح…",score:"نتيجتك",newExam:"امتحان جديد",tryAgain:"حاول مجدداً",thinking:"جارٍ العمل…",reviewing:"جارٍ مراجعة الدقة…",
-  error:"حدث خطأ. تأكد من الاتصال ومن مفتاح API ثم حاول مجدداً.",needLesson:"اكتب اسم الدرس أو أضف صورة أولاً.",yourAnswer:"إجابتك",correctAnswer:"الإجابة الصحيحة",trueL:"صح",falseL:"خطأ",back:"رجوع",
+  error:"حدث خطأ.",needLesson:"اكتب اسم الدرس أو أضف صورة أولاً.",yourAnswer:"إجابتك",correctAnswer:"الإجابة الصحيحة",trueL:"صح",falseL:"خطأ",back:"رجوع",
   addPhoto:"📷 أضف صورة للدرس",changePhoto:"غيّر الصورة",removePhoto:"احذف",photoHint:"صوّر الكتاب أو دفترك وسأعتمد عليه.",
-  pdf:"احفظ كـ PDF",pdfQuestions:"PDF: الأسئلة فقط",pdfAnswers:"PDF: مع الإجابات",share:"مشاركة / حفظ PDF",download:"تنزيل PDF",close:"إغلاق",answerKey:"مفتاح الإجابات",name:"الاسم",date:"التاريخ",
+  pdf:"احفظ كـ PDF",pdfQuestions:"PDF: الأسئلة فقط",pdfAnswers:"PDF: مع الإجابات",share:"مشاركة / حفظ",download:"تنزيل",close:"إغلاق",answerKey:"مفتاح الإجابات",name:"الاسم",date:"التاريخ",
   verify:"راجع مع أستاذك",flag:"هذا خطأ",flagPh:"ما الخطأ؟ (اختياري)",fix:"صحّحه",cancel:"إلغاء",
-  settings:"الإعدادات",apiKey:"مفتاح Gemini API",apiKeyPh:"الصق المفتاح هنا",model:"النموذج",save:"حفظ",saved:"تم الحفظ",noKey:"أضف مفتاح Gemini المجاني في الإعدادات للبدء.",
+  settings:"الإعدادات",apiKey:"مفتاح Gemini API",apiKeyPh:"الصق المفتاح هنا",model:"النموذج",save:"حفظ",noKey:"أضف مفتاح Gemini المجاني في الإعدادات للبدء.",
   howKey:"كيف تحصل على مفتاح مجاني",steps:["افتح aistudio.google.com وسجّل الدخول بحساب Google.","اضغط «Get API key» ثم «Create API key».","انسخ المفتاح والصقه في الأعلى. لا تشاركه مع أحد."],
-  uiLang:"لغة التطبيق"},
+  uiLang:"لغة التطبيق",features:"ميزات اختيارية",featFlash:"بطاقات مراجعة بعد كل درس",featGrades:"سجل الدرجات",test:"اختبار الاتصال",
+  history:"المحفوظات",historyEmpty:"لا شيء محفوظ بعد. كل درس وامتحان يُحفظ هنا تلقائياً.",deleteSaved:"حذف",
+  flash:"راجع بالبطاقات",flashTap:"اضغط البطاقة لتقلبها",known:"عرفتها ✅",unknown:"لم أعرفها ❌",flashDone:"أحسنت! حفظت كل المصطلحات.",again:"ابدأ من جديد",round:"جولة",
+  grades:"سجل الدرجات",gradesEmpty:"لا درجات بعد. قدّم امتحاناً وستظهر نتيجتك هنا.",avg:"المعدل",
+  tools:"أدوات",imgTool:"صانع الصور",docTool:"صانع الملفات",imgTitle:"اصنع صورة",imgPh:"صف الصورة التي تريدها… (مثال: ملصق عن تلوث المياه لمشروع مدرسي)",imgGo:"أنشئ الصورة",imgRef:"📷 أضف صورة مرجعية (اختياري)",imgNote:"تُصنع الصور عبر Gemini. إن لم يتضمن مفتاحك نموذج صور سيظهر خطأ.",
+  docTitle:"اصنع ملفاً",docType:"نوع الملف",docWord:"Word",docPpt:"PowerPoint",docXls:"Excel",docPh:"صف ما تريده… (مثال: عرض من ٦ شرائح عن البراكين / جدول مذاكرة أسبوعي / تقرير عن الثورة الفرنسية)",docGo:"أنشئ الملف",docUseLesson:"استخدم الدرس الحالي كموضوع",docReady:"ملفك جاهز",
+ },
 };
-const MODELS=["gemini-2.5-flash","gemini-2.5-flash-lite","gemini-2.0-flash","gemini-3-flash"];
+const MODELS=["gemini-2.5-flash","gemini-2.5-flash-lite","gemini-2.0-flash"];
+const LS=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}};
+const SV=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}};
 
 // ================= STATE =================
 const S={
  lang:localStorage.getItem("lang")||"ar",
  apiKey:localStorage.getItem("apiKey")||"",
  model:localStorage.getItem("model")||MODELS[0],
+ feat:LS("feat",{flash:true,grades:true}),
+ sessions:LS("sessions",[]), grades:LS("grades",[]),
  screen:"home", subject:null, lesson:"", mode:"explain", style:"simple",
  explanation:null, chat:[], customExam:"", exam:null, answers:{}, result:null, examUncertain:[],
  photo:null, corrections:[], flagging:null, loading:false, loadLabel:"", error:"",
  printTarget:null, pdfUrl:null, pdfBlob:null, pdfPages:[], pdfBusy:false,
+ fc:null,
+ img:{prompt:"",ref:null,out:null,busy:false,err:""},
+ doc:{type:"word",prompt:"",useLesson:false,busy:false,err:"",url:null,name:"",blob:null},
+ curSession:null,
 };
 const t=()=>T[S.lang];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const langName=l=>l==="ar"?"Arabic":"English";
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const fmtDate=ts=>new Date(ts).toLocaleString(S.lang==="ar"?"ar":"en",{dateStyle:"medium",timeStyle:"short"});
 
 // ================= GEMINI =================
-let MODEL_CACHE=null;
+let MODEL_CACHE=null,ALL_MODELS=[];
 async function listModels(){
  if(MODEL_CACHE) return MODEL_CACHE;
  const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(S.apiKey)}&pageSize=200`);
  if(!res.ok){let m="";try{m=(await res.json()).error?.message||"";}catch(e){}throw new Error(`key check failed (HTTP ${res.status}): ${m}`);}
  const data=await res.json();
- const names=(data.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes("generateContent")).map(m=>m.name.replace(/^models\//,""));
- const score=n=>(/flash/.test(n)?0:5)+(/lite/.test(n)?1:0)+(/preview|exp/.test(n)?2:0)+(/tts|image|audio|embedding|thinking/.test(n)?50:0)-(parseFloat((n.match(/(\d+\.?\d*)/)||[0,0])[1])||0);
+ ALL_MODELS=(data.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes("generateContent")).map(m=>m.name.replace(/^models\//,""));
+ const names=ALL_MODELS.filter(n=>!/tts|image|audio|embedding|imagen|veo|live/.test(n));
+ const score=n=>(/flash/.test(n)?0:5)+(/lite/.test(n)?1:0)+(/preview|exp/.test(n)?2:0)+(/thinking/.test(n)?3:0)-(parseFloat((n.match(/(\d+\.?\d*)/)||[0,0])[1])||0);
  names.sort((a,b)=>score(a)-score(b));
  MODEL_CACHE=names;return names;
 }
-async function askAI(system,userText,history=[]){
+// imgOverride: undefined => use S.photo ; null => no image ; object => that image
+async function askAI(system,userText,history=[],imgOverride){
  if(!S.apiKey) throw new Error("nokey");
+ const photo=imgOverride===undefined?S.photo:imgOverride;
  const contents=history.map(m=>({role:m.role==="assistant"?"model":"user",parts:[{text:m.content}]}));
  const parts=[{text:userText}];
- if(S.photo) parts.push({inlineData:{mimeType:S.photo.mediaType,data:S.photo.data}});
- if(contents.length&&contents[0].role==="user"&&S.photo) contents[0].parts.push({inlineData:{mimeType:S.photo.mediaType,data:S.photo.data}});
+ if(photo) parts.push({inlineData:{mimeType:photo.mediaType,data:photo.data}});
  contents.push({role:"user",parts});
  const avail=await listModels();
  if(!avail.length) throw new Error("no models available for this key");
  const tryModels=[...new Set([...(avail.includes(S.model)?[S.model]:[]),...avail])].slice(0,6);
  const errs=[];
  for(const model of tryModels){
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(S.apiKey)}`;
-  let res;
-  try{res=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,generationConfig:{temperature:0.3,maxOutputTokens:4000}})});}
-  catch(e){throw new Error("network: "+e.message);}
+  const body=JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,generationConfig:{temperature:0.3,maxOutputTokens:6000}});
+  let res=null,netErr="";
+  for(const ct of ["application/json","text/plain;charset=UTF-8"]){
+   try{res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(S.apiKey)}`,{method:"POST",headers:{"Content-Type":ct},body});netErr="";break;}
+   catch(e){netErr=e.message;res=null;}
+  }
+  if(!res){errs.push(`${model}: network ${netErr}`);continue;}
   if(res.ok){
    const data=await res.json();
    const txt=(data.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("\n");
@@ -183,8 +236,24 @@ async function askAI(system,userText,history=[]){
    return txt;
   }
   let msg="";try{const j=await res.json();msg=j.error?.message||JSON.stringify(j);}catch(e){msg=await res.text();}
-  errs.push(`${model}: HTTP ${res.status} ${msg.slice(0,120)}`);
+  errs.push(`${model}: HTTP ${res.status} ${msg.slice(0,140)}`);
   if(res.status===403||res.status===401) break;
+ }
+ throw new Error(errs.join(" | "));
+}
+async function genImage(prompt,ref){
+ if(!S.apiKey) throw new Error("nokey");
+ await listModels();
+ let cands=ALL_MODELS.filter(n=>/image/.test(n)&&!/imagen/.test(n));
+ if(!cands.length) cands=["gemini-2.5-flash-image","gemini-2.0-flash-preview-image-generation"];
+ cands.sort((a,b)=>(/2\.5/.test(b)?1:0)-(/2\.5/.test(a)?1:0));
+ const parts=[{text:prompt}];if(ref)parts.push({inlineData:{mimeType:ref.mediaType,data:ref.data}});
+ const errs=[];
+ for(const model of cands){
+  const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(S.apiKey)}`,{method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({contents:[{role:"user",parts}],generationConfig:{responseModalities:["IMAGE","TEXT"]}})});
+  if(res.ok){const d=await res.json();const p=(d.candidates?.[0]?.content?.parts||[]).find(x=>x.inlineData);if(p)return{mediaType:p.inlineData.mimeType,data:p.inlineData.data};errs.push(`${model}: no image returned`);continue;}
+  let msg="";try{msg=(await res.json()).error?.message||"";}catch(e){}errs.push(`${model}: HTTP ${res.status} ${msg.slice(0,140)}`);
  }
  throw new Error(errs.join(" | "));
 }
@@ -198,23 +267,39 @@ function baseSystem(){
 async function reviewPass(kind,obj){
  setLoad(true,t().reviewing);
  try{
-  const text=await askAI(baseSystem()+` You are now a strict reviewer. Check this ${kind} for factual, scientific, mathematical and language errors, and for anything that contradicts the attached photo if there is one. Fix every error. Respond ONLY with the corrected JSON in exactly the same shape, plus one extra field "uncertain": an array of short strings (max 4) naming specific facts the student should double-check with their teacher (dates, numbers, names, formulas). Use [] if everything is standard knowledge.`,JSON.stringify(obj));
+  const text=await askAI(baseSystem()+` You are now a strict reviewer. Check this ${kind} for factual, scientific, mathematical and language errors, and for anything that contradicts the attached photo if there is one. Fix every error. Respond ONLY with the corrected JSON in exactly the same shape, plus one extra field "uncertain": an array of short strings (max 4) naming specific facts the student should double-check with their teacher. Use [] if everything is standard knowledge.`,JSON.stringify(obj));
   const f=parseJSON(text);return f&&typeof f==="object"?f:obj;
  }catch(e){return obj;}
 }
+
+// ================= SESSIONS =================
+function saveSession(){
+ if(!S.subject||(!S.explanation&&!S.exam))return;
+ const id=S.curSession||uid();S.curSession=id;
+ const ses={id,ts:Date.now(),subject:S.subject.id,lesson:S.lesson,explanation:S.explanation,chat:S.chat,exam:S.exam,answers:S.answers,result:S.result,examUncertain:S.examUncertain,corrections:S.corrections,customExam:S.customExam};
+ S.sessions=[ses,...S.sessions.filter(x=>x.id!==id)].slice(0,60);SV("sessions",S.sessions);
+}
+function openSession(id){
+ const s=S.sessions.find(x=>x.id===id);if(!s)return;
+ Object.assign(S,{subject:SUBJECTS.find(x=>x.id===s.subject),screen:"subject",lesson:s.lesson,explanation:s.explanation,chat:s.chat||[],exam:s.exam,answers:s.answers||{},result:s.result,examUncertain:s.examUncertain||[],corrections:s.corrections||[],customExam:s.customExam||"",photo:null,flagging:null,error:"",curSession:id,mode:s.exam&&!s.explanation?"exam":"explain",fc:null});
+ render();
+}
+function delSession(id){S.sessions=S.sessions.filter(x=>x.id!==id);SV("sessions",S.sessions);render();}
+function addGrade(){if(!S.result||!S.feat.grades)return;S.grades=[{ts:Date.now(),subject:S.subject.id,lesson:S.lesson,score:S.result.score,total:S.result.total},...S.grades].slice(0,200);SV("grades",S.grades);}
 
 // ================= ACTIONS =================
 function setLoad(v,label=""){S.loading=v;S.loadLabel=label;render();}
 function fail(e){const m=e&&e.message||"";S.error=(m==="nokey")?t().noKey:(t().error+(m?" ["+m.slice(0,300)+"]":""));S.loading=false;S.loadLabel="";render();}
 async function doExplain(){
  if(!S.lesson.trim()&&!S.photo){S.error=t().needLesson;return render();}
- S.error="";S.explanation=null;S.chat=[];setLoad(true,t().thinking);
+ S.error="";S.explanation=null;S.chat=[];S.fc=null;S.curSession=null;setLoad(true,t().thinking);
  const styleMap={simple:"in very simple, plain words",steps:"as a numbered sequence of steps, one idea per step",examples:"with a concrete real-life example for every idea",kid:"as if explaining to a 10-year-old, with a fun comparison",summary:"as a compact summary a student can revise in 2 minutes"};
  try{
-  const text=await askAI(baseSystem()+` Explain the lesson ${styleMap[S.style]}.${photoNote()} Respond ONLY with JSON, no markdown: {"title":"","overview":"","sections":[{"heading":"","text":""}],"keyTerms":[{"term":"","meaning":""}],"example":"","summary":""}. Use 3 to 5 sections, 3 to 6 key terms.`,`Explain: ${S.lesson||"the lesson in the photo"}`);
+  const text=await askAI(baseSystem()+` Explain the lesson ${styleMap[S.style]}.${photoNote()} Respond ONLY with JSON, no markdown: {"title":"","overview":"","sections":[{"heading":"","text":""}],"keyTerms":[{"term":"","meaning":""}],"example":"","summary":""}. Use 3 to 5 sections, 4 to 8 key terms.`,`Explain: ${S.lesson||"the lesson in the photo"}`);
   const draft=parseJSON(text);
   S.explanation=await reviewPass("lesson explanation",draft);
-  setLoad(false);
+  if(!S.lesson.trim()&&S.explanation.title)S.lesson=S.explanation.title;
+  saveSession();setLoad(false);
  }catch(e){fail(e);}
 }
 async function doFollowUp(q){
@@ -222,9 +307,8 @@ async function doFollowUp(q){
  S.chat.push({role:"user",content:q});setLoad(true,t().thinking);
  try{
   const ctx=S.explanation?` Context you already explained: ${JSON.stringify(S.explanation).slice(0,3000)}`:"";
-  const hist=S.chat.slice(0,-1);
-  const text=await askAI(baseSystem()+" Answer the student's question briefly (under 150 words), plain text, no markdown."+photoNote()+ctx,q,hist);
-  S.chat.push({role:"assistant",content:text.trim()});setLoad(false);
+  const text=await askAI(baseSystem()+" Answer the student's question briefly (under 150 words), plain text, no markdown."+photoNote()+ctx,q,S.chat.slice(0,-1));
+  S.chat.push({role:"assistant",content:text.trim()});saveSession();setLoad(false);
  }catch(e){fail(e);}
 }
 async function doExam(){
@@ -236,15 +320,15 @@ async function doExam(){
   const text=await askAI(baseSystem()+spec+photoNote()+` Respond ONLY with JSON, no markdown: {"questions":[{"id":1,"type":"mcq|tf|short","q":"","options":["","","",""],"answer":""}]}. For mcq give 4 options and put the correct option text in "answer". For tf, options must be ["true","false"] and answer "true" or "false". For short (also for essay/open questions), options is [] and answer is a model answer under 30 words.`,`Make the exam on: ${S.lesson||"the lesson in the photo"}`);
   const draft=parseJSON(text);
   const rev=await reviewPass("exam with answer key",draft);
-  S.exam=rev.questions||draft.questions;S.examUncertain=rev.uncertain||[];setLoad(false);
+  S.exam=rev.questions||draft.questions;S.examUncertain=rev.uncertain||[];saveSession();setLoad(false);
  }catch(e){fail(e);}
 }
 async function doGrade(){
  setLoad(true,t().grading);S.error="";
  try{
   const payload=S.exam.map(q=>({id:q.id,type:q.type,q:q.q,correct:q.answer,student:S.answers[q.id]||""}));
-  const text=await askAI(baseSystem()+` Grade the exam fairly. For mcq/tf the student is correct only if the answer matches. For short answers accept equivalent meaning. Respond ONLY with JSON: {"score":0,"total":0,"items":[{"id":1,"correct":true,"feedback":""}]}. Feedback under 25 words each.`,JSON.stringify(payload));
-  S.result=parseJSON(text);setLoad(false);
+  const text=await askAI(baseSystem()+` Grade the exam fairly. For mcq/tf the student is correct only if the answer matches. For short answers accept equivalent meaning. Respond ONLY with JSON: {"score":0,"total":0,"items":[{"id":1,"correct":true,"feedback":""}]}. Feedback under 25 words each.`,JSON.stringify(payload),[],null);
+  S.result=parseJSON(text);addGrade();saveSession();setLoad(false);
  }catch(e){fail(e);}
 }
 async function submitFlag(){
@@ -252,22 +336,127 @@ async function submitFlag(){
  try{
   if(f.kind==="section"){
    const sec=S.explanation.sections[f.idx];
-   const text=await askAI(baseSystem()+` The student says this part of your explanation contains a mistake${f.note?`: "${f.note}"`:""}. Find and fix it carefully. Respond ONLY with JSON {"heading":"","text":"","whatWasWrong":""}.`,JSON.stringify(sec));
-   const x=parseJSON(text);S.explanation.sections[f.idx]={heading:x.heading,text:x.text};S.corrections.push(f.note||x.whatWasWrong);
+   const x=parseJSON(await askAI(baseSystem()+` The student says this part of your explanation contains a mistake${f.note?`: "${f.note}"`:""}. Find and fix it carefully. Respond ONLY with JSON {"heading":"","text":"","whatWasWrong":""}.`,JSON.stringify(sec)));
+   S.explanation.sections[f.idx]={heading:x.heading,text:x.text};S.corrections.push(f.note||x.whatWasWrong);
   }else{
    const q=S.exam[f.idx];
-   const text=await askAI(baseSystem()+` The student says this exam question or its answer is wrong${f.note?`: "${f.note}"`:""}. Fix it or replace it with a correct question of the same type and id. Respond ONLY with JSON {"id":${q.id},"type":"${q.type}","q":"","options":[],"answer":"","whatWasWrong":""}.`,JSON.stringify(q));
-   const x=parseJSON(text);S.exam[f.idx]={id:q.id,type:q.type,q:x.q,options:x.options||[],answer:x.answer};delete S.answers[q.id];S.result=null;S.corrections.push(f.note||x.whatWasWrong);
+   const x=parseJSON(await askAI(baseSystem()+` The student says this exam question or its answer is wrong${f.note?`: "${f.note}"`:""}. Fix it or replace it with a correct question of the same type and id. Respond ONLY with JSON {"id":${q.id},"type":"${q.type}","q":"","options":[],"answer":"","whatWasWrong":""}.`,JSON.stringify(q)));
+   S.exam[f.idx]={id:q.id,type:q.type,q:x.q,options:x.options||[],answer:x.answer};delete S.answers[q.id];S.result=null;S.corrections.push(f.note||x.whatWasWrong);
   }
-  setLoad(false);
+  saveSession();setLoad(false);
  }catch(e){fail(e);}
 }
-function pickSubject(s){Object.assign(S,{subject:s,screen:"subject",lesson:"",explanation:null,chat:[],exam:null,answers:{},result:null,examUncertain:[],photo:null,customExam:"",corrections:[],flagging:null,error:""});render();}
-function goHome(){S.subject=null;S.screen="home";render();}
+function pickSubject(s){Object.assign(S,{subject:s,screen:"subject",lesson:"",explanation:null,chat:[],exam:null,answers:{},result:null,examUncertain:[],photo:null,customExam:"",corrections:[],flagging:null,error:"",curSession:null,fc:null});render();}
+function goHome(){S.subject=null;S.screen="home";S.error="";render();}
+let fileTarget="lesson";
+function pickFile(target){fileTarget=target;document.getElementById("file").click();}
 document.getElementById("file").addEventListener("change",e=>{
  const file=e.target.files?.[0];if(!file)return;
- const r=new FileReader();r.onload=()=>{S.photo={data:r.result.split(",")[1],mediaType:file.type||"image/jpeg",preview:r.result};render();};r.readAsDataURL(file);e.target.value="";
+ const r=new FileReader();r.onload=()=>{const ph={data:r.result.split(",")[1],mediaType:file.type||"image/jpeg",preview:r.result};if(fileTarget==="img")S.img.ref=ph;else S.photo=ph;render();};r.readAsDataURL(file);e.target.value="";
 });
+
+// ================= FLASHCARDS =================
+function startFlash(){const ks=(S.explanation?.keyTerms||[]).filter(k=>k.term&&k.meaning);if(!ks.length)return;S.fc={cards:ks.map(k=>({f:k.term,b:k.meaning})),idx:0,flip:false,unknown:[],round:1,done:false};S.screen="flash";render();}
+function fcAnswer(known){const fc=S.fc;if(!known)fc.unknown.push(fc.cards[fc.idx]);fc.idx++;fc.flip=false;if(fc.idx>=fc.cards.length){if(fc.unknown.length){fc.cards=fc.unknown;fc.unknown=[];fc.idx=0;fc.round++;}else fc.done=true;}render();}
+
+// ================= IMAGE TOOL =================
+async function doImage(){
+ const p=S.img.prompt.trim();if(!p)return;S.img.busy=true;S.img.err="";S.img.out=null;render();
+ try{S.img.out=await genImage(p,S.img.ref);}catch(e){S.img.err=(e.message==="nokey"?t().noKey:e.message);}
+ S.img.busy=false;render();
+}
+async function shareBlob(blob,name){
+ try{const file=new File([blob],name,{type:blob.type});
+  if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:name});
+  else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();}
+ }catch(e){}
+}
+function b64ToBlob(b64,type){const bin=atob(b64);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new Blob([u],{type});}
+
+// ================= DOCUMENT TOOL =================
+const LIBS={
+ jszip:["https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js","https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"],
+ pptx:["https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js","https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"],
+ xlsx:["https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js","https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"],
+};
+function loadLib(name){
+ return new Promise((res,rej)=>{
+  const urls=LIBS[name];let i=0;
+  const tryNext=()=>{if(i>=urls.length)return rej(new Error("could not load "+name));const s=document.createElement("script");s.src=urls[i++];s.onload=res;s.onerror=()=>{s.remove();tryNext();};document.head.appendChild(s);};
+  tryNext();
+ });
+}
+const xmlEsc=s=>String(s??"").replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
+async function buildDocx(doc,rtl){
+ await loadLib("jszip");
+ const P=(txt,{size=24,bold=false,color="000000",align=null,spacing=120}={})=>`<w:p><w:pPr>${rtl?'<w:bidi/>':''}${align?`<w:jc w:val="${align}"/>`:''}<w:spacing w:after="${spacing}"/></w:pPr><w:r><w:rPr>${bold?'<w:b/><w:bCs/>':''}<w:color w:val="${color}"/><w:sz w:val="${size}"/><w:szCs w:val="${size}"/>${rtl?'<w:rtl/>':''}</w:rPr><w:t xml:space="preserve">${xmlEsc(txt)}</w:t></w:r></w:p>`;
+ let body=P(doc.title||"",{size:44,bold:true,color:"1F3A8A",align:"center",spacing:300});
+ if(doc.subtitle)body+=P(doc.subtitle,{size:24,color:"555555",align:"center",spacing:300});
+ for(const s of doc.sections||[]){
+  if(s.heading)body+=P(s.heading,{size:30,bold:true,color:"1F3A8A",spacing:80});
+  for(const para of String(s.text||"").split("\n").filter(Boolean))body+=P(para,{size:24,spacing:120});
+  for(const b of s.bullets||[])body+=P("• "+b,{size:24,spacing:60});
+ }
+ const docXml=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1200" w:right="1200" w:bottom="1200" w:left="1200"/>${rtl?'<w:bidi/>':''}</w:sectPr></w:body></w:document>`;
+ const zip=new JSZip();
+ zip.file("[Content_Types].xml",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>`);
+ zip.file("_rels/.rels",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`);
+ zip.file("word/_rels/document.xml.rels",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`);
+ zip.file("word/document.xml",docXml);
+ return zip.generateAsync({type:"blob",mimeType:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+}
+async function buildPptx(doc,rtl){
+ await loadLib("pptx");
+ const pptx=new PptxGenJS();pptx.layout="LAYOUT_16x9";
+ const align=rtl?"right":"left";
+ let s=pptx.addSlide();s.background={color:"0B1F4B"};
+ s.addText(doc.title||"",{x:0.5,y:1.6,w:9,h:1.2,fontSize:36,bold:true,color:"FFFFFF",align:"center",rtlMode:rtl});
+ if(doc.subtitle)s.addText(doc.subtitle,{x:0.5,y:2.9,w:9,h:0.8,fontSize:18,color:"CFE0FF",align:"center",rtlMode:rtl});
+ for(const sl of doc.slides||[]){
+  const p=pptx.addSlide();p.background={color:"FFFFFF"};
+  p.addShape(pptx.ShapeType.rect,{x:0,y:0,w:10,h:0.9,fill:{color:"1F3A8A"}});
+  p.addText(sl.title||"",{x:0.4,y:0.1,w:9.2,h:0.7,fontSize:24,bold:true,color:"FFFFFF",align,rtlMode:rtl});
+  const items=(sl.bullets||[]).map(b=>({text:String(b),options:{bullet:true,breakLine:true}}));
+  if(items.length)p.addText(items,{x:0.5,y:1.2,w:9,h:3.8,fontSize:18,color:"1F2937",align,rtlMode:rtl,valign:"top"});
+  if(sl.note)p.addText(sl.note,{x:0.5,y:5.0,w:9,h:0.5,fontSize:12,italic:true,color:"6B7280",align,rtlMode:rtl});
+ }
+ return pptx.write("blob");
+}
+async function buildXlsx(doc){
+ await loadLib("xlsx");
+ const wb=XLSX.utils.book_new();
+ for(const sh of doc.sheets||[]){
+  const rows=[sh.headers||[],...(sh.rows||[])];
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws["!cols"]=(sh.headers||[]).map(h=>({wch:Math.max(12,String(h).length+4)}));
+  XLSX.utils.book_append_sheet(wb,ws,String(sh.name||"Sheet").slice(0,28));
+ }
+ const out=XLSX.write(wb,{bookType:"xlsx",type:"array"});
+ return new Blob([out],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+}
+async function doDoc(){
+ const d=S.doc;let p=d.prompt.trim();
+ if(d.useLesson&&S.explanation)p=(p?p+". ":"")+`Topic: ${S.lesson}. Base it on this explanation: ${JSON.stringify(S.explanation).slice(0,2500)}`;
+ if(!p){d.err=t().docPh;return render();}
+ d.busy=true;d.err="";d.url=null;render();
+ const lang=langName(S.lang);
+ const shapes={
+  word:`{"title":"","subtitle":"","sections":[{"heading":"","text":"","bullets":[]}]} — 4 to 8 sections, real paragraphs (60-120 words each)`,
+  ppt:`{"title":"","subtitle":"","slides":[{"title":"","bullets":["",""],"note":""}]} — 5 to 10 slides, 3 to 5 short bullets each`,
+  xls:`{"title":"","sheets":[{"name":"","headers":["",""],"rows":[["",""]]}]} — realistic, complete rows; numbers as numbers`,
+ };
+ try{
+  const text=await askAI(`You create school documents. Write in ${lang} unless the user asks otherwise. Respond ONLY with JSON in this shape: ${shapes[d.type]}. No markdown.`,p,[],null);
+  const json=parseJSON(text);
+  const rtl=S.lang==="ar";
+  let blob,ext;
+  if(d.type==="word"){blob=await buildDocx(json,rtl);ext="docx";}
+  else if(d.type==="ppt"){blob=await buildPptx(json,rtl);ext="pptx";}
+  else{blob=await buildXlsx(json);ext="xlsx";}
+  d.blob=blob;d.name=(json.title||json.sheets?.[0]?.name||"file").toString().slice(0,40).replace(/[\\/:*?"<>|]/g,"")+"."+ext;d.url=URL.createObjectURL(blob);
+ }catch(e){d.err=(e.message==="nokey"?t().noKey:e.message);}
+ d.busy=false;render();
+}
 
 // ================= PDF =================
 const A4W=1240,A4H=1754,PM=90;
@@ -323,54 +512,117 @@ function openPdf(target){
   S.pdfBlob=canvasesToPdf(d.pages());S.pdfPages=d.pages().map(c=>c.toDataURL("image/jpeg",0.85));S.pdfUrl=URL.createObjectURL(S.pdfBlob);S.pdfBusy=false;render();
  },50);
 }
-async function sharePdf(){
- try{const file=new File([S.pdfBlob],pdfName(),{type:"application/pdf"});
-  if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:pdfName()});
-  else{const a=document.createElement("a");a.href=S.pdfUrl;a.download=pdfName();a.click();}
- }catch(e){}
+async function runDiag(){
+ S.apiKey=document.getElementById('key').value.trim();localStorage.setItem('apiKey',S.apiKey);MODEL_CACHE=null;
+ const out=document.getElementById('diag');out.style.display='block';const log=m=>{out.textContent+=m+"\n";};out.textContent="";
+ log("key length: "+S.apiKey.length+(S.apiKey.startsWith("AIza")?" (looks ok)":" (should start with AIza!)"));
+ try{const ms=await listModels();log("text models OK: "+ms.slice(0,4).join(", "));log("image models: "+(ALL_MODELS.filter(n=>/image/.test(n)).join(", ")||"none"));}catch(e){log("models FAIL: "+e.message);return;}
+ try{const tx=await askAI("Reply with the single word OK.","ping",[],null);log("generate OK, model="+S.model+", reply="+tx.trim().slice(0,40));}catch(e){log("generate FAIL: "+e.message);}
 }
 
 // ================= RENDER =================
 const app=document.getElementById("app");
 function render(){
  const tr=t();document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";
- if(S.printTarget)return app.innerHTML=viewPdf(tr);
- if(S.screen==="settings")return app.innerHTML=viewSettings(tr);
- if(!S.subject)return app.innerHTML=viewHome(tr);
- app.innerHTML=viewSubject(tr);
+ const views={settings:viewSettings,history:viewHistory,flash:viewFlash,grades:viewGrades,img:viewImg,doc:viewDoc};
+ if(S.printTarget)app.innerHTML=viewPdf(tr);
+ else if(views[S.screen])app.innerHTML=views[S.screen](tr);
+ else if(!S.subject)app.innerHTML=viewHome(tr);
+ else app.innerHTML=viewSubject(tr);
  const fu=document.getElementById("fu");if(fu){fu.addEventListener("keydown",e=>{if(e.key==="Enter"){doFollowUp(fu.value);fu.value="";}});}
  const fn=document.getElementById("flagnote");if(fn){fn.focus();fn.addEventListener("input",e=>S.flagging.note=e.target.value);fn.addEventListener("keydown",e=>e.key==="Enter"&&submitFlag());}
 }
 function header(tr,title,back){
  return `<div class="hdr"><div class="title">${back?`<button class="ib plain" onclick="${back}">${S.lang==="ar"?"→":"←"}</button>`:""}${title}</div>
- <div style="display:flex;gap:6px"><button class="ib" onclick="S.lang=S.lang==='en'?'ar':'en';localStorage.setItem('lang',S.lang);render()">${S.lang==="en"?"عربي":"EN"}</button><button class="ib plain" onclick="S.screen='settings';render()" title="${tr.settings}">⚙️</button></div></div>`;
+ <div style="display:flex;gap:6px"><button class="ib" title="${tr.history}" onclick="S.screen='history';render()">🗂</button><button class="ib" onclick="S.lang=S.lang==='en'?'ar':'en';localStorage.setItem('lang',S.lang);render()">${S.lang==="en"?"عربي":"EN"}</button><button class="ib plain" onclick="S.screen='settings';render()" title="${tr.settings}">⚙️</button></div></div>`;
 }
+function spinner(l){return `<div class="spin"><i></i>${l}</div>`;}
 function viewHome(tr){
  return header(tr,tr.appName)+`<div class="wrap">
  ${!S.apiKey?`<p class="err" style="margin-bottom:12px">${tr.noKey} <a href="#" onclick="S.screen='settings';render();return false">${tr.settings} ←</a></p>`:""}
- <p style="color:#4b5563;margin:4px 0 16px">${tr.tagline}</p>
- <div class="grid">${SUBJECTS.map(s=>`<button class="tile" style="background:${s.color}" onclick="pickSubject(SUBJECTS.find(x=>x.id==='${s.id}'))"><b>${s[S.lang]}</b><small>${S.lang==="en"?s.ar:s.en}</small></button>`).join("")}</div></div>`;
+ <p style="color:var(--muted);margin:4px 0 16px">${tr.tagline}</p>
+ <div class="grid">${SUBJECTS.map(s=>`<button class="tile" style="background:linear-gradient(145deg,${s.color},${s.color}CC)" onclick="pickSubject(SUBJECTS.find(x=>x.id==='${s.id}'))"><b>${s[S.lang]}</b><small>${S.lang==="en"?s.ar:s.en}</small></button>`).join("")}</div>
+ <p class="lbl" style="margin-top:20px">${tr.tools}</p>
+ <div class="tools">
+  <button class="tool" onclick="S.screen='history';render()"><b>🗂</b>${tr.history}</button>
+  <button class="tool" onclick="S.screen='img';render()"><b>🎨</b>${tr.imgTool}</button>
+  <button class="tool" onclick="S.screen='doc';render()"><b>📄</b>${tr.docTool}</button>
+  ${S.feat.grades?`<button class="tool" onclick="S.screen='grades';render()"><b>📊</b>${tr.grades}</button>`:""}
+ </div></div>`;
 }
 function viewSettings(tr){
+ const tog=(k,label)=>`<div class="tog"><span>${label}</span><button class="sw2 ${S.feat[k]?"on":""}" onclick="S.feat.${k}=!S.feat.${k};SV('feat',S.feat);render()"></button></div>`;
  return header(tr,tr.settings,"S.screen='home';render()")+`<div class="wrap stack">
  <div class="setbox stack">
   <div><p class="lbl">${tr.apiKey}</p><input class="inp" id="key" type="password" dir="ltr" value="${esc(S.apiKey)}" placeholder="${tr.apiKeyPh}"></div>
   <div><p class="lbl">${tr.model}</p><div class="chips">${[...new Set([S.model,...(MODEL_CACHE||MODELS)])].slice(0,6).map(m=>`<button class="chip ${S.model===m?"on":""}" onclick="S.model='${m}';localStorage.setItem('model','${m}');render()" dir="ltr">${m}</button>`).join("")}</div></div>
   <div><p class="lbl">${tr.uiLang}</p><div class="chips"><button class="chip ${S.lang==="ar"?"on":""}" onclick="S.lang='ar';localStorage.setItem('lang','ar');render()">العربية</button><button class="chip ${S.lang==="en"?"on":""}" onclick="S.lang='en';localStorage.setItem('lang','en');render()">English</button></div></div>
+  <div><p class="lbl">${tr.features}</p>${tog("flash",tr.featFlash)}${tog("grades",tr.featGrades)}</div>
   <button class="btn" onclick="S.apiKey=document.getElementById('key').value.trim();localStorage.setItem('apiKey',S.apiKey);MODEL_CACHE=null;S.screen='home';render()">${tr.save}</button>
+  <button class="btn o" onclick="runDiag()">🔧 ${tr.test}</button>
+  <pre id="diag" dir="ltr" style="white-space:pre-wrap;font-size:12px;background:#f3f4f6;border-radius:8px;padding:8px;margin:0;display:none"></pre>
  </div>
  <div class="setbox"><b>${tr.howKey}</b><ol>${tr.steps.map(s=>`<li>${s}</li>`).join("")}</ol><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey ↗</a></div></div>`;
 }
-function spinner(l){return `<div class="spin"><i></i>${l}</div>`;}
+function viewHistory(tr){
+ const items=S.sessions;
+ return header(tr,tr.history,"S.screen=S.subject?'subject':'home';render()")+`<div class="wrap">
+ ${!items.length?`<p style="color:var(--muted)">${tr.historyEmpty}</p>`:items.map(s=>{const sub=SUBJECTS.find(x=>x.id===s.subject)||{};
+  return `<div class="hitem" onclick="openSession('${s.id}')"><div><div class="t"><span class="sw" style="background:${sub.color};margin-inline-end:6px"></span>${esc(s.lesson||"—")}</div><div class="m">${sub[S.lang]||""} · ${s.explanation?"📖":""}${s.exam?" 📝":""}${s.result?` ${s.result.score}/${s.result.total}`:""} · ${fmtDate(s.ts)}</div></div><button class="del" onclick="event.stopPropagation();delSession('${s.id}')" title="${tr.deleteSaved}">🗑</button></div>`;}).join("")}
+ </div>`;
+}
+function viewGrades(tr){
+ const bySub={};S.grades.forEach(g=>{(bySub[g.subject]=bySub[g.subject]||[]).push(g);});
+ const ids=Object.keys(bySub);
+ return header(tr,tr.grades,"S.screen='home';render()")+`<div class="wrap stack">
+ ${!ids.length?`<p style="color:var(--muted)">${tr.gradesEmpty}</p>`:ids.map(id=>{const sub=SUBJECTS.find(x=>x.id===id)||{};const gs=bySub[id];const avg=Math.round(100*gs.reduce((a,g)=>a+g.score/(g.total||1),0)/gs.length);
+  return `<div class="card" style="background:rgba(255,255,255,.08);color:#fff;box-shadow:none;border:1px solid rgba(255,255,255,.15)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b><span class="sw" style="background:${sub.color};margin-inline-end:6px"></span>${sub[S.lang]}</b><span>${tr.avg}: <b>${avg}%</b></span></div><div class="bar"><i style="width:${avg}%"></i></div>
+  ${gs.slice(0,8).map(g=>`<div class="gitem"><span>${esc(g.lesson)}</span><span>${g.score}/${g.total} · ${fmtDate(g.ts)}</span></div>`).join("")}</div>`;}).join("")}
+ </div>`;
+}
+function viewFlash(tr){
+ const fc=S.fc;
+ if(fc.done)return header(tr,tr.flash,"S.screen='subject';render()")+`<div class="wrap stack" style="text-align:center"><div class="card"><h2>🎉 ${tr.flashDone}</h2></div><button class="btn" onclick="startFlash()">${tr.again}</button></div>`;
+ const c=fc.cards[fc.idx];
+ return header(tr,tr.flash,"S.screen='subject';render()")+`<div class="wrap stack" dir="${S.subject.lang==="ar"?"rtl":"ltr"}">
+ <div class="fcbar"><span>${fc.idx+1} / ${fc.cards.length}</span><span>${tr.round} ${fc.round}</span><span>${fc.unknown.length} ❌</span></div>
+ <div class="fc ${fc.flip?"flip":""}" onclick="S.fc.flip=!S.fc.flip;render()"><div class="in"><div class="f"><mark>${esc(c.f)}</mark></div><div class="b">${esc(c.b)}</div></div></div>
+ <p class="hint" style="text-align:center">${tr.flashTap}</p>
+ <div class="row"><button class="btn g" onclick="fcAnswer(false)">${tr.unknown}</button><button class="btn" style="background:linear-gradient(135deg,#16A34A,#22C55E);box-shadow:none" onclick="fcAnswer(true)">${tr.known}</button></div></div>`;
+}
+function viewImg(tr){
+ const im=S.img;
+ return header(tr,tr.imgTitle,"S.screen='home';render()")+`<div class="wrap stack">
+ <textarea class="inp" rows="4" placeholder="${tr.imgPh}" oninput="S.img.prompt=this.value">${esc(im.prompt)}</textarea>
+ ${im.ref?`<div class="photo"><img src="${im.ref.preview}" alt=""><div><button style="color:var(--acc);font-weight:600" onclick="pickFile('img')">${tr.changePhoto}</button><button style="color:#6b7280" onclick="S.img.ref=null;render()">${tr.removePhoto}</button></div></div>`:`<button class="dash" onclick="pickFile('img')">${tr.imgRef}</button>`}
+ <button class="btn" onclick="doImage()" ${im.busy?"disabled":""}>🎨 ${tr.imgGo}</button>
+ ${im.busy?spinner(tr.thinking):""}
+ ${im.err?`<p class="err">${esc(im.err)}</p>`:""}
+ ${im.out?`<img class="genimg" src="data:${im.out.mediaType};base64,${im.out.data}" alt=""><div class="row"><button class="btn g" onclick="shareBlob(b64ToBlob(S.img.out.data,S.img.out.mediaType),'image.png')">📤 ${tr.share}</button><a class="btn g" style="text-align:center;text-decoration:none" href="data:${im.out.mediaType};base64,${im.out.data}" download="image.png">⬇️ ${tr.download}</a></div>`:""}
+ <p class="hint">${tr.imgNote}</p></div>`;
+}
+function viewDoc(tr){
+ const d=S.doc;
+ const types=[["word","📝 "+tr.docWord],["ppt","📊 "+tr.docPpt],["xls","📈 "+tr.docXls]];
+ return header(tr,tr.docTitle,"S.screen=S.subject?'subject':'home';render()")+`<div class="wrap stack">
+ <div><p class="lbl">${tr.docType}</p><div class="chips">${types.map(([id,l])=>`<button class="chip ${d.type===id?"on":""}" onclick="S.doc.type='${id}';render()">${l}</button>`).join("")}</div></div>
+ <textarea class="inp" rows="4" placeholder="${tr.docPh}" oninput="S.doc.prompt=this.value">${esc(d.prompt)}</textarea>
+ ${S.explanation?`<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" ${d.useLesson?"checked":""} onchange="S.doc.useLesson=this.checked"> ${tr.docUseLesson} (${esc(S.lesson)})</label>`:""}
+ <button class="btn" onclick="doDoc()" ${d.busy?"disabled":""}>📄 ${tr.docGo}</button>
+ ${d.busy?spinner(tr.thinking):""}
+ ${d.err?`<p class="err">${esc(d.err)}</p>`:""}
+ ${d.url?`<div class="card"><b>✅ ${tr.docReady}:</b> <span dir="ltr">${esc(d.name)}</span><div class="row" style="margin-top:10px"><button class="btn o" onclick="shareBlob(S.doc.blob,S.doc.name)">📤 ${tr.share}</button><a class="btn o" style="text-align:center;text-decoration:none" href="${d.url}" download="${esc(d.name)}">⬇️ ${tr.download}</a></div></div>`:""}
+ </div>`;
+}
 function viewSubject(tr){
  const s=S.subject,col=s.color,cdir=s.lang==="ar"?"rtl":"ltr";
  const title=`<span class="sw" style="background:${col}"></span>${s[S.lang]}`;
  let h=header(tr,title,"goHome()")+`<div class="wrap stack" dir="${cdir}" style="--acc:${col}">
  <div><p class="lbl">${tr.lessonLabel}</p><input class="inp" value="${esc(S.lesson)}" placeholder="${tr.lessonPh}" oninput="S.lesson=this.value">
- ${S.photo?`<div class="photo"><img src="${S.photo.preview}" alt=""><div><button style="color:${col};font-weight:500" onclick="document.getElementById('file').click()">${tr.changePhoto}</button><button style="color:#6b7280" onclick="S.photo=null;render()">${tr.removePhoto}</button></div></div>`
-  :`<button class="dash" onclick="document.getElementById('file').click()">${tr.addPhoto}</button><p class="hint">${tr.photoHint}</p>`}</div>
+ ${S.photo?`<div class="photo"><img src="${S.photo.preview}" alt=""><div><button style="color:${col};font-weight:600" onclick="pickFile('lesson')">${tr.changePhoto}</button><button style="color:#6b7280" onclick="S.photo=null;render()">${tr.removePhoto}</button></div></div>`
+  :`<button class="dash" onclick="pickFile('lesson')">${tr.addPhoto}</button><p class="hint">${tr.photoHint}</p>`}</div>
  <div class="tabs"><button class="${S.mode==="explain"?"on":""}" onclick="S.mode='explain';render()">📖 ${tr.explain}</button><button class="${S.mode==="exam"?"on":""}" onclick="S.mode='exam';render()">📝 ${tr.exam}</button></div>
- ${S.error?`<p class="err">${S.error}</p>`:""}`;
+ ${S.error?`<p class="err">${esc(S.error)}</p>`:""}`;
  if(S.mode==="explain"){
   h+=`<div><p class="lbl">${tr.styleLabel}</p><div class="chips">${tr.styles.map(([id,l])=>`<button class="chip ${S.style===id?"on":""}" onclick="S.style='${id}';render()">${l}</button>`).join("")}</div></div>
   <button class="btn" onclick="doExplain()" ${S.loading?"disabled":""}>${tr.goExplain}</button>
@@ -381,13 +633,14 @@ function viewSubject(tr){
    ${(ex.sections||[]).map((x,i)=>`<div class="sec-h"><h3>${esc(x.heading)}</h3><button class="flag" onclick="S.flagging={kind:'section',idx:${i},note:''};render()">⚑ ${tr.flag}</button></div><p>${esc(x.text)}</p>${flagBox("section",i,tr)}`).join("")}
    ${S.loading&&!S.flagging?spinner(S.loadLabel||tr.thinking):""}
    ${verify(ex.uncertain,tr)}
-   ${ex.keyTerms?.length?`<p class="lbl" style="margin-top:12px">${tr.keyTerms}</p>${ex.keyTerms.map(k=>`<p style="font-size:14px;margin:0 0 4px"><mark>${esc(k.term)}</mark> — ${esc(k.meaning)}</p>`).join("")}`:""}
+   ${ex.keyTerms?.length?`<p class="lbl" style="margin-top:12px">${tr.keyTerms}</p>${ex.keyTerms.map(k=>`<p style="font-size:14px;margin:0 0 4px"><mark>${esc(k.term)}</mark> — ${esc(k.meaning)}</p>`).join("")}
+   ${S.feat.flash?`<button class="btn o" style="margin-top:8px" onclick="startFlash()">🃏 ${tr.flash}</button>`:""}`:""}
    ${ex.example?`<div class="ex" style="margin-top:10px"><span class="lbl">${tr.example}</span>${esc(ex.example)}</div>`:""}
    ${ex.summary?`<p class="sum" style="margin-top:10px"><span class="lbl" style="display:inline;font-style:normal">${tr.summary}: </span>${esc(ex.summary)}</p>`:""}
-   <button class="btn o" style="margin-top:12px" onclick="openPdf('explain')">📄 ${tr.pdf}</button></div>
+   <div class="row" style="margin-top:12px"><button class="btn o" onclick="openPdf('explain')">📄 ${tr.pdf}</button><button class="btn o" onclick="S.doc.useLesson=true;S.screen='doc';render()">📝 ${tr.docTool}</button></div></div>
    <div class="chat">${S.chat.map(m=>`<div class="msg ${m.role==="user"?"u":"a"}">${esc(m.content)}</div>`).join("")}
    ${S.loading&&S.chat.length&&S.chat[S.chat.length-1].role==="user"?spinner(tr.thinking):""}
-   <div class="row" style="gap:8px"><input class="inp" id="fu" placeholder="${tr.askFollow}" style="flex:1"><button class="btn" style="flex:0 0 auto;width:auto;background:${col}" onclick="const i=document.getElementById('fu');doFollowUp(i.value);i.value=''" ${S.loading?"disabled":""}>➤</button></div></div>`;
+   <div class="row" style="gap:8px"><input class="inp" id="fu" placeholder="${tr.askFollow}" style="flex:1"><button class="btn" style="flex:0 0 auto;width:auto;background:${col};box-shadow:none" onclick="const i=document.getElementById('fu');doFollowUp(i.value);i.value=''" ${S.loading?"disabled":""}>➤</button></div></div>`;
   }
  }else{
   if(!S.exam){
@@ -399,13 +652,13 @@ function viewSubject(tr){
    ${r?`<div class="score"><p class="lbl">${tr.score}</p><div class="big">${r.score} / ${r.total}</div></div>`:""}
    <div>${S.exam.map((q,idx)=>{const it=r?.items?.find(i=>i.id===q.id);const cls=it?(it.correct?"ok":"bad"):"";
     return `<div class="q ${cls}"><div class="qt"><span class="n">${idx+1}</span><span style="flex:1">${esc(q.q)}</span>${it?(it.correct?"✅":"❌"):""}</div>${flagBox("question",idx,tr)}
-    ${q.type==="short"?`<input class="inp" style="margin-top:8px" ${r?"disabled":""} value="${esc(S.answers[q.id]||"")}" placeholder="${tr.yourAnswer}" oninput="S.answers[${q.id}]=this.value">`
+    ${q.type==="short"?`<input class="inp" style="margin-top:8px;border-color:#d1d5db" ${r?"disabled":""} value="${esc(S.answers[q.id]||"")}" placeholder="${tr.yourAnswer}" oninput="S.answers[${q.id}]=this.value">`
      :(q.type==="tf"?["true","false"]:q.options).map(o=>`<button class="opt ${S.answers[q.id]===o?"on":""}" ${r?"disabled":""} onclick="S.answers[${q.id}]=${JSON.stringify(o).replace(/"/g,"&quot;")};render()">${esc(q.type==="tf"?(o==="true"?tr.trueL:tr.falseL):o)}</button>`).join("")}
     ${it?`<div class="fb">${!it.correct?`<span class="lbl" style="display:inline">${tr.correctAnswer}: </span><mark>${esc(q.type==="tf"?(q.answer==="true"?tr.trueL:tr.falseL):q.answer)}</mark><br>`:""}${esc(it.feedback)}</div>`:""}
     <div style="text-align:end;margin-top:6px"><button class="flag" onclick="S.flagging={kind:'question',idx:${idx},note:''};render()">⚑ ${tr.flag}</button></div></div>`;}).join("")}</div>
    ${S.loading?spinner(S.loadLabel||tr.thinking):""}
    ${!r?`<button class="btn" onclick="doGrade()" ${S.loading||Object.keys(S.answers).filter(k=>S.answers[k]).length<S.exam.length?"disabled":""}>${tr.submit}</button>`
-    :`<div class="row"><button class="btn o" style="color:var(--ink);border-color:#d1d5db" onclick="S.answers={};S.result=null;render()">↺ ${tr.tryAgain}</button><button class="btn" style="background:${col}" onclick="S.exam=null;S.answers={};S.result=null;render()">${tr.newExam}</button></div>`}`;
+    :`<div class="row"><button class="btn g" onclick="S.answers={};S.result=null;render()">↺ ${tr.tryAgain}</button><button class="btn" style="background:${col};box-shadow:none" onclick="S.exam=null;S.answers={};S.result=null;S.curSession=null;render()">${tr.newExam}</button></div>`}`;
   }
  }
  return h+"</div>";
@@ -416,7 +669,7 @@ function verify(items,tr){return items&&items.length?`<div class="verify"><b>⚠
 function viewPdf(tr){
  return `<div class="pdfbar"><button class="b" onclick="S.printTarget=null;S.pdfUrl=null;S.pdfPages=[];render()">${tr.close}</button>
  ${S.pdfBusy?spinner(tr.thinking):""}
- ${S.pdfUrl?`<button class="b p" onclick="sharePdf()">📤 ${tr.share}</button><a class="b" href="${S.pdfUrl}" download="${pdfName()}">⬇️ ${tr.download}</a>`:""}</div>
+ ${S.pdfUrl?`<button class="b p" onclick="shareBlob(S.pdfBlob,pdfName())">📤 ${tr.share}</button><a class="b" href="${S.pdfUrl}" download="${pdfName()}">⬇️ ${tr.download}</a>`:""}</div>
  <div class="pages">${S.pdfPages.map((p,i)=>`<img src="${p}" alt="page ${i+1}">`).join("")}</div>`;
 }
 render();
