@@ -551,12 +551,12 @@ function viewHome(tr){
  ${!S.apiKey?`<p class="err" style="margin-bottom:12px">${tr.noKey} <a href="#" onclick="S.screen='settings';render();return false">${tr.settings} ←</a></p>`:""}
  <p style="color:var(--muted);margin:4px 0 16px">${tr.tagline}</p>
  <div class="grid">${SUBJECTS.map(s=>`<button class="tile" style="background:linear-gradient(145deg,${s.color},${s.color}CC)" onclick="pickSubject(SUBJECTS.find(x=>x.id==='${s.id}'))"><b>${s[S.lang]}</b><small>${S.lang==="en"?s.ar:s.en}</small></button>`).join("")}</div>
- <p class="lbl" style="margin-top:20px">${tr.tools}</p>
+ <p class="lbl" style="margin-top:20px">Tools</p>
  <div class="tools">
-  <button class="tool" onclick="S.screen='history';render()"><b>🗂</b>${tr.history}</button>
-  <button class="tool" onclick="S.screen='img';render()"><b>🎨</b>${tr.imgTool}</button>
-  <button class="tool" onclick="S.screen='doc';render()"><b>📄</b>${tr.docTool}</button>
-  ${S.feat.grades?`<button class="tool" onclick="S.screen='grades';render()"><b>📊</b>${tr.grades}</button>`:""}
+  <button class="tool" onclick="S.screen='history';render()"><b>🗂</b>Saved</button>
+  <button class="tool" onclick="S.screen='img';render()"><b>🎨</b>Image Maker<small style="display:block;font-size:10px;opacity:.75;margin-top:2px">Posters · Projects</small></button>
+  <button class="tool" onclick="S.screen='doc';render()"><b>📄</b>File Maker<small style="display:block;font-size:10px;opacity:.75;margin-top:2px">Word · PowerPoint · Excel</small></button>
+
  </div></div>`;
 }
 function viewSettings(tr){
@@ -566,7 +566,7 @@ function viewSettings(tr){
   <div><p class="lbl">${tr.apiKey}</p><input class="inp" id="key" type="password" dir="ltr" value="${esc(S.apiKey)}" placeholder="${tr.apiKeyPh}"></div>
   <div><p class="lbl">${tr.model}</p><div class="chips">${[...new Set([S.model,...(MODEL_CACHE||MODELS)])].slice(0,6).map(m=>`<button class="chip ${S.model===m?"on":""}" onclick="S.model='${m}';localStorage.setItem('model','${m}');render()" dir="ltr">${m}</button>`).join("")}</div></div>
   <div><p class="lbl">${tr.uiLang}</p><div class="chips"><button class="chip ${S.lang==="ar"?"on":""}" onclick="S.lang='ar';localStorage.setItem('lang','ar');render()">العربية</button><button class="chip ${S.lang==="en"?"on":""}" onclick="S.lang='en';localStorage.setItem('lang','en');render()">English</button></div></div>
-  <div><p class="lbl">${tr.features}</p>${tog("flash",tr.featFlash)}${tog("grades",tr.featGrades)}</div>
+  <div><p class="lbl">${tr.features}</p>${tog("flash",tr.featFlash)}${tog("grades",tr.featGrades)}${S.feat.grades?`<button class="btn o" style="margin-top:8px" onclick="S.screen='grades';render()">📊 ${tr.grades}</button>`:""}</div>
   <button class="btn" onclick="S.apiKey=document.getElementById('key').value.trim();localStorage.setItem('apiKey',S.apiKey);MODEL_CACHE=null;S.screen='home';render()">${tr.save}</button>
   <button class="btn o" onclick="runDiag()">🔧 ${tr.test}</button>
   <pre id="diag" dir="ltr" style="white-space:pre-wrap;font-size:12px;background:#f3f4f6;border-radius:8px;padding:8px;margin:0;display:none"></pre>
@@ -583,7 +583,7 @@ function viewHistory(tr){
 function viewGrades(tr){
  const bySub={};S.grades.forEach(g=>{(bySub[g.subject]=bySub[g.subject]||[]).push(g);});
  const ids=Object.keys(bySub);
- return header(tr,tr.grades,"S.screen='home';render()")+`<div class="wrap stack">
+ return header(tr,tr.grades,"S.screen='settings';render()")+`<div class="wrap stack">
  ${!ids.length?`<p style="color:var(--muted)">${tr.gradesEmpty}</p>`:ids.map(id=>{const sub=SUBJECTS.find(x=>x.id===id)||{};const gs=bySub[id];const avg=Math.round(100*gs.reduce((a,g)=>a+g.score/(g.total||1),0)/gs.length);
   return `<div class="card" style="background:rgba(255,255,255,.08);color:#fff;box-shadow:none;border:1px solid rgba(255,255,255,.15)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b><span class="sw" style="background:${sub.color};margin-inline-end:6px"></span>${sub[S.lang]}</b><span>${tr.avg}: <b>${avg}%</b></span></div><div class="bar"><i style="width:${avg}%"></i></div>
   ${gs.slice(0,8).map(g=>`<div class="gitem"><span>${esc(g.lesson)}</span><span>${g.score}/${g.total} · ${fmtDate(g.ts)}</span></div>`).join("")}</div>`;}).join("")}
