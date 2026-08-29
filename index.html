@@ -209,7 +209,7 @@ async function listModels(){
  if(!res.ok){let m="";try{m=(await res.json()).error?.message||"";}catch(e){}throw new Error(`key check failed (HTTP ${res.status}): ${m}`);}
  const data=await res.json();
  ALL_MODELS=(data.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes("generateContent")).map(m=>m.name.replace(/^models\//,""));
- const names=ALL_MODELS.filter(n=>!/tts|image|audio|embedding|imagen|veo|live/.test(n));
+ const names=ALL_MODELS.filter(n=>/gemini/.test(n)&&!/tts|image|audio|embedding|imagen|veo|live|research|robotics|computer|native|dialog/.test(n));
  const score=n=>(/flash/.test(n)?0:5)+(/lite/.test(n)?1:0)+(/preview|exp/.test(n)?2:0)+(/thinking/.test(n)?3:0)-(parseFloat((n.match(/(\d+\.?\d*)/)||[0,0])[1])||0);
  names.sort((a,b)=>score(a)-score(b));
  MODEL_CACHE=names;return names;
@@ -225,15 +225,16 @@ async function askAI(system,userText,history=[],imgOverride){
  const avail=await listModels();
  if(!avail.length) throw new Error("no models available for this key");
  const tryModels=[...new Set([...(avail.includes(S.model)?[S.model]:[]),...avail])].slice(0,6);
- const errs=[];
+ const errs=[];const sleep=ms=>new Promise(r=>setTimeout(r,ms));
  for(const model of tryModels){
   const body=JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,generationConfig:{temperature:0.3,maxOutputTokens:6000}});
   let res=null,netErr="";
-  for(const ct of ["application/json","text/plain;charset=UTF-8"]){
-   try{res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(S.apiKey)}`,{method:"POST",headers:{"Content-Type":ct},body});netErr="";break;}
-   catch(e){netErr=e.message;res=null;}
+  for(let attempt=0;attempt<3&&!res;attempt++){
+   try{res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(S.apiKey)}`,{method:"POST",headers:{"Content-Type":"application/json"},body});netErr="";}
+   catch(e){netErr=e.message;res=null;await sleep(1500*(attempt+1));}
   }
   if(!res){errs.push(`${model}: network ${netErr}`);continue;}
+  if(res.status===429||res.status===503){let m="";try{m=(await res.json()).error?.message||"";}catch(e){}errs.push(`${model}: HTTP ${res.status} ${m.slice(0,80)}`);await sleep(1200);continue;}
   if(res.ok){
    const data=await res.json();
    const txt=(data.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("\n");
@@ -301,7 +302,8 @@ function addGrade(){if(!S.result||!S.feat.grades)return;S.grades=[{ts:Date.now()
 
 // ================= ACTIONS =================
 function setLoad(v,label=""){S.loading=v;S.loadLabel=label;render();}
-function fail(e){const m=e&&e.message||"";S.error=(m==="nokey")?t().noKey:(t().error+(m?" ["+m.slice(0,300)+"]":""));S.loading=false;S.loadLabel="";render();}
+function friendly(m){if(/429|quota|exceeded/i.test(m))return S.lang==="ar"?"وصلت إلى حدّ الاستخدام المجاني لهذا النموذج مؤقتاً. انتظر دقيقة ثم أعد المحاولة، أو اختر نموذجاً آخر من الإعدادات.":"You hit the free usage limit for this model. Wait a minute and retry, or pick another model in Settings.";if(/503|high demand/i.test(m))return S.lang==="ar"?"الخدمة مزدحمة حالياً، أعد المحاولة بعد لحظات.":"The service is busy, try again in a moment.";return null;}
+function fail(e){const m=e&&e.message||"";const f=friendly(m);S.error=(m==="nokey")?t().noKey:(f?f:(t().error+(m?" ["+m.slice(0,300)+"]":"")));S.loading=false;S.loadLabel="";render();}
 async function doExplain(){
  if(!S.lesson.trim()&&!S.photo){S.error=t().needLesson;return render();}
  S.error="";S.explanation=null;S.chat=[];S.fc=null;S.curSession=null;setLoad(true,t().thinking);
@@ -374,7 +376,7 @@ function fcAnswer(known){const fc=S.fc;if(!known)fc.unknown.push(fc.cards[fc.idx
 // ================= IMAGE TOOL =================
 async function doImage(){
  const p=S.img.prompt.trim();if(!p)return;S.img.busy=true;S.img.err="";S.img.out=null;S.img.outs=[];render();
- try{S.img.outs=await genImage(p,S.img.ref);S.img.out=S.img.outs.length===1?S.img.outs[0]:null;}catch(e){S.img.err=(e.message==="nokey"?t().noKey:e.message);}
+ try{S.img.outs=await genImage(p,S.img.ref);S.img.out=S.img.outs.length===1?S.img.outs[0]:null;}catch(e){S.img.err=(e.message==="nokey"?t().noKey:(friendly(e.message)||e.message));}
  S.img.busy=false;render();
 }
 const MIME={docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",pptx:"application/vnd.openxmlformats-officedocument.presentationml.presentation",xlsx:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",pdf:"application/pdf",png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg"};
@@ -529,7 +531,7 @@ async function doDoc(){
   else{blob=await buildXlsx(json);ext="xlsx";}
   blob=new Blob([blob],{type:MIME[ext]});
   d.blob=blob;d.name=(json.title||json.sheets?.[0]?.name||"file").toString().slice(0,40).replace(/[\\/:*?"<>|]/g,"")+"."+ext;d.url=URL.createObjectURL(blob);
- }catch(e){d.err=(e.message==="nokey"?t().noKey:e.message);}
+ }catch(e){d.err=(e.message==="nokey"?t().noKey:(friendly(e.message)||e.message));}
  d.busy=false;d.status="";render();
 }
 
