@@ -214,7 +214,8 @@ const S={
  printTarget:null, pdfUrl:null, pdfBlob:null, pdfPages:[], pdfBusy:false,
  fc:null,
  img:{prompt:"",ref:null,out:null,outs:[],busy:false,err:"",style:"poster"},
- doc:{type:"word",prompt:"",useLesson:false,busy:false,err:"",url:null,name:"",blob:null,theme:"blue",images:true,status:"",lang:"auto",imgDesc:"",json:null,imgs:{},chat:[],docLang:"en",attach:[],plusOpen:false},
+ doc:{type:"word",prompt:"",useLesson:false,busy:false,err:"",url:null,name:"",blob:null,theme:"blue",images:true,status:"",lang:"auto",imgDesc:"",json:null,imgs:{},chat:[],docLang:"en"},
+ attach:[],plusOpen:false,
  curSession:null,
  hw:{photo:null,text:"",mode:"full",busy:false,err:"",out:null,history:LS("hw",[])},
  plan:{subjects:[],examDate:"",hours:2,notes:"",busy:false,err:"",out:LS("plan",null),done:LS("planDone",{})},
@@ -243,7 +244,7 @@ async function listModels(){
 // imgOverride: undefined => use S.photo ; null => no image ; object => that image
 async function askAI(system,userText,history=[],imgOverride){
  if(!S.apiKey) throw new Error("nokey");
- const photo=imgOverride===undefined?S.photo:imgOverride;
+ const photo=imgOverride===undefined?ctxFiles():imgOverride;
  const contents=history.map(m=>({role:m.role==="assistant"?"model":"user",parts:[{text:m.content}]}));
  const parts=[{text:userText}];
  for(const ph of (Array.isArray(photo)?photo:(photo?[photo]:[]))){if(ph.text)parts.push({text:`\n[Attached file "${ph.name}"]:\n${ph.text.slice(0,20000)}`});else parts.push({inlineData:{mimeType:ph.mediaType,data:ph.data}});}
@@ -299,7 +300,8 @@ async function genImage(prompt,ref){
  return ok;
 }
 function parseJSON(text){const c=text.replace(/```json|```/g,"").trim();const a=c.indexOf("{"),b=c.lastIndexOf("}");try{return JSON.parse(c.slice(a,b+1));}catch(e){throw new Error("parse: "+c.slice(0,120));}}
-const photoNote=()=>S.photo?" The student attached a photo of the lesson from their book or notes: rely on its content first.":"";
+const ctxFiles=()=>{const a=[...(S.photo?[S.photo]:[]),...S.attach];return a.length?a:null;};
+const photoNote=()=>(S.photo||S.attach.length)?" The student attached a photo of the lesson from their book or notes: rely on its content first.":"";
 function baseSystem(){
  const s=S.subject;
  return `You are a patient school tutor for the subject "${s.en}". The student is studying the lesson "${S.lesson}". Always answer in ${langName(s.lang)} only, regardless of the language the student writes in. Keep everything clear, accurate and at school level. Accuracy matters more than completeness: never invent dates, numbers, names or formulas; if unsure, say so.`
@@ -389,7 +391,7 @@ async function submitFlag(){
   saveSession();setLoad(false);
  }catch(e){fail(e);}
 }
-function pickSubject(s){Object.assign(S,{subject:s,screen:"subject",lesson:"",explanation:null,chat:[],exam:null,answers:{},result:null,examUncertain:[],photo:null,customExam:"",corrections:[],flagging:null,error:"",curSession:null,fc:null});render();}
+function pickSubject(s){S.attach=[];S.plusOpen=false;Object.assign(S,{subject:s,screen:"subject",lesson:"",explanation:null,chat:[],exam:null,answers:{},result:null,examUncertain:[],photo:null,customExam:"",corrections:[],flagging:null,error:"",curSession:null,fc:null});render();}
 function goHome(){S.subject=null;S.screen="home";S.error="";render();}
 let fileTarget="lesson";
 function pickFile(target){fileTarget=target;document.getElementById("file").click();}
@@ -436,12 +438,12 @@ function importSessions(){const i=document.createElement("input");i.type="file";
 
 // ================= HOMEWORK =================
 async function doHomework(){
- const h=S.hw;if(!h.photo&&!h.text.trim()){h.err=t().hwNeed;return render();}
+ const h=S.hw;if(!h.photo&&!S.attach.length&&!h.text.trim()){h.err=t().hwNeed;return render();}
  h.busy=true;h.err="";h.out=null;render();
  const modeTxt={full:"Give the complete solution step by step, then the final answer.",hint:"Do NOT give the answer. Give 2-3 progressive hints that lead the student to solve it alone, then say what the first step should be.",check:"The student's own answer/working is in the photo or text. Check it carefully: say whether it is correct, point out each mistake precisely, and show the corrected working."}[h.mode];
  const lang=/[\u0600-\u06FF]/.test(h.text)?"Arabic":(h.photo?"the same language as the homework in the photo (Arabic or English); if unsure use "+langName(S.lang):langName(S.lang));
  try{
-  const txt=await askAI(`You are a careful school tutor. Read the homework (photo and/or text). ${modeTxt} Work every calculation carefully and double-check arithmetic. Answer in ${lang}. Respond ONLY with JSON: {"subject":"","problems":[{"question":"","steps":["",""],"answer":"","note":""}]} — one entry per question found; for hint mode put hints in "steps" and leave "answer" empty; for check mode put the verdict in "answer" and corrections in "steps".`,h.text.trim()||"Solve the homework in the photo.",[],h.photo);
+  const txt=await askAI(`You are a careful school tutor. Read the homework (photo and/or text). ${modeTxt} Work every calculation carefully and double-check arithmetic. Answer in ${lang}. Respond ONLY with JSON: {"subject":"","problems":[{"question":"","steps":["",""],"answer":"","note":""}]} — one entry per question found; for hint mode put hints in "steps" and leave "answer" empty; for check mode put the verdict in "answer" and corrections in "steps".`,h.text.trim()||"Solve the homework in the photo.",[],[...(h.photo?[h.photo]:[]),...S.attach]);
   h.out=parseJSON(txt);
   h.history=[{ts:Date.now(),mode:h.mode,text:h.text.slice(0,80),out:h.out},...h.history].slice(0,30);SV("hw",h.history);
  }catch(e){h.err=(e.message==="nokey"?t().noKey:(friendly(e.message)||e.message));}
@@ -455,7 +457,7 @@ async function doPlan(){
  const subs=pl.subjects.map(id=>{const x=SUBJECTS.find(y=>y.id===id);return x?x[S.lang]:id;}).join(", ");
  const today=new Date().toISOString().slice(0,10);
  try{
-  const txt=await askAI(`You are an expert study coach. Build a realistic day-by-day study plan in ${langName(S.lang)}. Today is ${today}. Deadline: ${pl.examDate||"in 14 days"}. Hours per day: ${pl.hours}. Subjects: ${subs}. Notes: ${pl.notes||"none"}. Rules: alternate subjects, put weak topics earlier and repeat them, include short reviews of previous days, one rest/light day per week, sessions of 25-50 minutes with breaks, final 2 days = revision + mock tests. Respond ONLY with JSON: {"title":"","days":[{"date":"YYYY-MM-DD","label":"","sessions":[{"time":"16:00","subject":"","topic":"","minutes":40,"tip":""}]}],"advice":["",""]}. Max 21 days.`,"Build the plan.",[],null);
+  const txt=await askAI(`You are an expert study coach. Build a realistic day-by-day study plan in ${langName(S.lang)}. Today is ${today}. Deadline: ${pl.examDate||"in 14 days"}. Hours per day: ${pl.hours}. Subjects: ${subs}. Notes: ${pl.notes||"none"}. Rules: alternate subjects, put weak topics earlier and repeat them, include short reviews of previous days, one rest/light day per week, sessions of 25-50 minutes with breaks, final 2 days = revision + mock tests. Respond ONLY with JSON: {"title":"","days":[{"date":"YYYY-MM-DD","label":"","sessions":[{"time":"16:00","subject":"","topic":"","minutes":40,"tip":""}]}],"advice":["",""]}. Max 21 days. If files/photos are attached (syllabus, timetable, exam schedule), use them.`,"Build the plan.",[],S.attach.length?S.attach:null);
   pl.out=parseJSON(txt);pl.done={};SV("plan",pl.out);SV("planDone",pl.done);
  }catch(e){pl.err=(e.message==="nokey"?t().noKey:(friendly(e.message)||e.message));}
  pl.busy=false;render();
@@ -486,16 +488,16 @@ function addAttach(file){
  const isImg=type.startsWith("image/"),isPdf=type==="application/pdf"||/\.pdf$/i.test(name),isTxt=/^text\//.test(type)||/\.(txt|md|csv|json)$/i.test(name);
  if(!isImg&&!isPdf&&!isTxt){alert(t().attBad);return;}
  const r=new FileReader();
- if(isTxt){r.onload=()=>{S.doc.attach.push({name,text:String(r.result)});render();};r.readAsText(file);return;}
- r.onload=()=>{S.doc.attach.push({name,mediaType:isPdf?"application/pdf":(type||"image/jpeg"),data:r.result.split(",")[1],preview:isImg?r.result:null});render();};
+ if(isTxt){r.onload=()=>{S.attach.push({name,text:String(r.result)});render();};r.readAsText(file);return;}
+ r.onload=()=>{S.attach.push({name,mediaType:isPdf?"application/pdf":(type||"image/jpeg"),data:r.result.split(",")[1],preview:isImg?r.result:null});render();};
  r.readAsDataURL(file);
 }
-["fileCam","filePhoto","fileDoc"].forEach(id=>document.getElementById(id).addEventListener("change",e=>{addAttach(e.target.files?.[0]);e.target.value="";S.doc.plusOpen=false;}));
-function plusMenu(){const tr=t();return `<div style="position:relative;flex:0 0 auto"><button class="mic" onclick="S.doc.plusOpen=!S.doc.plusOpen;render()">＋</button>${S.doc.plusOpen?`<div style="position:absolute;bottom:48px;inset-inline-end:0;background:#fff;color:var(--ink);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.35);padding:6px;min-width:150px;z-index:20">
+["fileCam","filePhoto","fileDoc"].forEach(id=>document.getElementById(id).addEventListener("change",e=>{addAttach(e.target.files?.[0]);e.target.value="";S.plusOpen=false;}));
+function plusMenu(){const tr=t();return `<div style="position:relative;flex:0 0 auto"><button class="mic" onclick="S.plusOpen=!S.plusOpen;render()">＋</button>${S.plusOpen?`<div style="position:absolute;bottom:48px;inset-inline-end:0;background:#fff;color:var(--ink);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.35);padding:6px;min-width:150px;z-index:20">
  <button class="opt" style="margin:0" onclick="document.getElementById('fileCam').click()">📷 ${tr.attCam}</button>
  <button class="opt" style="margin:4px 0 0" onclick="document.getElementById('filePhoto').click()">🖼 ${tr.attPhoto}</button>
  <button class="opt" style="margin:4px 0 0" onclick="document.getElementById('fileDoc').click()">📁 ${tr.attFiles}</button></div>`:""}</div>`;}
-function attachChips(){if(!S.doc.attach.length)return"";return `<div class="chips">${S.doc.attach.map((a,i)=>`<span class="chip" style="display:inline-flex;align-items:center;gap:6px">${a.preview?`<img src="${a.preview}" style="width:22px;height:22px;object-fit:cover;border-radius:4px">`:(a.text?"📄":"📎")} <span dir="ltr" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a.name)}</span><button style="background:none;border:none;color:#FFB4B4;cursor:pointer" onclick="S.doc.attach.splice(${i},1);render()">✕</button></span>`).join("")}</div>`;}
+function attachChips(){if(!S.attach.length)return"";return `<div class="chips">${S.attach.map((a,i)=>`<span class="chip" style="display:inline-flex;align-items:center;gap:6px">${a.preview?`<img src="${a.preview}" style="width:22px;height:22px;object-fit:cover;border-radius:4px">`:(a.text?"📄":"📎")} <span dir="ltr" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a.name)}</span><button style="background:none;border:none;color:#FFB4B4;cursor:pointer" onclick="S.attach.splice(${i},1);render()">✕</button></span>`).join("")}</div>`;}
 
 // ================= FLASHCARDS =================
 function startFlash(){const ks=(S.explanation?.keyTerms||[]).filter(k=>k.term&&k.meaning);if(!ks.length)return;S.fc={cards:ks.map(k=>({f:k.term,b:k.meaning})),idx:0,flip:false,unknown:[],round:1,done:false};S.screen="flash";render();}
@@ -504,7 +506,7 @@ function fcAnswer(known){const fc=S.fc;if(!known)fc.unknown.push(fc.cards[fc.idx
 // ================= IMAGE TOOL =================
 async function doImage(){
  const p=S.img.prompt.trim();if(!p)return;S.img.busy=true;S.img.err="";S.img.out=null;S.img.outs=[];render();
- try{S.img.outs=await genImage(p,S.img.ref);S.img.out=S.img.outs.length===1?S.img.outs[0]:null;}catch(e){S.img.err=(e.message==="nokey"?t().noKey:(friendly(e.message)||e.message));}
+ try{S.img.outs=await genImage(p,S.img.ref||S.attach.find(a=>a.preview)||null);S.img.out=S.img.outs.length===1?S.img.outs[0]:null;}catch(e){S.img.err=(e.message==="nokey"?t().noKey:(friendly(e.message)||e.message));}
  S.img.busy=false;render();
 }
 const MIME={docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",pptx:"application/vnd.openxmlformats-officedocument.presentationml.presentation",xlsx:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",pdf:"application/pdf",png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg"};
@@ -640,7 +642,7 @@ async function doDoc(){
  };
  try{
   setDocStatus(tr.stWriting);
-  const draft=parseJSON(await askAI(`You create high-quality school documents. Write ALL content in ${lang} (image prompts stay in English). If files or photos are attached, base the content on them faithfully. Also add a field "titleEn": the title translated to English. Respond ONLY with JSON in this shape: ${shapes[d.type]}. No markdown.`,p,[],d.attach.length?d.attach:null));
+  const draft=parseJSON(await askAI(`You create high-quality school documents. Write ALL content in ${lang} (image prompts stay in English). If files or photos are attached, base the content on them faithfully. Also add a field "titleEn": the title translated to English. Respond ONLY with JSON in this shape: ${shapes[d.type]}. No markdown.`,p,[],S.attach.length?S.attach:null));
   let json=draft;
   const th=THEMES[d.theme]||THEMES.blue,rtl=docLang==="ar";
   const imgs={};
@@ -694,7 +696,7 @@ async function doDocChat(msg){
  try{
   setDocStatus(t().stWriting);
   const kind=d.type==="ppt"?"presentation":d.type==="xls"?"spreadsheet":"report";
-  const txt=await askAI(`You are editing a ${kind} JSON together with the user. Apply the user's instruction to the JSON below and return the COMPLETE updated JSON in exactly the same shape and language (${langName(d.docLang)}), plus one extra field "reply": a short sentence (in the user's language) saying what you changed. Keep everything the user did not ask to change. Existing image prompts may stay. Respond ONLY with JSON.\n\nCURRENT JSON:\n${JSON.stringify(d.json).slice(0,14000)}`,msg,d.chat.slice(0,-1).slice(-6),d.attach.length?d.attach:null);
+  const txt=await askAI(`You are editing a ${kind} JSON together with the user. Apply the user's instruction to the JSON below and return the COMPLETE updated JSON in exactly the same shape and language (${langName(d.docLang)}), plus one extra field "reply": a short sentence (in the user's language) saying what you changed. Keep everything the user did not ask to change. Existing image prompts may stay. Respond ONLY with JSON.\n\nCURRENT JSON:\n${JSON.stringify(d.json).slice(0,14000)}`,msg,d.chat.slice(0,-1).slice(-6),S.attach.length?S.attach:null);
   const j=parseJSON(txt);const reply=j.reply||t().docChanged;delete j.reply;
   // images for new items if needed
   if(d.images&&d.type!=="xls"){const list=d.type==="ppt"?(j.slides||[]):(j.sections||[]);const st="clean educational illustration, flat colors, no text, no watermark";const topic=`Illustration about "${j.titleEn||j.title||""}": `;
@@ -792,11 +794,11 @@ function viewHome(tr){
  <div class="grid">${SUBJECTS.map(s=>`<button class="tile" style="background:linear-gradient(145deg,${s.color},${s.color}CC)" onclick="pickSubject(SUBJECTS.find(x=>x.id==='${s.id}'))"><b>${s[S.lang]}</b><small>${S.lang==="en"?s.ar:s.en}</small></button>`).join("")}</div>
  <p class="lbl" style="margin-top:20px">Tools</p>
  <div class="tools">
-  <button class="tool" onclick="S.screen='hw';render()"><b>📚</b>Homework Solver<small style="display:block;font-size:10px;opacity:.75;margin-top:2px">From a photo</small></button>
-  <button class="tool" onclick="S.screen='plan';render()"><b>🗓</b>Study Plan<small style="display:block;font-size:10px;opacity:.75;margin-top:2px">Reminders</small></button>
+  <button class="tool" onclick="S.attach=[];S.screen='hw';render()"><b>📚</b>Homework Solver<small style="display:block;font-size:10px;opacity:.75;margin-top:2px">From a photo</small></button>
+  <button class="tool" onclick="S.attach=[];S.screen='plan';render()"><b>🗓</b>Study Plan<small style="display:block;font-size:10px;opacity:.75;margin-top:2px">Reminders</small></button>
   <button class="tool" onclick="S.screen='history';render()"><b>🗂</b>Saved</button>
-  <button class="tool" onclick="S.screen='img';render()"><b>🎨</b>Image Maker<small style="display:block;font-size:10px;opacity:.75;margin-top:2px">Posters · Projects</small></button>
-  <button class="tool" onclick="S.screen='doc';render()"><b>📄</b>File Maker<small style="display:block;font-size:10px;opacity:.75;margin-top:2px">Word · PowerPoint · Excel</small></button>
+  <button class="tool" onclick="S.attach=[];S.screen='img';render()"><b>🎨</b>Image Maker<small style="display:block;font-size:10px;opacity:.75;margin-top:2px">Posters · Projects</small></button>
+  <button class="tool" onclick="S.attach=[];S.screen='doc';render()"><b>📄</b>File Maker<small style="display:block;font-size:10px;opacity:.75;margin-top:2px">Word · PowerPoint · Excel</small></button>
 
  </div></div>`;
 }
@@ -871,7 +873,8 @@ function viewHw(tr){
  const out=h.out;
  return header(tr,tr.hwTitle,"S.screen='home';render()")+`<div class="wrap stack">
  ${h.photo?`<div class="photo"><img src="${h.photo.preview}" alt="" style="width:96px;height:96px"><div><button style="color:var(--acc);font-weight:600" onclick="pickFile('hw')">${tr.changePhoto}</button><button style="color:#6b7280" onclick="S.hw.photo=null;render()">${tr.removePhoto}</button></div></div>`:`<button class="dash" style="padding:16px;font-size:16px" onclick="pickFile('hw')">${tr.hwPhoto}</button>`}
- <div class="row" style="gap:8px"><textarea class="inp" id="hwIn" rows="3" placeholder="${tr.hwText}" oninput="S.hw.text=this.value" style="flex:1">${esc(h.text)}</textarea>${micBtn("hwIn")}</div>
+ <div class="row" style="gap:8px"><textarea class="inp" id="hwIn" rows="3" placeholder="${tr.hwText}" oninput="S.hw.text=this.value" style="flex:1">${esc(h.text)}</textarea><div style="display:flex;flex-direction:column;gap:6px;flex:0 0 auto">${micBtn("hwIn")}${plusMenu()}</div></div>
+ ${attachChips()}
  <div><p class="lbl">${tr.hwMode}</p><div class="chips">${tr.hwModes.map(([id,l])=>`<button class="chip ${h.mode===id?"on":""}" onclick="S.hw.mode='${id}';render()">${l}</button>`).join("")}</div></div>
  <button class="btn" onclick="doHomework()" ${h.busy?"disabled":""}>✅ ${tr.hwGo}</button>
  ${h.busy?spinner(tr.thinking):""}
@@ -886,7 +889,7 @@ function viewPlan(tr){
  return header(tr,tr.planTitle,"S.screen='home';render()")+`<div class="wrap stack">
  ${!out?`<div><p class="lbl">${tr.planSubjects}</p><div class="chips">${subChips}</div></div>
  <div class="row"><div><p class="lbl">${tr.planDate}</p><input class="inp" type="date" value="${esc(pl.examDate)}" onchange="S.plan.examDate=this.value"></div><div><p class="lbl">${tr.planHours}</p><input class="inp" type="number" min="1" max="12" value="${pl.hours}" onchange="S.plan.hours=+this.value||2"></div></div>
- <div><p class="lbl">${tr.planNotes}</p><div class="row" style="gap:8px"><textarea class="inp" id="planIn" rows="2" oninput="S.plan.notes=this.value" style="flex:1">${esc(pl.notes)}</textarea>${micBtn("planIn")}</div></div>
+ <div><p class="lbl">${tr.planNotes}</p><div class="row" style="gap:8px"><textarea class="inp" id="planIn" rows="2" oninput="S.plan.notes=this.value" style="flex:1">${esc(pl.notes)}</textarea><div style="display:flex;flex-direction:column;gap:6px;flex:0 0 auto">${micBtn("planIn")}${plusMenu()}</div></div>${attachChips()}</div>
  <button class="btn" onclick="doPlan()" ${pl.busy?"disabled":""}>🗓 ${tr.planGo}</button>${pl.busy?spinner(tr.thinking):""}${pl.err?`<p class="err">${esc(pl.err)}</p>`:""}`
  :`<h2 style="margin:0">${esc(out.title||tr.planTitle)}</h2>
  <div class="row"><button class="btn g" onclick="planICS()">⏰ ${tr.planCal}</button><button class="btn g" onclick="planXlsx()">📈 ${tr.planXls}</button></div>
@@ -899,7 +902,8 @@ function viewImg(tr){
  const im=S.img;
  const one=o=>`<img class="genimg" src="data:${o.mediaType};base64,${o.data}" alt=""><div class="row"><button class="btn g" onclick="shareBlob(b64ToBlob(S.img.out.data,S.img.out.mediaType),'image.png')">📤 ${tr.share}</button><a class="btn g" style="text-align:center;text-decoration:none" href="data:${o.mediaType};base64,${o.data}" download="image.png">⬇️ ${tr.download}</a></div>`;
  return header(tr,tr.imgTitle,"S.screen='home';render()")+`<div class="wrap stack">
- <div class="row" style="gap:8px"><textarea class="inp" id="imgIn" rows="4" placeholder="${tr.imgPh}" oninput="S.img.prompt=this.value" style="flex:1">${esc(im.prompt)}</textarea>${micBtn("imgIn")}</div>
+ <div class="row" style="gap:8px"><textarea class="inp" id="imgIn" rows="4" placeholder="${tr.imgPh}" oninput="S.img.prompt=this.value" style="flex:1">${esc(im.prompt)}</textarea><div style="display:flex;flex-direction:column;gap:6px;flex:0 0 auto">${micBtn("imgIn")}${plusMenu()}</div></div>
+ ${attachChips()}
  <div><p class="lbl">${tr.imgStyle}</p><div class="chips">${tr.imgStyles.map(([id,l])=>`<button class="chip ${im.style===id?"on":""}" onclick="S.img.style='${id}';render()">${l}</button>`).join("")}</div></div>
  ${im.ref?`<div class="photo"><img src="${im.ref.preview}" alt=""><div><button style="color:var(--acc);font-weight:600" onclick="pickFile('img')">${tr.changePhoto}</button><button style="color:#6b7280" onclick="S.img.ref=null;render()">${tr.removePhoto}</button></div></div>`:`<button class="dash" onclick="pickFile('img')">${tr.imgRef}</button>`}
  <button class="btn" onclick="doImage()" ${im.busy?"disabled":""}>🎨 ${tr.imgGo}</button>
@@ -934,7 +938,8 @@ function viewSubject(tr){
  const s=S.subject,col=s.color,cdir=s.lang==="ar"?"rtl":"ltr";
  const title=`<span class="sw" style="background:${col}"></span>${s[S.lang]}`;
  let h=header(tr,title,"goHome()")+`<div class="wrap stack" dir="${cdir}" style="--acc:${col}">
- <div><p class="lbl">${tr.lessonLabel}</p><div class="row" style="gap:8px"><input class="inp" id="lessonIn" value="${esc(S.lesson)}" placeholder="${tr.lessonPh}" oninput="S.lesson=this.value" style="flex:1">${micBtn("lessonIn",s.lang)}</div>
+ <div><p class="lbl">${tr.lessonLabel}</p><div class="row" style="gap:8px"><input class="inp" id="lessonIn" value="${esc(S.lesson)}" placeholder="${tr.lessonPh}" oninput="S.lesson=this.value" style="flex:1">${micBtn("lessonIn",s.lang)}${plusMenu()}</div>
+ ${attachChips()}
  <button class="dash" onclick="S.screen='transcript';render()">${tr.recordLesson}</button>
  ${S.photo?`<div class="photo"><img src="${S.photo.preview}" alt=""><div><button style="color:${col};font-weight:600" onclick="pickFile('lesson')">${tr.changePhoto}</button><button style="color:#6b7280" onclick="S.photo=null;render()">${tr.removePhoto}</button></div></div>`
   :`<button class="dash" onclick="pickFile('lesson')">${tr.addPhoto}</button><p class="hint">${tr.photoHint}</p>`}</div>
@@ -958,11 +963,11 @@ function viewSubject(tr){
    <div class="row" style="margin-top:8px"><button class="btn o" onclick="openPdf('explain')">📄 ${tr.pdf}</button><button class="btn o" onclick="S.doc.useLesson=true;S.screen='doc';render()">📝 ${tr.docTool}</button></div></div>
    <div class="chat">${S.chat.map(m=>`<div class="msg ${m.role==="user"?"u":"a"}">${esc(m.content)}</div>`).join("")}
    ${S.loading&&S.chat.length&&S.chat[S.chat.length-1].role==="user"?spinner(tr.thinking):""}
-   <div class="row" style="gap:8px"><input class="inp" id="fu" placeholder="${tr.askFollow}" style="flex:1">${micBtn("fu",s.lang)}<button class="btn" style="flex:0 0 auto;width:auto;background:${col};box-shadow:none" onclick="const i=document.getElementById('fu');doFollowUp(i.value);i.value=''" ${S.loading?"disabled":""}>➤</button></div></div>`;
+   <div class="row" style="gap:8px"><input class="inp" id="fu" placeholder="${tr.askFollow}" style="flex:1">${micBtn("fu",s.lang)}${plusMenu()}<button class="btn" style="flex:0 0 auto;width:auto;background:${col};box-shadow:none" onclick="const i=document.getElementById('fu');doFollowUp(i.value);i.value=''" ${S.loading?"disabled":""}>➤</button></div></div>`;
   }
  }else{
   if(!S.exam){
-   h+=`<div><p class="lbl">${tr.customExam}</p><textarea class="inp" rows="4" placeholder="${tr.customExamPh}" oninput="S.customExam=this.value">${esc(S.customExam)}</textarea></div>
+   h+=`<div><p class="lbl">${tr.customExam}</p><div class="row" style="gap:8px"><textarea class="inp" id="examIn" rows="4" placeholder="${tr.customExamPh}" oninput="S.customExam=this.value" style="flex:1">${esc(S.customExam)}</textarea><div style="display:flex;flex-direction:column;gap:6px;flex:0 0 auto">${micBtn("examIn",s.lang)}${plusMenu()}</div></div></div>
    <button class="btn" onclick="doExam()" ${S.loading?"disabled":""}>${tr.makeExam}</button>${S.loading?spinner(S.loadLabel||tr.thinking):""}`;
   }else{
    const r=S.result;
