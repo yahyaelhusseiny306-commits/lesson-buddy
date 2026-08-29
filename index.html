@@ -112,11 +112,25 @@ a{color:#9DC1FF}.setbox a{color:var(--acc)}
 .bar{height:10px;border-radius:5px;background:rgba(255,255,255,.15);overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#F59E0B,#22C55E)}
 .gitem{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);padding:6px 0;border-top:1px solid rgba(255,255,255,.1)}
 .genimg{width:100%;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.35);background:#fff}
+.mic{flex:0 0 auto;width:44px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.1);color:#fff;border-radius:10px;cursor:pointer;font-size:18px}
+.mic.on{background:#DC2626;border-color:#DC2626;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.setbox .mic{color:var(--ink);border-color:#d1d5db;background:#fff}
+.step{background:var(--soft);border-radius:10px;padding:8px 10px;margin:6px 0;font-size:14px;color:#1F2937}
+.ans{background:#ECFDF5;border:1px solid #86EFAC;border-radius:10px;padding:10px;font-weight:600;margin-top:8px}
+.plan-day{background:#fff;color:var(--ink);border-radius:14px;padding:12px;margin-bottom:10px}
+.plan-day h4{margin:0 0 6px;font-size:15px;color:var(--acc)}
+.sess{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-top:1px solid #eef;font-size:14px}
+.sess.done{opacity:.5;text-decoration:line-through}
+.sess input{margin-top:3px}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <input type="file" id="file" accept="image/*" class="hidden">
+<input type="file" id="fileCam" accept="image/*" capture="environment" class="hidden">
+<input type="file" id="filePhoto" accept="image/*" class="hidden">
+<input type="file" id="fileDoc" accept=".pdf,.txt,.md,.csv,.json,application/pdf,text/plain" class="hidden">
 <script>
 // ================= DATA =================
 const SUBJECTS=[
@@ -149,9 +163,13 @@ const T={
   flash:"Review with flashcards",flashTap:"Tap the card to flip",known:"I knew it ✅",unknown:"Didn't know ❌",flashDone:"Done! You know all the terms.",again:"Start again",round:"Round",
   grades:"Grades log",gradesEmpty:"No grades yet. Take an exam and your score will appear here.",avg:"Average",
   tools:"Tools",imgTool:"Image maker",docTool:"File maker",imgTitle:"Make an image",imgPh:"Describe the image you want… (e.g. a poster about water pollution for a school project)",imgGo:"Generate image",imgRef:"📷 Add a reference photo (optional)",imgNote:"Uses Gemini when available, otherwise the free Pollinations service. Generation takes 10–30 seconds.",
+  hwTool:"Homework Solver",hwTitle:"Solve homework from a photo",hwPhoto:"📷 Take a photo of the homework",hwText:"…or type / dictate the question",hwMode:"What do you want?",hwModes:[["full","Full solution"],["hint","Hint only"],["check","Check my answer"]],hwGo:"Solve",hwSteps:"Steps",hwAnswer:"Answer",hwNeed:"Add a photo or type the question first.",
+  planTool:"Study Plan",planTitle:"Study plan",planSubjects:"Subjects to study",planDate:"Exam / deadline date",planHours:"Hours per day",planNotes:"Notes (weak topics, busy days…)",planGo:"Build my plan",planCal:"Add to calendar (with reminders)",planXls:"Export to Excel",planShare:"Share",planEmpty:"No plan yet.",planNew:"New plan",
+  listen:"Listen",stop:"Stop",recordLesson:"🎙 Record the lesson",recording:"Recording… tap to stop",micUnsupported:"Voice input needs Chrome on Android/desktop.",transcript:"Lesson transcript",useTranscript:"Explain this transcript",summarize:"Summarize transcript",
+  shareLesson:"Share lesson",exportAll:"Export saved lessons",importAll:"Import lessons",
   docTitle:"Make a file",docType:"File type",docWord:"Word",docPpt:"PowerPoint",docXls:"Excel",docPh:"Describe what you want… (e.g. a 6-slide presentation about volcanoes / a weekly study schedule table / a report on the French revolution)",docGo:"Create file",docUseLesson:"Use the current lesson as the topic",docReady:"Your file is ready",
   imgStyle:"Style",imgStyles:[["poster","Poster"],["realistic","Realistic"],["cartoon","Cartoon"],["diagram","Scientific drawing"],["art","Art"]],pick:"Choose",
-  docTheme:"Color theme",docImages:"Add images (slower)",docLang:"File language",docLangs:[["auto","Auto"],["ar","العربية"],["en","English"]],docImgDesc:"Image description (optional)",docImgDescPh:"e.g. a young man lowering his gaze in a busy street",stWriting:"Writing content…",stReview:"Reviewing content…",stImages:"Making images…",stBuild:"Building file…",
+  docTheme:"Color theme",docImages:"Add images (slower)",docLang:"File language",docLangs:[["auto","Auto"],["ar","العربية"],["en","English"]],attCam:"Camera",attPhoto:"Photo",attFiles:"Files",attBad:"Unsupported file. Use PDF, text, CSV or an image.",docChatPh:"Tell me what to change… (e.g. add a slide about causes, make it shorter, change the title)",docChanged:"Updated",docImgDesc:"Image description (optional)",docImgDescPh:"e.g. a young man lowering his gaze in a busy street",stWriting:"Writing content…",stReview:"Reviewing content…",stImages:"Making images…",stBuild:"Building file…",
  },
  ar:{appName:"رفيق الدروس",tagline:"اختر المادة، اكتب اسم الدرس، وتعلّم بطريقتك.",lessonLabel:"ما هو الدرس الذي أخذته؟",lessonPh:"مثال: قانون نيوتن الثاني، دورة الماء…",explain:"شرح",exam:"امتحان",styleLabel:"اشرحه…",
   styles:[["simple","ببساطة"],["steps","خطوة بخطوة"],["examples","مع أمثلة"],["kid","كأنني في العاشرة"],["summary","ملخّص قصير"]],
@@ -168,9 +186,13 @@ const T={
   flash:"راجع بالبطاقات",flashTap:"اضغط البطاقة لتقلبها",known:"عرفتها ✅",unknown:"لم أعرفها ❌",flashDone:"أحسنت! حفظت كل المصطلحات.",again:"ابدأ من جديد",round:"جولة",
   grades:"سجل الدرجات",gradesEmpty:"لا درجات بعد. قدّم امتحاناً وستظهر نتيجتك هنا.",avg:"المعدل",
   tools:"أدوات",imgTool:"صانع الصور",docTool:"صانع الملفات",imgTitle:"اصنع صورة",imgPh:"صف الصورة التي تريدها… (مثال: ملصق عن تلوث المياه لمشروع مدرسي)",imgGo:"أنشئ الصورة",imgRef:"📷 أضف صورة مرجعية (اختياري)",imgNote:"يستخدم Gemini إن كان متاحاً، وإلا فخدمة Pollinations المجانية. يستغرق الإنشاء ١٠–٣٠ ثانية.",
+  hwTool:"حلّ الواجب",hwTitle:"حلّ الواجب من صورة",hwPhoto:"📷 صوّر الواجب",hwText:"…أو اكتب / أملِ السؤال",hwMode:"ماذا تريد؟",hwModes:[["full","حل كامل"],["hint","تلميح فقط"],["check","تحقّق من حلّي"]],hwGo:"حُلّ",hwSteps:"الخطوات",hwAnswer:"الجواب",hwNeed:"أضف صورة أو اكتب السؤال أولاً.",
+  planTool:"خطة مذاكرة",planTitle:"خطة المذاكرة",planSubjects:"المواد التي ستذاكرها",planDate:"تاريخ الامتحان / الموعد",planHours:"ساعات المذاكرة يومياً",planNotes:"ملاحظات (مواضيع ضعيفة، أيام مشغولة…)",planGo:"اصنع خطتي",planCal:"أضف إلى التقويم (مع تنبيهات)",planXls:"تصدير إلى Excel",planShare:"مشاركة",planEmpty:"لا خطة بعد.",planNew:"خطة جديدة",
+  listen:"استمع",stop:"إيقاف",recordLesson:"🎙 سجّل الحصة",recording:"جارٍ التسجيل… اضغط للإيقاف",micUnsupported:"الإدخال الصوتي يحتاج متصفح Chrome على Android أو الحاسوب.",transcript:"نص الحصة",useTranscript:"اشرح هذا النص",summarize:"لخّص النص",
+  shareLesson:"شارك الدرس",exportAll:"تصدير الدروس المحفوظة",importAll:"استيراد دروس",
   docTitle:"اصنع ملفاً",docType:"نوع الملف",docWord:"Word",docPpt:"PowerPoint",docXls:"Excel",docPh:"صف ما تريده… (مثال: عرض من ٦ شرائح عن البراكين / جدول مذاكرة أسبوعي / تقرير عن الثورة الفرنسية)",docGo:"أنشئ الملف",docUseLesson:"استخدم الدرس الحالي كموضوع",docReady:"ملفك جاهز",
   imgStyle:"الأسلوب",imgStyles:[["poster","ملصق"],["realistic","واقعي"],["cartoon","كرتون"],["diagram","رسم علمي"],["art","فني"]],pick:"اختر",
-  docTheme:"لون التصميم",docImages:"أضف صوراً (أبطأ)",docLang:"لغة الملف",docLangs:[["auto","تلقائي"],["ar","العربية"],["en","English"]],docImgDesc:"وصف الصور (اختياري)",docImgDescPh:"مثال: شاب يخفض بصره في شارع مزدحم",stWriting:"جارٍ كتابة المحتوى…",stReview:"جارٍ مراجعة المحتوى…",stImages:"جارٍ صنع الصور…",stBuild:"جارٍ بناء الملف…",
+  docTheme:"لون التصميم",docImages:"أضف صوراً (أبطأ)",docLang:"لغة الملف",docLangs:[["auto","تلقائي"],["ar","العربية"],["en","English"]],attCam:"الكاميرا",attPhoto:"صورة",attFiles:"ملفات",attBad:"نوع غير مدعوم. استخدم PDF أو نصاً أو CSV أو صورة.",docChatPh:"قل لي ماذا أغيّر… (مثال: أضف شريحة عن الأسباب، اختصره، غيّر العنوان)",docChanged:"تم التعديل",docImgDesc:"وصف الصور (اختياري)",docImgDescPh:"مثال: شاب يخفض بصره في شارع مزدحم",stWriting:"جارٍ كتابة المحتوى…",stReview:"جارٍ مراجعة المحتوى…",stImages:"جارٍ صنع الصور…",stBuild:"جارٍ بناء الملف…",
  },
 };
 const THEMES={blue:{a:"1F3A8A",b:"0B1F4B",c:"3B82F6"},green:{a:"166534",b:"052E16",c:"22C55E"},purple:{a:"5B21B6",b:"2E1065",c:"A78BFA"},orange:{a:"C2410C",b:"431407",c:"FB923C"},gray:{a:"374151",b:"111827",c:"9CA3AF"}};
@@ -192,8 +214,12 @@ const S={
  printTarget:null, pdfUrl:null, pdfBlob:null, pdfPages:[], pdfBusy:false,
  fc:null,
  img:{prompt:"",ref:null,out:null,outs:[],busy:false,err:"",style:"poster"},
- doc:{type:"word",prompt:"",useLesson:false,busy:false,err:"",url:null,name:"",blob:null,theme:"blue",images:true,status:"",lang:"auto",imgDesc:""},
+ doc:{type:"word",prompt:"",useLesson:false,busy:false,err:"",url:null,name:"",blob:null,theme:"blue",images:true,status:"",lang:"auto",imgDesc:"",json:null,imgs:{},chat:[],docLang:"en",attach:[],plusOpen:false},
  curSession:null,
+ hw:{photo:null,text:"",mode:"full",busy:false,err:"",out:null,history:LS("hw",[])},
+ plan:{subjects:[],examDate:"",hours:2,notes:"",busy:false,err:"",out:LS("plan",null),done:LS("planDone",{})},
+ rec:{active:false,target:null,base:""},transcriptText:"",
+ speaking:false,
 };
 const t=()=>T[S.lang];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -220,7 +246,7 @@ async function askAI(system,userText,history=[],imgOverride){
  const photo=imgOverride===undefined?S.photo:imgOverride;
  const contents=history.map(m=>({role:m.role==="assistant"?"model":"user",parts:[{text:m.content}]}));
  const parts=[{text:userText}];
- if(photo) parts.push({inlineData:{mimeType:photo.mediaType,data:photo.data}});
+ for(const ph of (Array.isArray(photo)?photo:(photo?[photo]:[]))){if(ph.text)parts.push({text:`\n[Attached file "${ph.name}"]:\n${ph.text.slice(0,20000)}`});else parts.push({inlineData:{mimeType:ph.mediaType,data:ph.data}});}
  contents.push({role:"user",parts});
  const avail=await listModels();
  if(!avail.length) throw new Error("no models available for this key");
@@ -369,8 +395,107 @@ let fileTarget="lesson";
 function pickFile(target){fileTarget=target;document.getElementById("file").click();}
 document.getElementById("file").addEventListener("change",e=>{
  const file=e.target.files?.[0];if(!file)return;
- const r=new FileReader();r.onload=()=>{const ph={data:r.result.split(",")[1],mediaType:file.type||"image/jpeg",preview:r.result};if(fileTarget==="img")S.img.ref=ph;else S.photo=ph;render();};r.readAsDataURL(file);e.target.value="";
+ const r=new FileReader();r.onload=()=>{const ph={data:r.result.split(",")[1],mediaType:file.type||"image/jpeg",preview:r.result};if(fileTarget==="img")S.img.ref=ph;else if(fileTarget==="hw")S.hw.photo=ph;else S.photo=ph;render();};r.readAsDataURL(file);e.target.value="";
 });
+
+// ================= VOICE =================
+let REC=null;
+function micSupported(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition);}
+function toggleMic(targetId,langHint){
+ if(S.rec.active){stopMic();return;}
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){alert(t().micUnsupported);return;}
+ const el=document.getElementById(targetId);if(!el)return;
+ REC=new SR();REC.lang=(langHint||S.lang)==="ar"?"ar-SA":"en-US";REC.continuous=true;REC.interimResults=true;
+ S.rec={active:true,target:targetId,base:el.value?el.value+" ":""};
+ let finalTxt="";
+ REC.onresult=e=>{let interim="";for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)finalTxt+=r[0].transcript+" ";else interim+=r[0].transcript;}
+  const el2=document.getElementById(S.rec.target);if(el2){el2.value=S.rec.base+finalTxt+interim;el2.dispatchEvent(new Event("input"));}};
+ REC.onend=()=>{if(S.rec.active){try{REC.start();}catch(e){}}};
+ REC.onerror=e=>{if(e.error==="not-allowed"){stopMic();alert("Microphone permission denied");}};
+ try{REC.start();}catch(e){}
+ render();
+}
+function stopMic(){S.rec.active=false;try{REC&&REC.stop();}catch(e){}REC=null;render();}
+function micBtn(targetId,langHint){return `<button class="mic ${S.rec.active&&S.rec.target===targetId?"on":""}" title="🎤" onclick="toggleMic('${targetId}','${langHint||""}')">${S.rec.active&&S.rec.target===targetId?"⏹":"🎤"}</button>`;}
+function speak(text,lang){
+ if(!("speechSynthesis" in window))return;
+ if(S.speaking){speechSynthesis.cancel();S.speaking=false;render();return;}
+ const u=new SpeechSynthesisUtterance(String(text).slice(0,4000));u.lang=lang==="ar"?"ar-SA":"en-US";u.rate=0.95;
+ const vs=speechSynthesis.getVoices().filter(v=>v.lang.startsWith(lang==="ar"?"ar":"en"));if(vs.length)u.voice=vs[0];
+ u.onend=()=>{S.speaking=false;render();};S.speaking=true;speechSynthesis.speak(u);render();
+}
+function explanationText(ex){return [ex.title,ex.overview,...(ex.sections||[]).map(x=>x.heading+". "+x.text),(ex.keyTerms||[]).map(k=>k.term+": "+k.meaning).join(". "),ex.summary].filter(Boolean).join("\n");}
+async function shareLesson(){
+ const ex=S.explanation;if(!ex)return;
+ const txt=`${ex.title}\n\n${ex.overview}\n\n`+(ex.sections||[]).map(x=>`• ${x.heading}\n${x.text}`).join("\n\n")+`\n\n${t().keyTerms}:\n`+(ex.keyTerms||[]).map(k=>`- ${k.term}: ${k.meaning}`).join("\n")+(ex.summary?`\n\n${ex.summary}`:"")+`\n\n— ${t().appName}`;
+ try{if(navigator.share)await navigator.share({title:ex.title,text:txt});else{await navigator.clipboard.writeText(txt);alert("Copied");}}catch(e){}
+}
+function exportSessions(){const blob=new Blob([JSON.stringify({sessions:S.sessions,v:1})],{type:"application/json"});shareBlob(blob,"lesson-buddy-lessons.json");}
+function importSessions(){const i=document.createElement("input");i.type="file";i.accept="application/json,.json";i.onchange=async()=>{try{const j=JSON.parse(await i.files[0].text());const inc=(j.sessions||[]).filter(x=>x&&x.id);const ids=new Set(S.sessions.map(x=>x.id));S.sessions=[...inc.filter(x=>!ids.has(x.id)),...S.sessions].slice(0,100);SV("sessions",S.sessions);render();}catch(e){alert(t().error);}};i.click();}
+
+// ================= HOMEWORK =================
+async function doHomework(){
+ const h=S.hw;if(!h.photo&&!h.text.trim()){h.err=t().hwNeed;return render();}
+ h.busy=true;h.err="";h.out=null;render();
+ const modeTxt={full:"Give the complete solution step by step, then the final answer.",hint:"Do NOT give the answer. Give 2-3 progressive hints that lead the student to solve it alone, then say what the first step should be.",check:"The student's own answer/working is in the photo or text. Check it carefully: say whether it is correct, point out each mistake precisely, and show the corrected working."}[h.mode];
+ const lang=/[\u0600-\u06FF]/.test(h.text)?"Arabic":(h.photo?"the same language as the homework in the photo (Arabic or English); if unsure use "+langName(S.lang):langName(S.lang));
+ try{
+  const txt=await askAI(`You are a careful school tutor. Read the homework (photo and/or text). ${modeTxt} Work every calculation carefully and double-check arithmetic. Answer in ${lang}. Respond ONLY with JSON: {"subject":"","problems":[{"question":"","steps":["",""],"answer":"","note":""}]} — one entry per question found; for hint mode put hints in "steps" and leave "answer" empty; for check mode put the verdict in "answer" and corrections in "steps".`,h.text.trim()||"Solve the homework in the photo.",[],h.photo);
+  h.out=parseJSON(txt);
+  h.history=[{ts:Date.now(),mode:h.mode,text:h.text.slice(0,80),out:h.out},...h.history].slice(0,30);SV("hw",h.history);
+ }catch(e){h.err=(e.message==="nokey"?t().noKey:(friendly(e.message)||e.message));}
+ h.busy=false;render();
+}
+
+// ================= STUDY PLAN =================
+async function doPlan(){
+ const pl=S.plan;if(!pl.subjects.length){pl.err=t().planSubjects;return render();}
+ pl.busy=true;pl.err="";render();
+ const subs=pl.subjects.map(id=>{const x=SUBJECTS.find(y=>y.id===id);return x?x[S.lang]:id;}).join(", ");
+ const today=new Date().toISOString().slice(0,10);
+ try{
+  const txt=await askAI(`You are an expert study coach. Build a realistic day-by-day study plan in ${langName(S.lang)}. Today is ${today}. Deadline: ${pl.examDate||"in 14 days"}. Hours per day: ${pl.hours}. Subjects: ${subs}. Notes: ${pl.notes||"none"}. Rules: alternate subjects, put weak topics earlier and repeat them, include short reviews of previous days, one rest/light day per week, sessions of 25-50 minutes with breaks, final 2 days = revision + mock tests. Respond ONLY with JSON: {"title":"","days":[{"date":"YYYY-MM-DD","label":"","sessions":[{"time":"16:00","subject":"","topic":"","minutes":40,"tip":""}]}],"advice":["",""]}. Max 21 days.`,"Build the plan.",[],null);
+  pl.out=parseJSON(txt);pl.done={};SV("plan",pl.out);SV("planDone",pl.done);
+ }catch(e){pl.err=(e.message==="nokey"?t().noKey:(friendly(e.message)||e.message));}
+ pl.busy=false;render();
+}
+function planICS(){
+ const pl=S.plan.out;if(!pl)return;
+ const pad=n=>String(n).padStart(2,"0");const fmt=(d,tm)=>{const [h,m]=(tm||"16:00").split(":").map(Number);const dt=new Date(d+"T00:00:00");dt.setHours(h,m,0,0);return `${dt.getFullYear()}${pad(dt.getMonth()+1)}${pad(dt.getDate())}T${pad(dt.getHours())}${pad(dt.getMinutes())}00`;};
+ const esc2=x=>String(x||"").replace(/([,;\\])/g,"\\$1").replace(/\n/g,"\\n");
+ let ics="BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Lesson Buddy//EN\r\n";
+ (pl.days||[]).forEach((d,i)=>(d.sessions||[]).forEach((se,j)=>{const st=fmt(d.date,se.time);const en=new Date(d.date+"T"+(se.time||"16:00")+":00");en.setMinutes(en.getMinutes()+(se.minutes||40));const et=`${en.getFullYear()}${pad(en.getMonth()+1)}${pad(en.getDate())}T${pad(en.getHours())}${pad(en.getMinutes())}00`;
+  ics+=`BEGIN:VEVENT\r\nUID:lb-${i}-${j}-${Date.now()}@lessonbuddy\r\nDTSTAMP:${st}\r\nDTSTART:${st}\r\nDTEND:${et}\r\nSUMMARY:${esc2("📚 "+se.subject+": "+se.topic)}\r\nDESCRIPTION:${esc2(se.tip)}\r\nBEGIN:VALARM\r\nTRIGGER:-PT10M\r\nACTION:DISPLAY\r\nDESCRIPTION:${esc2(se.subject)}\r\nEND:VALARM\r\nEND:VEVENT\r\n`;}));
+ ics+="END:VCALENDAR\r\n";
+ shareBlob(new Blob([ics],{type:"text/calendar"}),"study-plan.ics");
+}
+async function planXlsx(){
+ const pl=S.plan.out;if(!pl)return;
+ const rows=[];(pl.days||[]).forEach(d=>(d.sessions||[]).forEach(se=>rows.push([d.date,se.time,se.subject,se.topic,se.minutes,se.tip])));
+ const isAr=S.lang==="ar";
+ const blob=await buildXlsx({sheets:[{name:isAr?"الخطة":"Plan",headers:isAr?["التاريخ","الوقت","المادة","الموضوع","الدقائق","نصيحة"]:["Date","Time","Subject","Topic","Minutes","Tip"],rows}]});
+ shareBlob(blob,"study-plan.xlsx");
+}
+function planShare(){const pl=S.plan.out;if(!pl)return;const txt=(pl.title||"")+"\n"+(pl.days||[]).map(d=>`\n📅 ${d.date} ${d.label||""}\n`+(d.sessions||[]).map(se=>`  ${se.time} ${se.subject} — ${se.topic} (${se.minutes}m)`).join("\n")).join("");if(navigator.share)navigator.share({title:pl.title,text:txt}).catch(()=>{});else navigator.clipboard.writeText(txt);}
+
+// ================= ATTACHMENTS (+) =================
+function addAttach(file){
+ if(!file)return;
+ const name=file.name||"file";const type=file.type||"";
+ const isImg=type.startsWith("image/"),isPdf=type==="application/pdf"||/\.pdf$/i.test(name),isTxt=/^text\//.test(type)||/\.(txt|md|csv|json)$/i.test(name);
+ if(!isImg&&!isPdf&&!isTxt){alert(t().attBad);return;}
+ const r=new FileReader();
+ if(isTxt){r.onload=()=>{S.doc.attach.push({name,text:String(r.result)});render();};r.readAsText(file);return;}
+ r.onload=()=>{S.doc.attach.push({name,mediaType:isPdf?"application/pdf":(type||"image/jpeg"),data:r.result.split(",")[1],preview:isImg?r.result:null});render();};
+ r.readAsDataURL(file);
+}
+["fileCam","filePhoto","fileDoc"].forEach(id=>document.getElementById(id).addEventListener("change",e=>{addAttach(e.target.files?.[0]);e.target.value="";S.doc.plusOpen=false;}));
+function plusMenu(){const tr=t();return `<div style="position:relative;flex:0 0 auto"><button class="mic" onclick="S.doc.plusOpen=!S.doc.plusOpen;render()">＋</button>${S.doc.plusOpen?`<div style="position:absolute;bottom:48px;inset-inline-end:0;background:#fff;color:var(--ink);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.35);padding:6px;min-width:150px;z-index:20">
+ <button class="opt" style="margin:0" onclick="document.getElementById('fileCam').click()">📷 ${tr.attCam}</button>
+ <button class="opt" style="margin:4px 0 0" onclick="document.getElementById('filePhoto').click()">🖼 ${tr.attPhoto}</button>
+ <button class="opt" style="margin:4px 0 0" onclick="document.getElementById('fileDoc').click()">📁 ${tr.attFiles}</button></div>`:""}</div>`;}
+function attachChips(){if(!S.doc.attach.length)return"";return `<div class="chips">${S.doc.attach.map((a,i)=>`<span class="chip" style="display:inline-flex;align-items:center;gap:6px">${a.preview?`<img src="${a.preview}" style="width:22px;height:22px;object-fit:cover;border-radius:4px">`:(a.text?"📄":"📎")} <span dir="ltr" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a.name)}</span><button style="background:none;border:none;color:#FFB4B4;cursor:pointer" onclick="S.doc.attach.splice(${i},1);render()">✕</button></span>`).join("")}</div>`;}
 
 // ================= FLASHCARDS =================
 function startFlash(){const ks=(S.explanation?.keyTerms||[]).filter(k=>k.term&&k.meaning);if(!ks.length)return;S.fc={cards:ks.map(k=>({f:k.term,b:k.meaning})),idx:0,flip:false,unknown:[],round:1,done:false};S.screen="flash";render();}
@@ -515,7 +640,7 @@ async function doDoc(){
  };
  try{
   setDocStatus(tr.stWriting);
-  const draft=parseJSON(await askAI(`You create high-quality school documents. Write ALL content in ${lang} (image prompts stay in English). Also add a field "titleEn": the title translated to English. Respond ONLY with JSON in this shape: ${shapes[d.type]}. No markdown.`,p,[],null));
+  const draft=parseJSON(await askAI(`You create high-quality school documents. Write ALL content in ${lang} (image prompts stay in English). If files or photos are attached, base the content on them faithfully. Also add a field "titleEn": the title translated to English. Respond ONLY with JSON in this shape: ${shapes[d.type]}. No markdown.`,p,[],d.attach.length?d.attach:null));
   let json=draft;
   const th=THEMES[d.theme]||THEMES.blue,rtl=docLang==="ar";
   const imgs={};
@@ -546,11 +671,40 @@ async function doDoc(){
   else if(d.type==="ppt"){blob=await buildPptx(json,rtl,th,d.images);ext="pptx";}
   else{blob=await buildXlsx(json);ext="xlsx";}
   blob=new Blob([blob],{type:MIME[ext]});
+  d.json=json;d.imgs=imgs;d.docLang=docLang;d.chat=[];
   d.blob=blob;d.name=(json.title||json.sheets?.[0]?.name||"file").toString().slice(0,40).replace(/[\\/:*?"<>|]/g,"")+"."+ext;d.url=URL.createObjectURL(blob);
  }catch(e){d.err=(e.message==="nokey"?t().noKey:(friendly(e.message)||e.message));}
  d.busy=false;d.status="";render();
 }
 
+async function rebuildDoc(){
+ const d=S.doc,json=d.json,th=THEMES[d.theme]||THEMES.blue,rtl=d.docLang==="ar";
+ if(d.imgs.cover)json.coverImage=d.imgs.cover;
+ const list=d.type==="ppt"?(json.slides||[]):(json.sections||[]);list.forEach((x,i)=>{if(d.imgs[i]&&!x.image)x.image=d.imgs[i];});
+ let blob,ext;
+ if(d.type==="word"){blob=await buildDocx(json,rtl,th,d.images);ext="docx";}
+ else if(d.type==="ppt"){blob=await buildPptx(json,rtl,th,d.images);ext="pptx";}
+ else{blob=await buildXlsx(json);ext="xlsx";}
+ blob=new Blob([blob],{type:MIME[ext]});
+ d.blob=blob;d.name=(json.title||json.sheets?.[0]?.name||"file").toString().slice(0,40).replace(/[\\/:*?"<>|]/g,"")+"."+ext;d.url=URL.createObjectURL(blob);
+}
+async function doDocChat(msg){
+ msg=(msg||"").trim();const d=S.doc;if(!msg||!d.json)return;
+ d.chat.push({role:"user",content:msg});d.busy=true;d.err="";render();
+ try{
+  setDocStatus(t().stWriting);
+  const kind=d.type==="ppt"?"presentation":d.type==="xls"?"spreadsheet":"report";
+  const txt=await askAI(`You are editing a ${kind} JSON together with the user. Apply the user's instruction to the JSON below and return the COMPLETE updated JSON in exactly the same shape and language (${langName(d.docLang)}), plus one extra field "reply": a short sentence (in the user's language) saying what you changed. Keep everything the user did not ask to change. Existing image prompts may stay. Respond ONLY with JSON.\n\nCURRENT JSON:\n${JSON.stringify(d.json).slice(0,14000)}`,msg,d.chat.slice(0,-1).slice(-6),d.attach.length?d.attach:null);
+  const j=parseJSON(txt);const reply=j.reply||t().docChanged;delete j.reply;
+  // images for new items if needed
+  if(d.images&&d.type!=="xls"){const list=d.type==="ppt"?(j.slides||[]):(j.sections||[]);const st="clean educational illustration, flat colors, no text, no watermark";const topic=`Illustration about "${j.titleEn||j.title||""}": `;
+   const jobs=[];list.forEach((x,i)=>{const old=(d.type==="ppt"?(d.json.slides||[]):(d.json.sections||[]))[i];if(old&&(old.title||old.heading)===(x.title||x.heading)&&d.imgs[i])return;if(x.imagePrompt)jobs.push(polliB64(topic+x.imagePrompt+", "+st,640,640).then(o=>{d.imgs[i]=o.data;}).catch(()=>{}));});
+   if(jobs.length){setDocStatus(t().stImages);await Promise.all(jobs);}}
+  d.json=j;setDocStatus(t().stBuild);await rebuildDoc();
+  d.chat.push({role:"assistant",content:reply});
+ }catch(e){d.err=(e.message==="nokey"?t().noKey:(friendly(e.message)||e.message));}
+ d.busy=false;d.status="";render();
+}
 // ================= PDF =================
 const A4W=1240,A4H=1754,PM=90;
 function makeDoc(rtl){
@@ -617,12 +771,13 @@ async function runDiag(){
 const app=document.getElementById("app");
 function render(){
  const tr=t();document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";
- const views={settings:viewSettings,history:viewHistory,flash:viewFlash,grades:viewGrades,img:viewImg,doc:viewDoc};
+ const views={settings:viewSettings,history:viewHistory,flash:viewFlash,grades:viewGrades,img:viewImg,doc:viewDoc,hw:viewHw,plan:viewPlan,transcript:viewTranscript};
  if(S.printTarget)app.innerHTML=viewPdf(tr);
  else if(views[S.screen])app.innerHTML=views[S.screen](tr);
  else if(!S.subject)app.innerHTML=viewHome(tr);
  else app.innerHTML=viewSubject(tr);
  const fu=document.getElementById("fu");if(fu){fu.addEventListener("keydown",e=>{if(e.key==="Enter"){doFollowUp(fu.value);fu.value="";}});}
+ const tt=document.getElementById("transcriptTA");if(tt){tt.addEventListener("input",e=>S.transcriptText=e.target.value);}
  const fn=document.getElementById("flagnote");if(fn){fn.focus();fn.addEventListener("input",e=>S.flagging.note=e.target.value);fn.addEventListener("keydown",e=>e.key==="Enter"&&submitFlag());}
 }
 function header(tr,title,back){
@@ -637,6 +792,8 @@ function viewHome(tr){
  <div class="grid">${SUBJECTS.map(s=>`<button class="tile" style="background:linear-gradient(145deg,${s.color},${s.color}CC)" onclick="pickSubject(SUBJECTS.find(x=>x.id==='${s.id}'))"><b>${s[S.lang]}</b><small>${S.lang==="en"?s.ar:s.en}</small></button>`).join("")}</div>
  <p class="lbl" style="margin-top:20px">Tools</p>
  <div class="tools">
+  <button class="tool" onclick="S.screen='hw';render()"><b>📚</b>Homework Solver<small style="display:block;font-size:10px;opacity:.75;margin-top:2px">From a photo</small></button>
+  <button class="tool" onclick="S.screen='plan';render()"><b>🗓</b>Study Plan<small style="display:block;font-size:10px;opacity:.75;margin-top:2px">Reminders</small></button>
   <button class="tool" onclick="S.screen='history';render()"><b>🗂</b>Saved</button>
   <button class="tool" onclick="S.screen='img';render()"><b>🎨</b>Image Maker<small style="display:block;font-size:10px;opacity:.75;margin-top:2px">Posters · Projects</small></button>
   <button class="tool" onclick="S.screen='doc';render()"><b>📄</b>File Maker<small style="display:block;font-size:10px;opacity:.75;margin-top:2px">Word · PowerPoint · Excel</small></button>
@@ -660,6 +817,7 @@ function viewSettings(tr){
 function viewHistory(tr){
  const items=S.sessions;
  return header(tr,tr.history,"S.screen=S.subject?'subject':'home';render()")+`<div class="wrap">
+ <div class="row" style="margin-bottom:12px"><button class="btn g" onclick="exportSessions()">📤 ${tr.exportAll}</button><button class="btn g" onclick="importSessions()">📥 ${tr.importAll}</button></div>
  ${!items.length?`<p style="color:var(--muted)">${tr.historyEmpty}</p>`:items.map(s=>{const sub=SUBJECTS.find(x=>x.id===s.subject)||{};
   return `<div class="hitem" onclick="openSession('${s.id}')"><div><div class="t"><span class="sw" style="background:${sub.color};margin-inline-end:6px"></span>${esc(s.lesson||"—")}</div><div class="m">${sub[S.lang]||""} · ${s.explanation?"📖":""}${s.exam?" 📝":""}${s.result?` ${s.result.score}/${s.result.total}`:""} · ${fmtDate(s.ts)}</div></div><button class="del" onclick="event.stopPropagation();delSession('${s.id}')" title="${tr.deleteSaved}">🗑</button></div>`;}).join("")}
  </div>`;
@@ -683,11 +841,65 @@ function viewFlash(tr){
  <p class="hint" style="text-align:center">${tr.flashTap}</p>
  <div class="row"><button class="btn g" onclick="fcAnswer(false)">${tr.unknown}</button><button class="btn" style="background:linear-gradient(135deg,#16A34A,#22C55E);box-shadow:none" onclick="fcAnswer(true)">${tr.known}</button></div></div>`;
 }
+function viewTranscript(tr){
+ const s=S.subject;const lang=s?s.lang:S.lang;
+ return header(tr,tr.recordLesson,"S.screen='subject';render()")+`<div class="wrap stack" dir="${lang==="ar"?"rtl":"ltr"}">
+ <p class="hint">${micSupported()?"":tr.micUnsupported}</p>
+ <button class="btn ${S.rec.active?"":"g"}" style="${S.rec.active?"background:#DC2626;box-shadow:none":""}" onclick="toggleMic('transcriptTA','${lang}')">${S.rec.active?"⏹ "+tr.recording:"🎤 "+tr.recordLesson}</button>
+ <div><p class="lbl">${tr.transcript}</p><textarea class="inp" id="transcriptTA" rows="12">${esc(S.transcriptText||"")}</textarea></div>
+ <div class="row"><button class="btn" onclick="stopMic();S.photo=null;S.lesson=(S.transcriptText||'').slice(0,60);S.customExam='';S.screen='subject';S.mode='explain';S.transcriptCtx=S.transcriptText;doExplainFromTranscript()">${tr.useTranscript}</button><button class="btn g" onclick="stopMic();S.screen='subject';S.mode='explain';doSummarizeTranscript()">${tr.summarize}</button></div>
+ </div>`;
+}
+async function doExplainFromTranscript(){
+ const tx=(S.transcriptText||"").trim();if(!tx)return render();
+ S.error="";S.explanation=null;S.chat=[];S.curSession=null;setLoad(true,t().thinking);
+ try{
+  const text=await askAI(baseSystem()+` The student recorded their teacher's lesson; here is the transcript (may contain speech-recognition errors — infer the intended meaning): """${tx.slice(0,12000)}""". Explain THIS lesson clearly and faithfully, organized. Respond ONLY with JSON, no markdown: {"title":"","overview":"","sections":[{"heading":"","text":""}],"keyTerms":[{"term":"","meaning":""}],"example":"","summary":""}.`,"Explain the recorded lesson.",[],null);
+  S.explanation=parseJSON(text);if(S.explanation.title)S.lesson=S.explanation.title;saveSession();setLoad(false);
+ }catch(e){fail(e);}
+}
+async function doSummarizeTranscript(){
+ const tx=(S.transcriptText||"").trim();if(!tx)return render();
+ S.error="";S.explanation=null;S.chat=[];S.curSession=null;setLoad(true,t().thinking);
+ try{
+  const text=await askAI(baseSystem()+` Summarize this recorded lesson transcript into a compact revision sheet (fix recognition errors): """${tx.slice(0,12000)}""". Respond ONLY with JSON: {"title":"","overview":"","sections":[{"heading":"","text":""}],"keyTerms":[{"term":"","meaning":""}],"example":"","summary":""} with 2-4 short sections.`,"Summarize.",[],null);
+  S.explanation=parseJSON(text);if(S.explanation.title)S.lesson=S.explanation.title;saveSession();setLoad(false);
+ }catch(e){fail(e);}
+}
+function viewHw(tr){
+ const h=S.hw;
+ const out=h.out;
+ return header(tr,tr.hwTitle,"S.screen='home';render()")+`<div class="wrap stack">
+ ${h.photo?`<div class="photo"><img src="${h.photo.preview}" alt="" style="width:96px;height:96px"><div><button style="color:var(--acc);font-weight:600" onclick="pickFile('hw')">${tr.changePhoto}</button><button style="color:#6b7280" onclick="S.hw.photo=null;render()">${tr.removePhoto}</button></div></div>`:`<button class="dash" style="padding:16px;font-size:16px" onclick="pickFile('hw')">${tr.hwPhoto}</button>`}
+ <div class="row" style="gap:8px"><textarea class="inp" id="hwIn" rows="3" placeholder="${tr.hwText}" oninput="S.hw.text=this.value" style="flex:1">${esc(h.text)}</textarea>${micBtn("hwIn")}</div>
+ <div><p class="lbl">${tr.hwMode}</p><div class="chips">${tr.hwModes.map(([id,l])=>`<button class="chip ${h.mode===id?"on":""}" onclick="S.hw.mode='${id}';render()">${l}</button>`).join("")}</div></div>
+ <button class="btn" onclick="doHomework()" ${h.busy?"disabled":""}>✅ ${tr.hwGo}</button>
+ ${h.busy?spinner(tr.thinking):""}
+ ${h.err?`<p class="err">${esc(h.err)}</p>`:""}
+ ${out?`<div class="card" dir="auto">${out.subject?`<p class="lbl">${esc(out.subject)}</p>`:""}${(out.problems||[]).map((pr,i)=>`<h3>${i+1}. ${esc(pr.question)}</h3>${(pr.steps||[]).map((st,j)=>`<div class="step"><b>${j+1}.</b> ${esc(st)}</div>`).join("")}${pr.answer?`<div class="ans">${tr.hwAnswer}: ${esc(pr.answer)}</div>`:""}${pr.note?`<p class="hint" style="color:#6B7A99">${esc(pr.note)}</p>`:""}`).join("")}
+ <div class="row" style="margin-top:12px"><button class="btn o" onclick="speak(S.hw.out.problems.map(p=>p.question+'. '+(p.steps||[]).join('. ')+'. '+(p.answer||'')).join('\n'),/[\u0600-\u06FF]/.test(JSON.stringify(S.hw.out))?'ar':'en')">${S.speaking?"⏹ "+tr.stop:"🔊 "+tr.listen}</button><button class="btn o" onclick="navigator.share&&navigator.share({text:JSON.stringify(S.hw.out.problems.map(p=>p.question+'\n'+(p.steps||[]).join('\n')+'\n'+(p.answer||'')).join('\n\n'))}).catch(()=>{})">📤 ${tr.share}</button></div></div>`:""}
+ </div>`;
+}
+function viewPlan(tr){
+ const pl=S.plan,out=pl.out;
+ const subChips=SUBJECTS.map(x=>`<button class="chip ${pl.subjects.includes(x.id)?"on":""}" onclick="const a=S.plan.subjects;const i=a.indexOf('${x.id}');i>=0?a.splice(i,1):a.push('${x.id}');render()">${x[S.lang]}</button>`).join("");
+ return header(tr,tr.planTitle,"S.screen='home';render()")+`<div class="wrap stack">
+ ${!out?`<div><p class="lbl">${tr.planSubjects}</p><div class="chips">${subChips}</div></div>
+ <div class="row"><div><p class="lbl">${tr.planDate}</p><input class="inp" type="date" value="${esc(pl.examDate)}" onchange="S.plan.examDate=this.value"></div><div><p class="lbl">${tr.planHours}</p><input class="inp" type="number" min="1" max="12" value="${pl.hours}" onchange="S.plan.hours=+this.value||2"></div></div>
+ <div><p class="lbl">${tr.planNotes}</p><div class="row" style="gap:8px"><textarea class="inp" id="planIn" rows="2" oninput="S.plan.notes=this.value" style="flex:1">${esc(pl.notes)}</textarea>${micBtn("planIn")}</div></div>
+ <button class="btn" onclick="doPlan()" ${pl.busy?"disabled":""}>🗓 ${tr.planGo}</button>${pl.busy?spinner(tr.thinking):""}${pl.err?`<p class="err">${esc(pl.err)}</p>`:""}`
+ :`<h2 style="margin:0">${esc(out.title||tr.planTitle)}</h2>
+ <div class="row"><button class="btn g" onclick="planICS()">⏰ ${tr.planCal}</button><button class="btn g" onclick="planXlsx()">📈 ${tr.planXls}</button></div>
+ <div class="row"><button class="btn g" onclick="planShare()">📤 ${tr.planShare}</button><button class="btn g" onclick="S.plan.out=null;SV('plan',null);render()">🆕 ${tr.planNew}</button></div>
+ ${(out.days||[]).map((d,i)=>`<div class="plan-day"><h4>📅 ${esc(d.date)} ${esc(d.label||"")}</h4>${(d.sessions||[]).map((se,j)=>{const k=i+"-"+j;const dn=!!pl.done[k];return `<label class="sess ${dn?"done":""}"><input type="checkbox" ${dn?"checked":""} onchange="S.plan.done['${k}']=this.checked;SV('planDone',S.plan.done);render()"><span><b>${esc(se.time)}</b> · <b>${esc(se.subject)}</b> — ${esc(se.topic)} (${se.minutes||40}m)${se.tip?`<br><span style="color:#6B7A99;font-size:12px">💡 ${esc(se.tip)}</span>`:""}</span></label>`;}).join("")}</div>`).join("")}
+ ${(out.advice||[]).length?`<div class="verify"><b>💡</b><ul>${out.advice.map(a=>`<li>${esc(a)}</li>`).join("")}</ul></div>`:""}`}
+ </div>`;
+}
 function viewImg(tr){
  const im=S.img;
  const one=o=>`<img class="genimg" src="data:${o.mediaType};base64,${o.data}" alt=""><div class="row"><button class="btn g" onclick="shareBlob(b64ToBlob(S.img.out.data,S.img.out.mediaType),'image.png')">📤 ${tr.share}</button><a class="btn g" style="text-align:center;text-decoration:none" href="data:${o.mediaType};base64,${o.data}" download="image.png">⬇️ ${tr.download}</a></div>`;
  return header(tr,tr.imgTitle,"S.screen='home';render()")+`<div class="wrap stack">
- <textarea class="inp" rows="4" placeholder="${tr.imgPh}" oninput="S.img.prompt=this.value">${esc(im.prompt)}</textarea>
+ <div class="row" style="gap:8px"><textarea class="inp" id="imgIn" rows="4" placeholder="${tr.imgPh}" oninput="S.img.prompt=this.value" style="flex:1">${esc(im.prompt)}</textarea>${micBtn("imgIn")}</div>
  <div><p class="lbl">${tr.imgStyle}</p><div class="chips">${tr.imgStyles.map(([id,l])=>`<button class="chip ${im.style===id?"on":""}" onclick="S.img.style='${id}';render()">${l}</button>`).join("")}</div></div>
  ${im.ref?`<div class="photo"><img src="${im.ref.preview}" alt=""><div><button style="color:var(--acc);font-weight:600" onclick="pickFile('img')">${tr.changePhoto}</button><button style="color:#6b7280" onclick="S.img.ref=null;render()">${tr.removePhoto}</button></div></div>`:`<button class="dash" onclick="pickFile('img')">${tr.imgRef}</button>`}
  <button class="btn" onclick="doImage()" ${im.busy?"disabled":""}>🎨 ${tr.imgGo}</button>
@@ -703,7 +915,8 @@ function viewDoc(tr){
  const types=[["word","📝 "+tr.docWord],["ppt","📊 "+tr.docPpt],["xls","📈 "+tr.docXls]];
  return header(tr,tr.docTitle,"S.screen=S.subject?'subject':'home';render()")+`<div class="wrap stack">
  <div><p class="lbl">${tr.docType}</p><div class="chips">${types.map(([id,l])=>`<button class="chip ${d.type===id?"on":""}" onclick="S.doc.type='${id}';render()">${l}</button>`).join("")}</div></div>
- <textarea class="inp" rows="4" placeholder="${tr.docPh}" oninput="S.doc.prompt=this.value">${esc(d.prompt)}</textarea>
+ <div class="row" style="gap:8px"><textarea class="inp" id="docIn" rows="4" placeholder="${tr.docPh}" oninput="S.doc.prompt=this.value" style="flex:1">${esc(d.prompt)}</textarea><div style="display:flex;flex-direction:column;gap:6px;flex:0 0 auto">${micBtn("docIn")}${plusMenu()}</div></div>
+ ${attachChips()}
  <div><p class="lbl">${tr.docLang}</p><div class="chips">${tr.docLangs.map(([id,l])=>`<button class="chip ${d.lang===id?"on":""}" onclick="S.doc.lang='${id}';render()">${l}</button>`).join("")}</div></div>
  ${d.type!=="xls"?`<div><p class="lbl">${tr.docTheme}</p><div class="chips">${Object.keys(THEMES).map(k=>`<button class="chip ${d.theme===k?"on":""}" style="border-color:#${THEMES[k].c};${d.theme===k?`background:#${THEMES[k].a}`:""}" onclick="S.doc.theme='${k}';render()"><span class="sw" style="background:#${THEMES[k].c};margin-inline-end:6px"></span>${k}</button>`).join("")}</div></div>
  <label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" ${d.images?"checked":""} onchange="S.doc.images=this.checked"> ${tr.docImages}</label>
@@ -712,14 +925,17 @@ function viewDoc(tr){
  <button class="btn" onclick="doDoc()" ${d.busy?"disabled":""}>📄 ${tr.docGo}</button>
  ${d.busy?spinner(d.status||tr.thinking):""}
  ${d.err?`<p class="err">${esc(d.err)}</p>`:""}
- ${d.url?`<div class="card"><b>✅ ${tr.docReady}:</b> <span dir="ltr">${esc(d.name)}</span><div class="row" style="margin-top:10px"><button class="btn o" onclick="shareBlob(S.doc.blob,S.doc.name)">📤 ${tr.share}</button><a class="btn o" style="text-align:center;text-decoration:none" href="${d.url}" download="${esc(d.name)}">⬇️ ${tr.download}</a></div></div>`:""}
+ ${d.url?`<div class="card"><b>✅ ${tr.docReady}:</b> <span dir="ltr">${esc(d.name)}</span><div class="row" style="margin-top:10px"><button class="btn o" onclick="shareBlob(S.doc.blob,S.doc.name)">📤 ${tr.share}</button><a class="btn o" style="text-align:center;text-decoration:none" href="${d.url}" download="${esc(d.name)}">⬇️ ${tr.download}</a></div></div>
+ <div class="chat">${d.chat.map(m=>`<div class="msg ${m.role==="user"?"u":"a"}">${esc(m.content)}</div>`).join("")}
+ <div class="row" style="gap:8px"><input class="inp" id="docChat" placeholder="${tr.docChatPh}" style="flex:1" onkeydown="if(event.key==='Enter'){doDocChat(this.value);this.value='';}">${micBtn("docChat")}${plusMenu()}<button class="btn" style="flex:0 0 auto;width:auto;box-shadow:none" onclick="const i=document.getElementById('docChat');doDocChat(i.value);i.value=''" ${d.busy?"disabled":""}>➤</button></div></div>`:""}
  </div>`;
 }
 function viewSubject(tr){
  const s=S.subject,col=s.color,cdir=s.lang==="ar"?"rtl":"ltr";
  const title=`<span class="sw" style="background:${col}"></span>${s[S.lang]}`;
  let h=header(tr,title,"goHome()")+`<div class="wrap stack" dir="${cdir}" style="--acc:${col}">
- <div><p class="lbl">${tr.lessonLabel}</p><input class="inp" value="${esc(S.lesson)}" placeholder="${tr.lessonPh}" oninput="S.lesson=this.value">
+ <div><p class="lbl">${tr.lessonLabel}</p><div class="row" style="gap:8px"><input class="inp" id="lessonIn" value="${esc(S.lesson)}" placeholder="${tr.lessonPh}" oninput="S.lesson=this.value" style="flex:1">${micBtn("lessonIn",s.lang)}</div>
+ <button class="dash" onclick="S.screen='transcript';render()">${tr.recordLesson}</button>
  ${S.photo?`<div class="photo"><img src="${S.photo.preview}" alt=""><div><button style="color:${col};font-weight:600" onclick="pickFile('lesson')">${tr.changePhoto}</button><button style="color:#6b7280" onclick="S.photo=null;render()">${tr.removePhoto}</button></div></div>`
   :`<button class="dash" onclick="pickFile('lesson')">${tr.addPhoto}</button><p class="hint">${tr.photoHint}</p>`}</div>
  <div class="tabs"><button class="${S.mode==="explain"?"on":""}" onclick="S.mode='explain';render()">📖 ${tr.explain}</button><button class="${S.mode==="exam"?"on":""}" onclick="S.mode='exam';render()">📝 ${tr.exam}</button></div>
@@ -738,10 +954,11 @@ function viewSubject(tr){
    ${S.feat.flash?`<button class="btn o" style="margin-top:8px" onclick="startFlash()">🃏 ${tr.flash}</button>`:""}`:""}
    ${ex.example?`<div class="ex" style="margin-top:10px"><span class="lbl">${tr.example}</span>${esc(ex.example)}</div>`:""}
    ${ex.summary?`<p class="sum" style="margin-top:10px"><span class="lbl" style="display:inline;font-style:normal">${tr.summary}: </span>${esc(ex.summary)}</p>`:""}
-   <div class="row" style="margin-top:12px"><button class="btn o" onclick="openPdf('explain')">📄 ${tr.pdf}</button><button class="btn o" onclick="S.doc.useLesson=true;S.screen='doc';render()">📝 ${tr.docTool}</button></div></div>
+   <div class="row" style="margin-top:12px"><button class="btn o" onclick="speak(explanationText(S.explanation),'${s.lang}')">${S.speaking?"⏹ "+tr.stop:"🔊 "+tr.listen}</button><button class="btn o" onclick="shareLesson()">📤 ${tr.shareLesson}</button></div>
+   <div class="row" style="margin-top:8px"><button class="btn o" onclick="openPdf('explain')">📄 ${tr.pdf}</button><button class="btn o" onclick="S.doc.useLesson=true;S.screen='doc';render()">📝 ${tr.docTool}</button></div></div>
    <div class="chat">${S.chat.map(m=>`<div class="msg ${m.role==="user"?"u":"a"}">${esc(m.content)}</div>`).join("")}
    ${S.loading&&S.chat.length&&S.chat[S.chat.length-1].role==="user"?spinner(tr.thinking):""}
-   <div class="row" style="gap:8px"><input class="inp" id="fu" placeholder="${tr.askFollow}" style="flex:1"><button class="btn" style="flex:0 0 auto;width:auto;background:${col};box-shadow:none" onclick="const i=document.getElementById('fu');doFollowUp(i.value);i.value=''" ${S.loading?"disabled":""}>➤</button></div></div>`;
+   <div class="row" style="gap:8px"><input class="inp" id="fu" placeholder="${tr.askFollow}" style="flex:1">${micBtn("fu",s.lang)}<button class="btn" style="flex:0 0 auto;width:auto;background:${col};box-shadow:none" onclick="const i=document.getElementById('fu');doFollowUp(i.value);i.value=''" ${S.loading?"disabled":""}>➤</button></div></div>`;
   }
  }else{
   if(!S.exam){
@@ -774,7 +991,11 @@ function viewPdf(tr){
  <div class="pages">${S.pdfPages.map((p,i)=>`<img src="${p}" alt="page ${i+1}">`).join("")}</div>`;
 }
 render();
-if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+if("serviceWorker" in navigator){
+ navigator.serviceWorker.register("sw.js").then(r=>{try{r.update();}catch(e){}}).catch(()=>{});
+ let reloaded=false;
+ navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;if(navigator.serviceWorker.controller)location.reload();});
+}
 </script>
 </body>
 </html>
