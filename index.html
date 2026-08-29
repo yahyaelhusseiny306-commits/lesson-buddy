@@ -504,8 +504,8 @@ async function doDoc(){
  d.busy=true;d.err="";d.url=null;render();
  const lang=langName(S.lang),tr=t();
  const shapes={
-  word:`{"title":"","subtitle":"","coverImagePrompt":"English description of a cover picture","sections":[{"heading":"","text":"","bullets":[],"table":{"headers":[],"rows":[[]]},"imagePrompt":"English description of an illustration or empty string"}],"conclusion":""} — 4 to 8 sections with real paragraphs (80-150 words each); include a table only where data fits; imagePrompt for 2-3 sections max`,
-  ppt:`{"title":"","subtitle":"","coverImagePrompt":"English description of a cover picture","slides":[{"title":"","bullets":["",""],"note":"","imagePrompt":"English description of a picture for this slide"}],"closing":"","closingSub":""} — 6 to 10 slides, 3 to 5 short bullets each, every slide has an imagePrompt`,
+  word:`{"title":"","subtitle":"","coverImagePrompt":"","sections":[{"heading":"","text":"","bullets":[],"table":{"headers":[],"rows":[[]]},"imagePrompt":""}],"conclusion":""} — 4 to 8 sections with real paragraphs (80-150 words each); include a table only where data fits; imagePrompt for 2-3 sections max. IMAGE PROMPTS: in English, 20-40 words, must depict the topic itself explicitly and concretely (name the topic in the prompt, show its symbols/scene/objects/people; for abstract or religious topics use clear symbolic scenes, e.g. a person modestly lowering their gaze, an open Quran with soft light) — never generic landscapes or decorations`,
+  ppt:`{"title":"","subtitle":"","coverImagePrompt":"","slides":[{"title":"","bullets":["",""],"note":"","imagePrompt":""}],"closing":"","closingSub":""} — 6 to 10 slides, 3 to 5 short bullets each, every slide has an imagePrompt. IMAGE PROMPTS: in English, 20-40 words, must depict that slide's specific content explicitly (name the topic and the slide idea, show its symbols/scene/objects/people; for abstract or religious topics use clear symbolic scenes) — never generic landscapes or decorations`,
   xls:`{"title":"","sheets":[{"name":"","headers":["",""],"rows":[["",""]],"totalLabel":"","averageLabel":"","formulas":[{"cell":"E2","formula":"=B2*C2"}]}]} — realistic complete data (8-25 rows); numbers as JSON numbers not strings; add useful formulas where they make sense (per-row calculations, percentages)`,
  };
  try{
@@ -517,11 +517,12 @@ async function doDoc(){
   const th=THEMES[d.theme]||THEMES.blue,rtl=S.lang==="ar";
   if(d.images&&d.type!=="xls"){
    setDocStatus(tr.stImages);
-   const st="clean educational illustration, flat colors, no text";
+   const st="clean educational illustration, flat colors, no text, no watermark";
+   const topic=`Illustration about "${json.title||p.slice(0,80)}": `;
    const jobs=[];
-   if(json.coverImagePrompt)jobs.push(polliB64(json.coverImagePrompt+", "+st,1024,640).then(o=>{json.coverImage=o.data;}).catch(()=>{}));
+   if(json.coverImagePrompt)jobs.push(polliB64(topic+json.coverImagePrompt+", "+st,1024,640).then(o=>{json.coverImage=o.data;}).catch(()=>{}));
    const list=d.type==="ppt"?(json.slides||[]):(json.sections||[]);
-   list.forEach(x=>{if(x.imagePrompt)jobs.push(polliB64(x.imagePrompt+", "+st,768,768).then(o=>{x.image=o.data;}).catch(()=>{}));});
+   list.forEach(x=>{if(x.imagePrompt)jobs.push(polliB64(topic+(x.title||x.heading?`(${x.title||x.heading}) `:"")+x.imagePrompt+", "+st,768,768).then(o=>{x.image=o.data;}).catch(()=>{}));});
    await Promise.all(jobs);
   }
   setDocStatus(tr.stBuild);
