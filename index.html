@@ -130,7 +130,7 @@ a{color:#9DC1FF}.setbox a{color:var(--acc)}
 <input type="file" id="file" accept="image/*" class="hidden">
 <input type="file" id="fileCam" accept="image/*" capture="environment" class="hidden">
 <input type="file" id="filePhoto" accept="image/*" class="hidden">
-<input type="file" id="fileDoc" accept=".pdf,.txt,.md,.csv,.json,application/pdf,text/plain" class="hidden">
+<input type="file" id="fileDoc" accept="*/*" class="hidden">
 <script>
 // ================= DATA =================
 const SUBJECTS=[
@@ -169,7 +169,7 @@ const T={
   shareLesson:"Share lesson",exportAll:"Export saved lessons",importAll:"Import lessons",
   docTitle:"Make a file",docType:"File type",docWord:"Word",docPpt:"PowerPoint",docXls:"Excel",docPh:"Describe what you want… (e.g. a 6-slide presentation about volcanoes / a weekly study schedule table / a report on the French revolution)",docGo:"Create file",docUseLesson:"Use the current lesson as the topic",docReady:"Your file is ready",
   imgStyle:"Style",imgStyles:[["poster","Poster"],["realistic","Realistic"],["cartoon","Cartoon"],["diagram","Scientific drawing"],["art","Art"]],pick:"Choose",
-  docTheme:"Color theme",docImages:"Add images (slower)",docLang:"File language",docLangs:[["auto","Auto"],["ar","العربية"],["en","English"]],attCam:"Camera",attPhoto:"Photo",attFiles:"Files",attBad:"Unsupported file. Use PDF, text, CSV or an image.",docChatPh:"Tell me what to change… (e.g. add a slide about causes, make it shorter, change the title)",docChanged:"Updated",docImgDesc:"Image description (optional)",docImgDescPh:"e.g. a young man lowering his gaze in a busy street",stWriting:"Writing content…",stReview:"Reviewing content…",stImages:"Making images…",stBuild:"Building file…",
+  docTheme:"Color theme",docImages:"Add images (slower)",docLang:"File language",docLangs:[["auto","Auto"],["ar","العربية"],["en","English"]],attCam:"Camera",attPhoto:"Photo",attFiles:"Files",attBad:"Unsupported file type. Use images, PDF, Word, PowerPoint, Excel, text or audio.",attReading:"Reading file…",docChatPh:"Tell me what to change… (e.g. add a slide about causes, make it shorter, change the title)",docChanged:"Updated",docImgDesc:"Image description (optional)",docImgDescPh:"e.g. a young man lowering his gaze in a busy street",stWriting:"Writing content…",stReview:"Reviewing content…",stImages:"Making images…",stBuild:"Building file…",
  },
  ar:{appName:"رفيق الدروس",tagline:"اختر المادة، اكتب اسم الدرس، وتعلّم بطريقتك.",lessonLabel:"ما هو الدرس الذي أخذته؟",lessonPh:"مثال: قانون نيوتن الثاني، دورة الماء…",explain:"شرح",exam:"امتحان",styleLabel:"اشرحه…",
   styles:[["simple","ببساطة"],["steps","خطوة بخطوة"],["examples","مع أمثلة"],["kid","كأنني في العاشرة"],["summary","ملخّص قصير"]],
@@ -192,7 +192,7 @@ const T={
   shareLesson:"شارك الدرس",exportAll:"تصدير الدروس المحفوظة",importAll:"استيراد دروس",
   docTitle:"اصنع ملفاً",docType:"نوع الملف",docWord:"Word",docPpt:"PowerPoint",docXls:"Excel",docPh:"صف ما تريده… (مثال: عرض من ٦ شرائح عن البراكين / جدول مذاكرة أسبوعي / تقرير عن الثورة الفرنسية)",docGo:"أنشئ الملف",docUseLesson:"استخدم الدرس الحالي كموضوع",docReady:"ملفك جاهز",
   imgStyle:"الأسلوب",imgStyles:[["poster","ملصق"],["realistic","واقعي"],["cartoon","كرتون"],["diagram","رسم علمي"],["art","فني"]],pick:"اختر",
-  docTheme:"لون التصميم",docImages:"أضف صوراً (أبطأ)",docLang:"لغة الملف",docLangs:[["auto","تلقائي"],["ar","العربية"],["en","English"]],attCam:"الكاميرا",attPhoto:"صورة",attFiles:"ملفات",attBad:"نوع غير مدعوم. استخدم PDF أو نصاً أو CSV أو صورة.",docChatPh:"قل لي ماذا أغيّر… (مثال: أضف شريحة عن الأسباب، اختصره، غيّر العنوان)",docChanged:"تم التعديل",docImgDesc:"وصف الصور (اختياري)",docImgDescPh:"مثال: شاب يخفض بصره في شارع مزدحم",stWriting:"جارٍ كتابة المحتوى…",stReview:"جارٍ مراجعة المحتوى…",stImages:"جارٍ صنع الصور…",stBuild:"جارٍ بناء الملف…",
+  docTheme:"لون التصميم",docImages:"أضف صوراً (أبطأ)",docLang:"لغة الملف",docLangs:[["auto","تلقائي"],["ar","العربية"],["en","English"]],attCam:"الكاميرا",attPhoto:"صورة",attFiles:"ملفات",attBad:"نوع غير مدعوم. استخدم صورة أو PDF أو Word أو PowerPoint أو Excel أو نصاً أو تسجيلاً صوتياً.",attReading:"جارٍ قراءة الملف…",docChatPh:"قل لي ماذا أغيّر… (مثال: أضف شريحة عن الأسباب، اختصره، غيّر العنوان)",docChanged:"تم التعديل",docImgDesc:"وصف الصور (اختياري)",docImgDescPh:"مثال: شاب يخفض بصره في شارع مزدحم",stWriting:"جارٍ كتابة المحتوى…",stReview:"جارٍ مراجعة المحتوى…",stImages:"جارٍ صنع الصور…",stBuild:"جارٍ بناء الملف…",
  },
 };
 const THEMES={blue:{a:"1F3A8A",b:"0B1F4B",c:"3B82F6"},green:{a:"166534",b:"052E16",c:"22C55E"},purple:{a:"5B21B6",b:"2E1065",c:"A78BFA"},orange:{a:"C2410C",b:"431407",c:"FB923C"},gray:{a:"374151",b:"111827",c:"9CA3AF"}};
@@ -247,7 +247,7 @@ async function askAI(system,userText,history=[],imgOverride){
  const photo=imgOverride===undefined?ctxFiles():imgOverride;
  const contents=history.map(m=>({role:m.role==="assistant"?"model":"user",parts:[{text:m.content}]}));
  const parts=[{text:userText}];
- for(const ph of (Array.isArray(photo)?photo:(photo?[photo]:[]))){if(ph.text)parts.push({text:`\n[Attached file "${ph.name}"]:\n${ph.text.slice(0,20000)}`});else parts.push({inlineData:{mimeType:ph.mediaType,data:ph.data}});}
+ for(const ph of (Array.isArray(photo)?photo:(photo?[photo]:[]))){if(ph.text)parts.push({text:`\n[Attached file "${ph.name}"]:\n${ph.text.slice(0,20000)}`});else{if(ph.audio)parts.push({text:`[Attached audio recording "${ph.name}": listen to it and use its content.]`});parts.push({inlineData:{mimeType:ph.mediaType,data:ph.data}});}}
  contents.push({role:"user",parts});
  const avail=await listModels();
  if(!avail.length) throw new Error("no models available for this key");
@@ -482,15 +482,30 @@ async function planXlsx(){
 function planShare(){const pl=S.plan.out;if(!pl)return;const txt=(pl.title||"")+"\n"+(pl.days||[]).map(d=>`\n📅 ${d.date} ${d.label||""}\n`+(d.sessions||[]).map(se=>`  ${se.time} ${se.subject} — ${se.topic} (${se.minutes}m)`).join("\n")).join("");if(navigator.share)navigator.share({title:pl.title,text:txt}).catch(()=>{});else navigator.clipboard.writeText(txt);}
 
 // ================= ATTACHMENTS (+) =================
-function addAttach(file){
+const stripXml=x=>x.replace(/<\/(w:p|a:p|w:tr)>/g,"\n").replace(/<[^>]+>/g,"").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/\n{3,}/g,"\n\n").trim();
+async function addAttach(file){
  if(!file)return;
- const name=file.name||"file";const type=file.type||"";
- const isImg=type.startsWith("image/"),isPdf=type==="application/pdf"||/\.pdf$/i.test(name),isTxt=/^text\//.test(type)||/\.(txt|md|csv|json)$/i.test(name);
- if(!isImg&&!isPdf&&!isTxt){alert(t().attBad);return;}
- const r=new FileReader();
- if(isTxt){r.onload=()=>{S.attach.push({name,text:String(r.result)});render();};r.readAsText(file);return;}
- r.onload=()=>{S.attach.push({name,mediaType:isPdf?"application/pdf":(type||"image/jpeg"),data:r.result.split(",")[1],preview:isImg?r.result:null});render();};
- r.readAsDataURL(file);
+ const name=file.name||"file";const type=(file.type||"").toLowerCase();const ext=(name.split(".").pop()||"").toLowerCase();
+ const isImg=type.startsWith("image/")||/^(jpg|jpeg|png|webp|gif|heic)$/.test(ext);
+ const isPdf=type==="application/pdf"||ext==="pdf";
+ const isAudio=type.startsWith("audio/")||/^(mp3|m4a|wav|ogg|aac|flac|opus|amr|3gp)$/.test(ext);
+ const isTxt=/^text\//.test(type)||/^(txt|md|json|html|rtf)$/.test(ext);
+ const isDocx=ext==="docx",isPptx=ext==="pptx",isXls=/^(xlsx|xls|csv)$/.test(ext);
+ const readB64=()=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});
+ const readBuf=()=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsArrayBuffer(file);});
+ try{
+  if(isImg){const d=await readB64();S.attach.push({name,mediaType:type||"image/jpeg",data:d.split(",")[1],preview:d});}
+  else if(isPdf){const d=await readB64();S.attach.push({name,mediaType:"application/pdf",data:d.split(",")[1]});}
+  else if(isAudio){const d=await readB64();const mt={mp3:"audio/mp3",m4a:"audio/mp4",wav:"audio/wav",ogg:"audio/ogg",aac:"audio/aac",flac:"audio/flac",opus:"audio/opus",amr:"audio/amr","3gp":"audio/3gpp"}[ext]||type||"audio/mpeg";S.attach.push({name,mediaType:mt,data:d.split(",")[1],audio:true});}
+  else if(isTxt){S.attach.push({name,text:await file.text()});}
+  else if(isDocx||isPptx){await loadLibs();const zip=await JSZip.loadAsync(await readBuf());let txt="";
+   if(isDocx){txt=stripXml(await zip.file("word/document.xml").async("string"));}
+   else{const names=Object.keys(zip.files).filter(n=>/^ppt\/slides\/slide\d+\.xml$/.test(n)).sort((a,b)=>+a.match(/\d+/)[0]-+b.match(/\d+/)[0]);for(const n of names)txt+=`\n[Slide ${n.match(/\d+/)[0]}]\n`+stripXml(await zip.file(n).async("string"));}
+   S.attach.push({name,text:txt});}
+  else if(isXls){await loadLibs();const wb=XLSX.read(await readBuf(),{type:"array"});let txt="";wb.SheetNames.forEach(sn=>{txt+=`\n[Sheet ${sn}]\n`+XLSX.utils.sheet_to_csv(wb.Sheets[sn]);});S.attach.push({name,text:txt});}
+  else{alert(t().attBad);}
+ }catch(e){alert(t().attBad+" ("+e.message+")");}
+ render();
 }
 ["fileCam","filePhoto","fileDoc"].forEach(id=>document.getElementById(id).addEventListener("change",e=>{addAttach(e.target.files?.[0]);e.target.value="";S.plusOpen=false;}));
 function plusMenu(){return `<button class="mic" onclick="S.plusOpen=true;render()">＋</button>`;}
@@ -501,7 +516,7 @@ function plusOverlay(){const tr=t();if(!S.plusOpen)return"";return `<div onclick
   <button class="opt" style="margin:8px 0 0;padding:14px;font-size:16px" onclick="document.getElementById('fileDoc').click()">📁 ${tr.attFiles}</button>
   <button class="opt" style="margin:8px 0 0;text-align:center;color:#6b7280;border:none" onclick="S.plusOpen=false;render()">${tr.cancel}</button>
  </div></div>`;}
-function attachChips(){if(!S.attach.length)return"";return `<div class="chips">${S.attach.map((a,i)=>`<span class="chip" style="display:inline-flex;align-items:center;gap:6px">${a.preview?`<img src="${a.preview}" style="width:22px;height:22px;object-fit:cover;border-radius:4px">`:(a.text?"📄":"📎")} <span dir="ltr" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a.name)}</span><button style="background:none;border:none;color:#FFB4B4;cursor:pointer" onclick="S.attach.splice(${i},1);render()">✕</button></span>`).join("")}</div>`;}
+function attachChips(){if(!S.attach.length)return"";return `<div class="chips">${S.attach.map((a,i)=>`<span class="chip" style="display:inline-flex;align-items:center;gap:6px">${a.preview?`<img src="${a.preview}" style="width:22px;height:22px;object-fit:cover;border-radius:4px">`:(a.audio?"🎧":(a.text?"📄":"📎"))} <span dir="ltr" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a.name)}</span><button style="background:none;border:none;color:#FFB4B4;cursor:pointer" onclick="S.attach.splice(${i},1);render()">✕</button></span>`).join("")}</div>`;}
 
 // ================= FLASHCARDS =================
 function startFlash(){const ks=(S.explanation?.keyTerms||[]).filter(k=>k.term&&k.meaning);if(!ks.length)return;S.fc={cards:ks.map(k=>({f:k.term,b:k.meaning})),idx:0,flip:false,unknown:[],round:1,done:false};S.screen="flash";render();}
@@ -538,7 +553,7 @@ let LIBS_READY=null;
 function loadLibs(){
  if(window.docx&&window.PptxGenJS&&window.XLSX)return Promise.resolve();
  if(LIBS_READY)return LIBS_READY;
- LIBS_READY=new Promise((res,rej)=>{const sc=document.createElement("script");sc.src="libs.js?v=1";sc.onload=res;sc.onerror=()=>{LIBS_READY=null;rej(new Error("could not load libs.js — upload it to GitHub"));};document.head.appendChild(sc);});
+ LIBS_READY=new Promise((res,rej)=>{const sc=document.createElement("script");sc.src="libs.js?v=2";sc.onload=res;sc.onerror=()=>{LIBS_READY=null;rej(new Error("could not load libs.js — upload it to GitHub"));};document.head.appendChild(sc);});
  return LIBS_READY;
 }
 const xmlEsc=s=>String(s??"").replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
