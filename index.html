@@ -147,6 +147,17 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const langName=l=>l==="ar"?"Arabic":"English";
 
 // ================= GEMINI =================
+let MODEL_CACHE=null;
+async function listModels(){
+ if(MODEL_CACHE) return MODEL_CACHE;
+ const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(S.apiKey)}&pageSize=200`);
+ if(!res.ok){let m="";try{m=(await res.json()).error?.message||"";}catch(e){}throw new Error(`key check failed (HTTP ${res.status}): ${m}`);}
+ const data=await res.json();
+ const names=(data.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes("generateContent")).map(m=>m.name.replace(/^models\//,""));
+ const score=n=>(/flash/.test(n)?0:5)+(/lite/.test(n)?1:0)+(/preview|exp/.test(n)?2:0)+(/tts|image|audio|embedding|thinking/.test(n)?50:0)-(parseFloat((n.match(/(\d+\.?\d*)/)||[0,0])[1])||0);
+ names.sort((a,b)=>score(a)-score(b));
+ MODEL_CACHE=names;return names;
+}
 async function askAI(system,userText,history=[]){
  if(!S.apiKey) throw new Error("nokey");
  const contents=history.map(m=>({role:m.role==="assistant"?"model":"user",parts:[{text:m.content}]}));
@@ -154,8 +165,10 @@ async function askAI(system,userText,history=[]){
  if(S.photo) parts.push({inlineData:{mimeType:S.photo.mediaType,data:S.photo.data}});
  if(contents.length&&contents[0].role==="user"&&S.photo) contents[0].parts.push({inlineData:{mimeType:S.photo.mediaType,data:S.photo.data}});
  contents.push({role:"user",parts});
- const tryModels=[S.model,...MODELS.filter(m=>m!==S.model)];
- let lastErr="";
+ const avail=await listModels();
+ if(!avail.length) throw new Error("no models available for this key");
+ const tryModels=[...new Set([...(avail.includes(S.model)?[S.model]:[]),...avail])].slice(0,6);
+ const errs=[];
  for(const model of tryModels){
   const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(S.apiKey)}`;
   let res;
@@ -165,16 +178,15 @@ async function askAI(system,userText,history=[]){
   if(res.ok){
    const data=await res.json();
    const txt=(data.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("\n");
-   if(!txt) throw new Error("empty response: "+JSON.stringify(data).slice(0,200));
+   if(!txt){errs.push(`${model}: empty`);continue;}
    if(model!==S.model){S.model=model;localStorage.setItem("model",model);}
    return txt;
   }
   let msg="";try{const j=await res.json();msg=j.error?.message||JSON.stringify(j);}catch(e){msg=await res.text();}
-  lastErr=`HTTP ${res.status} (${model}): ${msg}`;
-  // 404 = model not available for this key -> try next model; other errors stop
-  if(res.status!==404&&res.status!==400) break;
+  errs.push(`${model}: HTTP ${res.status} ${msg.slice(0,120)}`);
+  if(res.status===403||res.status===401) break;
  }
- throw new Error(lastErr);
+ throw new Error(errs.join(" | "));
 }
 function parseJSON(text){const c=text.replace(/```json|```/g,"").trim();const a=c.indexOf("{"),b=c.lastIndexOf("}");try{return JSON.parse(c.slice(a,b+1));}catch(e){throw new Error("parse: "+c.slice(0,120));}}
 const photoNote=()=>S.photo?" The student attached a photo of the lesson from their book or notes: rely on its content first.":"";
@@ -343,9 +355,9 @@ function viewSettings(tr){
  return header(tr,tr.settings,"S.screen='home';render()")+`<div class="wrap stack">
  <div class="setbox stack">
   <div><p class="lbl">${tr.apiKey}</p><input class="inp" id="key" type="password" dir="ltr" value="${esc(S.apiKey)}" placeholder="${tr.apiKeyPh}"></div>
-  <div><p class="lbl">${tr.model}</p><div class="chips">${MODELS.map(m=>`<button class="chip ${S.model===m?"on":""}" onclick="S.model='${m}';localStorage.setItem('model','${m}');render()" dir="ltr">${m}</button>`).join("")}</div></div>
+  <div><p class="lbl">${tr.model}</p><div class="chips">${[...new Set([S.model,...(MODEL_CACHE||MODELS)])].slice(0,6).map(m=>`<button class="chip ${S.model===m?"on":""}" onclick="S.model='${m}';localStorage.setItem('model','${m}');render()" dir="ltr">${m}</button>`).join("")}</div></div>
   <div><p class="lbl">${tr.uiLang}</p><div class="chips"><button class="chip ${S.lang==="ar"?"on":""}" onclick="S.lang='ar';localStorage.setItem('lang','ar');render()">العربية</button><button class="chip ${S.lang==="en"?"on":""}" onclick="S.lang='en';localStorage.setItem('lang','en');render()">English</button></div></div>
-  <button class="btn" onclick="S.apiKey=document.getElementById('key').value.trim();localStorage.setItem('apiKey',S.apiKey);S.screen='home';render()">${tr.save}</button>
+  <button class="btn" onclick="S.apiKey=document.getElementById('key').value.trim();localStorage.setItem('apiKey',S.apiKey);MODEL_CACHE=null;S.screen='home';render()">${tr.save}</button>
  </div>
  <div class="setbox"><b>${tr.howKey}</b><ol>${tr.steps.map(s=>`<li>${s}</li>`).join("")}</ol><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey ↗</a></div></div>`;
 }
