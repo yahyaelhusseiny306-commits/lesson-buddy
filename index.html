@@ -112,6 +112,18 @@ a{color:#9DC1FF}.setbox a{color:var(--acc)}
 .bar{height:10px;border-radius:5px;background:rgba(255,255,255,.15);overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#F59E0B,#22C55E)}
 .gitem{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);padding:6px 0;border-top:1px solid rgba(255,255,255,.1)}
 .genimg{width:100%;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.35);background:#fff}
+.aitile{width:100%;border:none;border-radius:16px;padding:16px;margin-bottom:14px;color:#fff;text-align:start;cursor:pointer;background:linear-gradient(135deg,#7C3AED,#2563EB);box-shadow:0 10px 30px rgba(0,0,0,.3);display:flex;align-items:center;gap:14px}
+.aitile b{font-size:18px;display:block}.aitile small{opacity:.85}
+.cmsg{max-width:92%;border-radius:14px;padding:10px 14px;line-height:1.6;font-size:15px;white-space:normal}
+.cmsg.u{background:var(--acc);color:#fff;margin-inline-start:auto}
+.cmsg.a{background:#fff;color:var(--ink)}
+.cmsg p{margin:0 0 8px}.cmsg ul,.cmsg ol{margin:4px 0 8px;padding-inline-start:22px}.cmsg h1,.cmsg h2,.cmsg h3{margin:10px 0 6px;font-size:16px;color:var(--acc)}
+.cmsg pre{background:#0F1E3F;color:#EAF0FF;padding:10px;border-radius:10px;overflow:auto;font-size:13px;direction:ltr;text-align:left}.cmsg code{background:#EEF3FF;padding:1px 5px;border-radius:4px;font-size:13px;direction:ltr;unicode-bidi:embed}
+.cmsg table{border-collapse:collapse;width:100%;margin:6px 0}.cmsg td,.cmsg th{border:1px solid #d1d5db;padding:4px 8px;font-size:13px}
+.acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.acts button{background:#EEF3FF;border:1px solid #d6def5;border-radius:8px;padding:4px 8px;font-size:12px;cursor:pointer;color:var(--ink)}
+.srcs{font-size:12px;margin-top:6px;color:#4B5A7A}.srcs a{color:var(--acc);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.imggrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}.imggrid img{width:100%;border-radius:10px;background:#eee;aspect-ratio:1;object-fit:cover}
+.chatbar{position:sticky;bottom:0;background:rgba(11,31,75,.92);backdrop-filter:blur(8px);padding:10px 0 6px;margin-top:10px}
 .mic{flex:0 0 auto;width:44px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.1);color:#fff;border-radius:10px;cursor:pointer;font-size:18px}
 .mic.on{background:#DC2626;border-color:#DC2626;animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
@@ -163,6 +175,7 @@ const T={
   flash:"Review with flashcards",flashTap:"Tap the card to flip",known:"I knew it ✅",unknown:"Didn't know ❌",flashDone:"Done! You know all the terms.",again:"Start again",round:"Round",
   grades:"Grades log",gradesEmpty:"No grades yet. Take an exam and your score will appear here.",avg:"Average",
   tools:"Tools",imgTool:"Image maker",docTool:"File maker",imgTitle:"Make an image",imgPh:"Describe the image you want… (e.g. a poster about water pollution for a school project)",imgGo:"Generate image",imgRef:"📷 Add a reference photo (optional)",imgNote:"Uses Gemini when available, otherwise the free Pollinations service. Generation takes 10–30 seconds.",
+  aiTitle:"AI Chat",aiSub:"Ask anything · write · search · images · files",aiPh:"Ask anything…",aiNew:"New chat",aiChats:"Chats",aiSearch:"Web search",aiModes:[["ask","💬 Ask"],["image","🎨 Make image"],["web","🔎 Web images"]],aiSources:"Sources",aiCopy:"Copy",aiEmptyChat:"Start a new conversation.",aiCredit:"Free image libraries (Wikimedia / Openverse)",
   hwTool:"Homework Solver",hwTitle:"Solve homework from a photo",hwPhoto:"📷 Take a photo of the homework",hwText:"…or type / dictate the question",hwMode:"What do you want?",hwModes:[["full","Full solution"],["hint","Hint only"],["check","Check my answer"]],hwGo:"Solve",hwSteps:"Steps",hwAnswer:"Answer",hwNeed:"Add a photo or type the question first.",
   planTool:"Study Plan",planTitle:"Study plan",planSubjects:"Subjects to study",planDate:"Exam / deadline date",planHours:"Hours per day",planNotes:"Notes (weak topics, busy days…)",planGo:"Build my plan",planCal:"Add to calendar (with reminders)",planXls:"Export to Excel",planShare:"Share",planEmpty:"No plan yet.",planNew:"New plan",
   listen:"Listen",stop:"Stop",recordLesson:"🎙 Record the lesson",recording:"Recording… tap to stop",micUnsupported:"Voice input needs Chrome on Android/desktop.",transcript:"Lesson transcript",useTranscript:"Explain this transcript",summarize:"Summarize transcript",
@@ -186,6 +199,7 @@ const T={
   flash:"راجع بالبطاقات",flashTap:"اضغط البطاقة لتقلبها",known:"عرفتها ✅",unknown:"لم أعرفها ❌",flashDone:"أحسنت! حفظت كل المصطلحات.",again:"ابدأ من جديد",round:"جولة",
   grades:"سجل الدرجات",gradesEmpty:"لا درجات بعد. قدّم امتحاناً وستظهر نتيجتك هنا.",avg:"المعدل",
   tools:"أدوات",imgTool:"صانع الصور",docTool:"صانع الملفات",imgTitle:"اصنع صورة",imgPh:"صف الصورة التي تريدها… (مثال: ملصق عن تلوث المياه لمشروع مدرسي)",imgGo:"أنشئ الصورة",imgRef:"📷 أضف صورة مرجعية (اختياري)",imgNote:"يستخدم Gemini إن كان متاحاً، وإلا فخدمة Pollinations المجانية. يستغرق الإنشاء ١٠–٣٠ ثانية.",
+  aiTitle:"AI Chat",aiSub:"اسأل أي شيء · اكتب · ابحث · صور · ملفات",aiPh:"اسأل أي شيء…",aiNew:"محادثة جديدة",aiChats:"المحادثات",aiSearch:"بحث الإنترنت",aiModes:[["ask","💬 اسأل"],["image","🎨 اصنع صورة"],["web","🔎 صور من الإنترنت"]],aiSources:"المصادر",aiCopy:"نسخ",aiEmptyChat:"ابدأ محادثة جديدة.",aiCredit:"مكتبات صور مجانية (Wikimedia / Openverse)",
   hwTool:"حلّ الواجب",hwTitle:"حلّ الواجب من صورة",hwPhoto:"📷 صوّر الواجب",hwText:"…أو اكتب / أملِ السؤال",hwMode:"ماذا تريد؟",hwModes:[["full","حل كامل"],["hint","تلميح فقط"],["check","تحقّق من حلّي"]],hwGo:"حُلّ",hwSteps:"الخطوات",hwAnswer:"الجواب",hwNeed:"أضف صورة أو اكتب السؤال أولاً.",
   planTool:"خطة مذاكرة",planTitle:"خطة المذاكرة",planSubjects:"المواد التي ستذاكرها",planDate:"تاريخ الامتحان / الموعد",planHours:"ساعات المذاكرة يومياً",planNotes:"ملاحظات (مواضيع ضعيفة، أيام مشغولة…)",planGo:"اصنع خطتي",planCal:"أضف إلى التقويم (مع تنبيهات)",planXls:"تصدير إلى Excel",planShare:"مشاركة",planEmpty:"لا خطة بعد.",planNew:"خطة جديدة",
   listen:"استمع",stop:"إيقاف",recordLesson:"🎙 سجّل الحصة",recording:"جارٍ التسجيل… اضغط للإيقاف",micUnsupported:"الإدخال الصوتي يحتاج متصفح Chrome على Android أو الحاسوب.",transcript:"نص الحصة",useTranscript:"اشرح هذا النص",summarize:"لخّص النص",
@@ -216,6 +230,7 @@ const S={
  img:{prompt:"",ref:null,out:null,outs:[],busy:false,err:"",style:"poster"},
  doc:{type:"word",prompt:"",useLesson:false,busy:false,err:"",url:null,name:"",blob:null,theme:"blue",images:true,status:"",lang:"auto",imgDesc:"",json:null,imgs:{},chat:[],docLang:"en"},
  attach:[],plusOpen:false,
+ ai:{chats:LS("aichats",[]),cur:null,busy:false,err:"",search:true,mode:"ask",input:""},
  curSession:null,
  hw:{photo:null,text:"",mode:"full",busy:false,err:"",out:null,history:LS("hw",[])},
  plan:{subjects:[],examDate:"",hours:2,notes:"",busy:false,err:"",out:LS("plan",null),done:LS("planDone",{})},
@@ -480,6 +495,101 @@ async function planXlsx(){
  shareBlob(blob,"study-plan.xlsx");
 }
 function planShare(){const pl=S.plan.out;if(!pl)return;const txt=(pl.title||"")+"\n"+(pl.days||[]).map(d=>`\n📅 ${d.date} ${d.label||""}\n`+(d.sessions||[]).map(se=>`  ${se.time} ${se.subject} — ${se.topic} (${se.minutes}m)`).join("\n")).join("");if(navigator.share)navigator.share({title:pl.title,text:txt}).catch(()=>{});else navigator.clipboard.writeText(txt);}
+
+// ================= AI CHAT =================
+function mdToHtml(md){
+ let h=esc(md||"");
+ h=h.replace(/```(\w*)\n([\s\S]*?)```/g,(m,l,c)=>`<pre><code>${c}</code></pre>`);
+ h=h.replace(/`([^`\n]+)`/g,"<code>$1</code>");
+ h=h.replace(/^### (.*)$/gm,"<h3>$1</h3>").replace(/^## (.*)$/gm,"<h2>$1</h2>").replace(/^# (.*)$/gm,"<h1>$1</h1>");
+ h=h.replace(/\*\*([^*\n]+)\*\*/g,"<b>$1</b>");
+ h=h.replace(/((?:^\|.*\|\s*$\n?)+)/gm,tb=>{const rows=tb.trim().split("\n").filter(r=>!/^\|\s*:?-+/.test(r));return "<table>"+rows.map((r,i)=>"<tr>"+r.replace(/^\||\|$/g,"").split("|").map(c=>i===0?`<th>${c.trim()}</th>`:`<td>${c.trim()}</td>`).join("")+"</tr>").join("")+"</table>";});
+ h=h.replace(/((?:^[-*] .*\n?)+)/gm,l=>"<ul>"+l.trim().split("\n").map(x=>`<li>${x.replace(/^[-*] /,"")}</li>`).join("")+"</ul>");
+ h=h.replace(/((?:^\d+[.)] .*\n?)+)/gm,l=>"<ol>"+l.trim().split("\n").map(x=>`<li>${x.replace(/^\d+[.)] /,"")}</li>`).join("")+"</ol>");
+ h=h.replace(/\n{2,}/g,"</p><p>").replace(/\n/g,"<br>");
+ return "<p>"+h+"</p>";
+}
+function curChat(){let c=S.ai.chats.find(x=>x.id===S.ai.cur);if(!c){c={id:uid(),ts:Date.now(),title:"",msgs:[]};S.ai.chats.unshift(c);S.ai.cur=c.id;}return c;}
+function saveChats(){S.ai.chats=S.ai.chats.filter(c=>c.msgs.length).slice(0,50);SV("aichats",S.ai.chats.map(c=>({...c,msgs:c.msgs.map(m=>({role:m.role,content:m.content,sources:m.sources,webimgs:m.webimgs,attNames:m.attNames,imgs:m.imgs?m.imgs.slice(0,1):undefined}))})));}
+async function askChat(chat,userText,attach){
+ if(!S.apiKey) throw new Error("nokey");
+ const hist=chat.msgs.slice(0,-1).slice(-12).map(m=>({role:m.role==="assistant"?"model":"user",parts:[{text:(m.content||"").slice(0,6000)||"…"}]}));
+ const parts=[{text:userText}];
+ for(const ph of attach){if(ph.text)parts.push({text:`\n[Attached file "${ph.name}"]:\n${ph.text.slice(0,20000)}`});else{if(ph.audio)parts.push({text:`[Attached audio "${ph.name}"]`});parts.push({inlineData:{mimeType:ph.mediaType,data:ph.data}});}}
+ const contents=[...hist,{role:"user",parts}];
+ const system=`You are a brilliant, precise, up-to-date assistant inside a student's app. Answer in the user's language (detect it: Arabic, English or any other). Be accurate; if unsure say so. Use Markdown (headings, lists, tables, code) when helpful; keep answers well-structured and not longer than needed. Today is ${new Date().toISOString().slice(0,10)}.`;
+ const avail=await listModels();
+ const tryModels=[...new Set([...(S.feat.fast?avail.filter(n=>/lite/.test(n)):[]),...(avail.includes(S.model)?[S.model]:[]),...avail])].slice(0,5);
+ const errs=[];
+ for(const model of tryModels){
+  for(const useTools of (S.ai.search?[true,false]:[false])){
+   const body={systemInstruction:{parts:[{text:system}]},contents,generationConfig:{temperature:0.6,maxOutputTokens:8000}};
+   if(useTools)body.tools=[{google_search:{}}];else body.generationConfig.thinkingConfig={thinkingBudget:0};
+   let res;try{res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(S.apiKey)}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});}catch(e){errs.push(`${model}: ${e.message}`);continue;}
+   if(res.ok){const d=await res.json();const c=d.candidates?.[0];const txt=(c?.content?.parts||[]).map(p=>p.text||"").join("");if(!txt){errs.push(`${model}: empty`);continue;}
+    const src=(c?.groundingMetadata?.groundingChunks||[]).map(g=>g.web).filter(Boolean).slice(0,6);
+    if(model!==S.model&&!S.feat.fast){S.model=model;localStorage.setItem("model",model);}
+    return {text:txt,sources:src};}
+   let msg="";try{msg=(await res.json()).error?.message||"";}catch(e){}errs.push(`${model}${useTools?"+search":""}: HTTP ${res.status} ${msg.slice(0,100)}`);
+   if(res.status===429||res.status===503){await new Promise(r=>setTimeout(r,1200));break;}
+  }
+ }
+ throw new Error(errs.join(" | "));
+}
+async function webImages(q){
+ const out=[];
+ try{const r=await fetch(`https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(q)}&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url&iiurlwidth=480&format=json&origin=*`);const j=await r.json();Object.values(j.query?.pages||{}).forEach(pg=>{const ii=pg.imageinfo?.[0];if(ii&&/\.(jpe?g|png|webp|gif|svg)$/i.test(ii.url||""))out.push({thumb:ii.thumburl||ii.url,url:ii.url,title:pg.title.replace(/^File:/,""),page:ii.descriptionurl,src:"Wikimedia"});});}catch(e){}
+ try{const r=await fetch(`https://api.openverse.org/v1/images/?q=${encodeURIComponent(q)}&page_size=8`);const j=await r.json();(j.results||[]).forEach(x=>out.push({thumb:x.thumbnail||x.url,url:x.url,title:x.title||"",page:x.foreign_landing_url,src:x.source||"Openverse"}));}catch(e){}
+ return out.slice(0,12);
+}
+async function sendChat(){
+ const txt=(S.ai.input||"").trim();if(!txt&&!S.attach.length)return;
+ const chat=curChat();const att=S.attach.slice();S.attach=[];S.ai.input="";
+ chat.msgs.push({role:"user",content:txt||"📎",attNames:att.map(a=>a.name)});
+ if(!chat.title)chat.title=txt.slice(0,40)||"…";
+ S.ai.busy=true;S.ai.err="";render();scrollChat();
+ try{
+  if(S.ai.mode==="image"){
+   const outs=await genImage(txt,att.find(a=>a.preview)||null);
+   chat.msgs.push({role:"assistant",content:outs[0]&&outs[0].promptEn?outs[0].promptEn:txt,imgs:outs.map(o=>`data:${o.mediaType};base64,${o.data}`)});
+  }else if(S.ai.mode==="web"){
+   let q=txt;if(/[\u0600-\u06FF]/.test(txt)){try{q=(await askAI("Translate this image-search query to 2-5 English keywords. Output only the keywords.",txt,[],null)).trim();}catch(e){}}
+   const imgs=await webImages(q);
+   chat.msgs.push({role:"assistant",content:imgs.length?`🔎 ${q}`:(S.lang==="ar"?"لم أجد صوراً.":"No images found."),webimgs:imgs});
+  }else{
+   const r=await askChat(chat,txt||"Describe / use the attached file.",att);
+   chat.msgs.push({role:"assistant",content:r.text,sources:r.sources});
+  }
+  saveChats();
+ }catch(e){S.ai.err=(e.message==="nokey"?t().noKey:(friendly(e.message)||e.message));}
+ S.ai.busy=false;render();scrollChat();
+}
+function scrollChat(){setTimeout(()=>{const el=document.getElementById("chatEnd");if(el)el.scrollIntoView({behavior:"smooth",block:"end"});},60);}
+function chatToFile(i,type){const m=curChat().msgs[i];if(!m)return;S.attach=[];S.doc.type=type;S.doc.useLesson=false;S.doc.prompt=(S.lang==="ar"?"حوّل هذا المحتوى إلى ملف منظم كاملاً دون حذف معلومات:\n\n":"Turn this content into a complete well-structured file without dropping information:\n\n")+m.content.slice(0,9000);S.doc.lang="auto";S.screen="doc";render();doDoc();}
+function chatToPdf(i){const c=curChat(),m=c.msgs[i];if(!m)return;const rtl=/[\u0600-\u06FF]/.test(m.content);const d=makeDoc(rtl);d.text(c.title||"",{size:40,bold:true,color:"#1F3A8A",gap:10});d.rule("#3B82F6");
+ for(const ln of m.content.replace(/```/g,"").split("\n")){const h=ln.match(/^#+\s*(.*)/);if(h)d.text(h[1].replace(/\*\*/g,""),{size:32,bold:true,color:"#1F3A8A",gap:6});else if(ln.trim())d.text(ln.replace(/\*\*/g,"").replace(/^[-*] /,"• ").replace(/\|/g," "),{size:28,gap:4});}
+ shareBlob(canvasesToPdf(d.pages()),(c.title||"chat").slice(0,30)+".pdf");}
+function chatCopy(i){const m=curChat().msgs[i];if(navigator.clipboard)navigator.clipboard.writeText(m.content).catch(()=>{});}
+function chatShare(i){const m=curChat().msgs[i];if(navigator.share)navigator.share({text:m.content}).catch(()=>{});else chatCopy(i);}
+function delChat(id){S.ai.chats=S.ai.chats.filter(c=>c.id!==id);if(S.ai.cur===id)S.ai.cur=null;saveChats();render();}
+function viewAI(tr){
+ const chat=S.ai.chats.find(x=>x.id===S.ai.cur);
+ const msgs=chat?chat.msgs:[];
+ const modeBar=`<div class="chips" style="margin-bottom:8px">${tr.aiModes.map(([id,l])=>`<button class="chip ${S.ai.mode===id?"on":""}" onclick="S.ai.mode='${id}';render()">${l}</button>`).join("")}<button class="chip ${S.ai.search?"on":""}" style="${S.ai.search?"background:#16A34A;border-color:#16A34A":""}" onclick="S.ai.search=!S.ai.search;render()">🌐 ${tr.aiSearch}</button></div>`;
+ const acts=(m,i)=>m.role==="assistant"&&!m.imgs&&!m.webimgs?`<div class="acts"><button onclick="chatToPdf(${i})">📄 PDF</button><button onclick="chatToFile(${i},'word')">📝 Word</button><button onclick="chatToFile(${i},'ppt')">📊 PowerPoint</button><button onclick="chatToFile(${i},'xls')">📈 Excel</button><button onclick="speak(curChat().msgs[${i}].content.replace(/[*#\`|]/g,''),/[\\u0600-\\u06FF]/.test(curChat().msgs[${i}].content)?'ar':'en')">${S.speaking?"⏹":"🔊"}</button><button onclick="chatCopy(${i})">📋 ${tr.aiCopy}</button><button onclick="chatShare(${i})">📤</button></div>`:"";
+ const srcs=m=>m.sources&&m.sources.length?`<div class="srcs"><b>${tr.aiSources}:</b>${m.sources.map(w=>`<a href="${esc(w.uri)}" target="_blank" rel="noopener">${esc(w.title||w.uri)}</a>`).join("")}</div>`:"";
+ const imgs=m=>m.imgs?`<div class="imggrid">${m.imgs.map(u=>`<a href="${u}" download="image.png"><img src="${u}" alt=""></a>`).join("")}</div>`:"";
+ const web=m=>m.webimgs?(m.webimgs.length?`<div class="imggrid">${m.webimgs.map(w=>`<a href="${esc(w.page||w.url)}" target="_blank" rel="noopener" title="${esc(w.title)}"><img src="${esc(w.thumb)}" alt="" loading="lazy"></a>`).join("")}</div><p class="hint" style="color:#6B7A99">${tr.aiCredit}</p>`:""):"";
+ const list=S.ai.chats.filter(c=>c.msgs.length).length?`<details style="margin-bottom:10px"><summary style="cursor:pointer;color:var(--muted);font-size:13px">🗂 ${tr.aiChats} (${S.ai.chats.filter(c=>c.msgs.length).length})</summary>${S.ai.chats.filter(c=>c.msgs.length).map(c=>`<div class="hitem" style="padding:8px 10px" onclick="S.ai.cur='${c.id}';render();scrollChat()"><div class="t" style="font-size:14px">${esc(c.title||"…")}</div><button class="del" onclick="event.stopPropagation();delChat('${c.id}')">🗑</button></div>`).join("")}</details>`:"";
+ return header(tr,"✨ "+tr.aiTitle,"S.screen='home';render()")+`<div class="wrap" style="padding-bottom:0">
+ <div class="row" style="margin-bottom:8px"><button class="btn g" onclick="S.ai.cur=null;S.attach=[];render()">＋ ${tr.aiNew}</button></div>
+ ${list}
+ <div class="chat" dir="auto" style="min-height:40vh">${msgs.length?msgs.map((m,i)=>`<div class="cmsg ${m.role==="user"?"u":"a"}" dir="auto">${m.role==="user"?esc(m.content)+(m.attNames&&m.attNames.length?`<div style="font-size:12px;opacity:.8">📎 ${esc(m.attNames.join(", "))}</div>`:""):mdToHtml(m.content)}${imgs(m)}${web(m)}${srcs(m)}${acts(m,i)}</div>`).join(""):`<p style="color:var(--muted)">${tr.aiEmptyChat}</p>`}
+ ${S.ai.busy?spinner(tr.thinking):""}${S.ai.err?`<p class="err">${esc(S.ai.err)}</p>`:""}<div id="chatEnd"></div></div>
+ <div class="chatbar">${modeBar}${attachChips()}
+ <div style="display:flex;gap:8px;direction:ltr;align-items:flex-end">${plusMenu()}<textarea class="inp" id="aiIn" rows="1" placeholder="${tr.aiPh}" style="flex:1;direction:${S.lang==="ar"?"rtl":"ltr"};min-height:44px;max-height:140px" oninput="S.ai.input=this.value;this.style.height='auto';this.style.height=Math.min(140,this.scrollHeight)+'px'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}">${esc(S.ai.input)}</textarea>${micBtn("aiIn")}<button class="btn" style="flex:0 0 auto;width:52px;box-shadow:none" onclick="sendChat()" ${S.ai.busy?"disabled":""}>➤</button></div></div>
+ </div>`;
+}
 
 // ================= ATTACHMENTS (+) =================
 const stripXml=x=>x.replace(/<\/(w:p|a:p|w:tr)>/g,"\n").replace(/<[^>]+>/g,"").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/\n{3,}/g,"\n\n").trim();
@@ -792,7 +902,7 @@ async function runDiag(){
 const app=document.getElementById("app");
 function render(){
  const tr=t();document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";
- const views={settings:viewSettings,history:viewHistory,flash:viewFlash,grades:viewGrades,img:viewImg,doc:viewDoc,hw:viewHw,plan:viewPlan,transcript:viewTranscript};
+ const views={settings:viewSettings,history:viewHistory,flash:viewFlash,grades:viewGrades,img:viewImg,doc:viewDoc,hw:viewHw,plan:viewPlan,transcript:viewTranscript,ai:viewAI};
  if(S.printTarget)app.innerHTML=viewPdf(tr);
  else if(views[S.screen])app.innerHTML=views[S.screen](tr);
  else if(!S.subject)app.innerHTML=viewHome(tr);
@@ -810,6 +920,7 @@ function spinner(l){return `<div class="spin"><i></i>${l}</div>`;}
 function viewHome(tr){
  return header(tr,tr.appName)+`<div class="wrap">
  ${!S.apiKey?`<p class="err" style="margin-bottom:12px">${tr.noKey} <a href="#" onclick="S.screen='settings';render();return false">${tr.settings} ←</a></p>`:""}
+ <button class="aitile" onclick="S.attach=[];S.screen='ai';render()"><span style="font-size:34px">✨</span><span><b>${tr.aiTitle}</b><small>${tr.aiSub}</small></span></button>
  <p style="color:var(--muted);margin:4px 0 16px">${tr.tagline}</p>
  <div class="grid">${SUBJECTS.map(s=>`<button class="tile" style="background:linear-gradient(145deg,${s.color},${s.color}CC)" onclick="pickSubject(SUBJECTS.find(x=>x.id==='${s.id}'))"><b>${s[S.lang]}</b><small>${S.lang==="en"?s.ar:s.en}</small></button>`).join("")}</div>
  <p class="lbl" style="margin-top:20px">Tools</p>
