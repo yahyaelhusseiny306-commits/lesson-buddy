@@ -398,65 +398,49 @@ async function polliB64(promptEn,w=1024,h=1024,seed=null){
 function b64ToBlob(b64,type){const bin=atob(b64);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new Blob([u],{type});}
 
 // ================= DOCUMENT TOOL =================
-const LIBS={
- jszip:["https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js","https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"],
- pptx:["https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js","https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"],
- xlsx:["https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js","https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"],
-};
-function loadLib(name){
- return new Promise((res,rej)=>{
-  const urls=LIBS[name];let i=0;
-  const tryNext=()=>{if(i>=urls.length)return rej(new Error("could not load "+name));const s=document.createElement("script");s.src=urls[i++];s.onload=res;s.onerror=()=>{s.remove();tryNext();};document.head.appendChild(s);};
-  tryNext();
- });
+let LIBS_READY=null;
+function loadLibs(){
+ if(window.docx&&window.PptxGenJS&&window.XLSX)return Promise.resolve();
+ if(LIBS_READY)return LIBS_READY;
+ LIBS_READY=new Promise((res,rej)=>{const sc=document.createElement("script");sc.src="libs.js?v=1";sc.onload=res;sc.onerror=()=>{LIBS_READY=null;rej(new Error("could not load libs.js — upload it to GitHub"));};document.head.appendChild(sc);});
+ return LIBS_READY;
 }
 const xmlEsc=s=>String(s??"").replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
-function docxImageXml(rId,id,cx,cy){
- return `<w:p><w:pPr><w:spacing w:after="200"/><w:jc w:val="center"/></w:pPr><w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"><wp:extent cx="${cx}" cy="${cy}"/><wp:effectExtent l="0" t="0" r="0" b="0"/><wp:docPr id="${id}" name="Picture ${id}"/><wp:cNvGraphicFramePr/><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="${id}" name="img${id}.jpg"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${rId}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>`;
-}
 async function buildDocx(doc,rtl,th,images){
- await loadLib("jszip");
- const P=(txt,{size=24,bold=false,color="000000",align=null,spacing=120,shade=null}={})=>`<w:p><w:pPr>${shade?`<w:shd w:val="clear" w:color="auto" w:fill="${shade}"/>`:''}${rtl?'<w:bidi/>':''}<w:spacing w:after="${spacing}"/>${align?`<w:jc w:val="${align}"/>`:''}</w:pPr><w:r><w:rPr>${bold?'<w:b/><w:bCs/>':''}<w:color w:val="${color}"/><w:sz w:val="${size}"/><w:szCs w:val="${size}"/>${rtl?'<w:rtl/>':''}</w:rPr><w:t xml:space="preserve">${xmlEsc(txt)}</w:t></w:r></w:p>`;
- const BR=`<w:p><w:r><w:br w:type="page"/></w:r></w:p>`;
- const cell=(txt,hdr)=>`<w:tc><w:tcPr><w:tcW w:w="0" w:type="auto"/>${hdr?`<w:shd w:val="clear" w:color="auto" w:fill="${th.a}"/>`:''}</w:tcPr>${P(txt,{size:22,bold:hdr,color:hdr?"FFFFFF":"000000",spacing:40})}</w:tc>`;
- const table=(tb)=>{const b='<w:top w:val="single" w:sz="6" w:color="BBBBBB"/><w:left w:val="single" w:sz="6" w:color="BBBBBB"/><w:bottom w:val="single" w:sz="6" w:color="BBBBBB"/><w:right w:val="single" w:sz="6" w:color="BBBBBB"/><w:insideH w:val="single" w:sz="6" w:color="BBBBBB"/><w:insideV w:val="single" w:sz="6" w:color="BBBBBB"/>';
-  const nc=(tb.headers||[]).length||1;const gw=Math.floor(9500/nc);
-  return `<w:tbl><w:tblPr>${rtl?'<w:bidiVisual/>':''}<w:tblW w:w="5000" w:type="pct"/><w:tblBorders>${b}</w:tblBorders></w:tblPr><w:tblGrid>${Array.from({length:nc}).map(()=>`<w:gridCol w:w="${gw}"/>`).join("")}</w:tblGrid><w:tr>${(tb.headers||[]).map(h=>cell(h,true)).join("")}</w:tr>${(tb.rows||[]).map(r=>`<w:tr>${Array.from({length:nc}).map((_,i)=>cell((r||[])[i]??"",false)).join("")}</w:tr>`).join("")}</w:tbl>${P("",{spacing:120})}`;};
- const media=[];let rels="";
- const addImg=(b64)=>{const n=media.length+1;media.push({name:`image${n}.jpg`,b64});rels+=`<Relationship Id="rIdImg${n}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/image${n}.jpg"/>`;return `rIdImg${n}`;};
- let body="";
- // cover
- body+=P("",{spacing:2400});
- body+=P(doc.title||"",{size:60,bold:true,color:th.a,align:"center",spacing:240});
- if(doc.subtitle)body+=P(doc.subtitle,{size:28,color:"555555",align:"center",spacing:400});
- if(images&&doc.coverImage){const rid=addImg(doc.coverImage);body+=docxImageXml(rid,1,5486400,3086100);}
- body+=P(new Date().toLocaleDateString(rtl?"ar":"en"),{size:22,color:"777777",align:"center",spacing:0});
- body+=BR;
- // contents
+ await loadLibs();
+ const D=window.docx;
+ const al=a=>a==="center"?D.AlignmentType.CENTER:(rtl?D.AlignmentType.RIGHT:D.AlignmentType.LEFT);
+ const run=(text,o={})=>new D.TextRun({text:String(text??""),bold:!!o.bold,italics:!!o.italic,color:o.color||"000000",size:o.size||24,font:"Arial",rightToLeft:rtl});
+ const para=(text,o={})=>new D.Paragraph({children:[run(text,o)],alignment:al(o.align),bidirectional:rtl,spacing:{after:o.after??160,before:o.before??0},heading:o.heading});
+ const bullet=text=>new D.Paragraph({children:[run(text)],bullet:{level:0},bidirectional:rtl,spacing:{after:80}});
+ const img=(b64,w,h)=>{try{const bin=atob(b64);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new D.Paragraph({children:[new D.ImageRun({type:"jpg",data:u,transformation:{width:w,height:h}})],alignment:D.AlignmentType.CENTER,spacing:{after:200}});}catch(e){return null;}};
+ const table=tb=>{const hs=tb.headers||[];const nc=hs.length||1;
+  const cell=(txt,hdr)=>new D.TableCell({children:[new D.Paragraph({children:[run(txt,{bold:hdr,color:hdr?"FFFFFF":"000000",size:22})],alignment:al(),bidirectional:rtl})],shading:hdr?{fill:th.a,type:D.ShadingType.CLEAR,color:"auto"}:undefined,width:{size:Math.floor(100/nc),type:D.WidthType.PERCENTAGE}});
+  return new D.Table({width:{size:100,type:D.WidthType.PERCENTAGE},visuallyRightToLeft:rtl,rows:[new D.TableRow({tableHeader:true,children:hs.map(h=>cell(h,true))}),...(tb.rows||[]).map(r=>new D.TableRow({children:Array.from({length:nc}).map((_,i)=>cell((r||[])[i]??"",false))}))]});};
+ const kids=[];
+ kids.push(para("",{after:2400}));
+ kids.push(para(doc.title||"",{size:60,bold:true,color:th.a,align:"center",after:240}));
+ if(doc.subtitle)kids.push(para(doc.subtitle,{size:28,color:"555555",align:"center",after:400}));
+ if(images&&doc.coverImage){const x=img(doc.coverImage,480,300);if(x)kids.push(x);}
+ kids.push(para(new Date().toLocaleDateString(rtl?"ar":"en"),{size:22,color:"777777",align:"center"}));
+ kids.push(new D.Paragraph({children:[new D.PageBreak()]}));
  const secs=doc.sections||[];
- body+=P(rtl?"المحتويات":"Contents",{size:34,bold:true,color:th.a,spacing:160});
- secs.forEach((x,i)=>{if(x.heading)body+=P(`${i+1}. ${x.heading}`,{size:24,spacing:60});});
- body+=BR;
- // sections
+ kids.push(para(rtl?"المحتويات":"Contents",{size:34,bold:true,color:th.a,after:200}));
+ secs.forEach((x,i)=>{if(x.heading)kids.push(para(`${i+1}. ${x.heading}`,{size:24,after:80}));});
+ kids.push(new D.Paragraph({children:[new D.PageBreak()]}));
  secs.forEach((x,i)=>{
-  if(x.heading)body+=P(`${i+1}. ${x.heading}`,{size:32,bold:true,color:th.a,spacing:100});
-  for(const para of String(x.text||"").split("\n").filter(Boolean))body+=P(para,{size:24,spacing:140});
-  for(const b of x.bullets||[])body+=P("• "+b,{size:24,spacing:60});
-  if(x.table&&x.table.headers)body+=table(x.table);
-  if(images&&x.image){const rid=addImg(x.image);body+=docxImageXml(rid,10+i,4572000,2571750);}
+  if(x.heading)kids.push(para(`${i+1}. ${x.heading}`,{size:32,bold:true,color:th.a,before:200,after:120}));
+  for(const pg of String(x.text||"").split("\n").filter(Boolean))kids.push(para(pg,{after:160}));
+  for(const b of x.bullets||[])kids.push(bullet(b));
+  if(x.table&&x.table.headers&&x.table.headers.length){kids.push(table(x.table));kids.push(para("",{after:120}));}
+  if(images&&x.image){const y=img(x.image,400,260);if(y)kids.push(y);}
  });
- if(doc.conclusion){body+=P(rtl?"الخاتمة":"Conclusion",{size:32,bold:true,color:th.a,spacing:100});body+=P(doc.conclusion,{size:24});}
- const docXml=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1200" w:right="1200" w:bottom="1200" w:left="1200"/>${rtl?'<w:bidi/>':''}</w:sectPr></w:body></w:document>`;
- const zip=new JSZip();
- zip.file("[Content_Types].xml",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="jpg" ContentType="image/jpeg"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>`);
- zip.file("_rels/.rels",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`);
- zip.file("word/_rels/document.xml.rels",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${rels}</Relationships>`);
- zip.file("word/document.xml",docXml);
- media.forEach(m=>zip.file("word/media/"+m.name,m.b64,{base64:true}));
- return zip.generateAsync({type:"blob",mimeType:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+ if(doc.conclusion){kids.push(para(rtl?"الخاتمة":"Conclusion",{size:32,bold:true,color:th.a,before:200,after:120}));kids.push(para(doc.conclusion));}
+ const d=new D.Document({sections:[{properties:{page:{margin:{top:1100,right:1100,bottom:1100,left:1100}}},children:kids}]});
+ return D.Packer.toBlob(d);
 }
 async function buildPptx(doc,rtl,th,images){
- await loadLib("pptx");
+ await loadLibs();
  const pptx=new PptxGenJS();pptx.layout="LAYOUT_16x9";
  const align=rtl?"right":"left";
  let s0=pptx.addSlide();s0.background={color:th.b};
@@ -482,7 +466,7 @@ async function buildPptx(doc,rtl,th,images){
  return pptx.write("blob");
 }
 async function buildXlsx(doc){
- await loadLib("xlsx");
+ await loadLibs();
  const wb=XLSX.utils.book_new();
  for(const sh of doc.sheets||[]){
   const headers=sh.headers||[],rows=sh.rows||[];
