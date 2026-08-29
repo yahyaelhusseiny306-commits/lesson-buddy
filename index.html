@@ -493,10 +493,14 @@ function addAttach(file){
  r.readAsDataURL(file);
 }
 ["fileCam","filePhoto","fileDoc"].forEach(id=>document.getElementById(id).addEventListener("change",e=>{addAttach(e.target.files?.[0]);e.target.value="";S.plusOpen=false;}));
-function plusMenu(){const tr=t();return `<div style="position:relative;flex:0 0 auto"><button class="mic" onclick="S.plusOpen=!S.plusOpen;render()">＋</button>${S.plusOpen?`<div style="position:absolute;bottom:48px;inset-inline-end:0;background:#fff;color:var(--ink);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.35);padding:6px;min-width:150px;z-index:20">
- <button class="opt" style="margin:0" onclick="document.getElementById('fileCam').click()">📷 ${tr.attCam}</button>
- <button class="opt" style="margin:4px 0 0" onclick="document.getElementById('filePhoto').click()">🖼 ${tr.attPhoto}</button>
- <button class="opt" style="margin:4px 0 0" onclick="document.getElementById('fileDoc').click()">📁 ${tr.attFiles}</button></div>`:""}</div>`;}
+function plusMenu(){return `<button class="mic" onclick="S.plusOpen=true;render()">＋</button>`;}
+function plusOverlay(){const tr=t();if(!S.plusOpen)return"";return `<div onclick="S.plusOpen=false;render()" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50;display:flex;align-items:center;justify-content:center;padding:20px">
+ <div onclick="event.stopPropagation()" style="background:#fff;color:var(--ink);border-radius:18px;padding:14px;width:100%;max-width:320px;box-shadow:0 20px 60px rgba(0,0,0,.5)">
+  <button class="opt" style="margin:0;padding:14px;font-size:16px" onclick="document.getElementById('fileCam').click()">📷 ${tr.attCam}</button>
+  <button class="opt" style="margin:8px 0 0;padding:14px;font-size:16px" onclick="document.getElementById('filePhoto').click()">🖼 ${tr.attPhoto}</button>
+  <button class="opt" style="margin:8px 0 0;padding:14px;font-size:16px" onclick="document.getElementById('fileDoc').click()">📁 ${tr.attFiles}</button>
+  <button class="opt" style="margin:8px 0 0;text-align:center;color:#6b7280;border:none" onclick="S.plusOpen=false;render()">${tr.cancel}</button>
+ </div></div>`;}
 function attachChips(){if(!S.attach.length)return"";return `<div class="chips">${S.attach.map((a,i)=>`<span class="chip" style="display:inline-flex;align-items:center;gap:6px">${a.preview?`<img src="${a.preview}" style="width:22px;height:22px;object-fit:cover;border-radius:4px">`:(a.text?"📄":"📎")} <span dir="ltr" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a.name)}</span><button style="background:none;border:none;color:#FFB4B4;cursor:pointer" onclick="S.attach.splice(${i},1);render()">✕</button></span>`).join("")}</div>`;}
 
 // ================= FLASHCARDS =================
@@ -778,6 +782,7 @@ function render(){
  else if(views[S.screen])app.innerHTML=views[S.screen](tr);
  else if(!S.subject)app.innerHTML=viewHome(tr);
  else app.innerHTML=viewSubject(tr);
+ if(S.plusOpen)app.insertAdjacentHTML("beforeend",plusOverlay());
  const fu=document.getElementById("fu");if(fu){fu.addEventListener("keydown",e=>{if(e.key==="Enter"){doFollowUp(fu.value);fu.value="";}});}
  const tt=document.getElementById("transcriptTA");if(tt){tt.addEventListener("input",e=>S.transcriptText=e.target.value);}
  const fn=document.getElementById("flagnote");if(fn){fn.focus();fn.addEventListener("input",e=>S.flagging.note=e.target.value);fn.addEventListener("keydown",e=>e.key==="Enter"&&submitFlag());}
@@ -941,8 +946,7 @@ function viewSubject(tr){
  <div><p class="lbl">${tr.lessonLabel}</p><div class="row" style="gap:8px"><input class="inp" id="lessonIn" value="${esc(S.lesson)}" placeholder="${tr.lessonPh}" oninput="S.lesson=this.value" style="flex:1">${micBtn("lessonIn",s.lang)}${plusMenu()}</div>
  ${attachChips()}
  <button class="dash" onclick="S.screen='transcript';render()">${tr.recordLesson}</button>
- ${S.photo?`<div class="photo"><img src="${S.photo.preview}" alt=""><div><button style="color:${col};font-weight:600" onclick="pickFile('lesson')">${tr.changePhoto}</button><button style="color:#6b7280" onclick="S.photo=null;render()">${tr.removePhoto}</button></div></div>`
-  :`<button class="dash" onclick="pickFile('lesson')">${tr.addPhoto}</button><p class="hint">${tr.photoHint}</p>`}</div>
+ ${S.photo?`<div class="photo"><img src="${S.photo.preview}" alt=""><div><button style="color:#6b7280" onclick="S.photo=null;render()">${tr.removePhoto}</button></div></div>`:`<p class="hint">${tr.photoHint}</p>`}</div>
  <div class="tabs"><button class="${S.mode==="explain"?"on":""}" onclick="S.mode='explain';render()">📖 ${tr.explain}</button><button class="${S.mode==="exam"?"on":""}" onclick="S.mode='exam';render()">📝 ${tr.exam}</button></div>
  ${S.error?`<p class="err">${esc(S.error)}</p>`:""}`;
  if(S.mode==="explain"){
