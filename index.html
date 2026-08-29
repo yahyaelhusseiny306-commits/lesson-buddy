@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14213D">
+<meta name="mobile-web-app-capable" content="yes">
+<title>رفيق الدروس · Lesson Buddy</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--ink:#14213D;--line:#D9DDE3;--mark:#FFE066;--bg:#fff;--acc:#2563EB}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Arabic",Arial,sans-serif;color:var(--ink);background-color:#fff;
+background-image:linear-gradient(#EEF1F5 1px,transparent 1px),linear-gradient(90deg,#EEF1F5 1px,transparent 1px);background-size:24px 24px;-webkit-tap-highlight-color:transparent}
+button,input,textarea{font:inherit}
+.hdr{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid #e5e7eb;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hdr .title{font-weight:700;font-size:18px;display:flex;align-items:center;gap:8px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.ib{background:none;border:1px solid #d1d5db;border-radius:8px;padding:4px 8px;font-size:12px;font-family:ui-monospace,monospace;cursor:pointer}
+.ib.plain{border:none;font-size:20px;padding:2px 6px}
+.wrap{padding:16px;max-width:520px;margin:0 auto}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tile{aspect-ratio:1;border-radius:14px;color:#fff;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;box-shadow:0 1px 3px rgba(0,0,0,.15);cursor:pointer}
+.tile b{font-size:16px;line-height:1.1}.tile small{opacity:.8;font-size:11px}
+.lbl{font-family:ui-monospace,monospace;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;margin:0 0 6px}
+.inp{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff}
+textarea.inp{resize:vertical}
+.btn{width:100%;padding:12px;border:none;border-radius:10px;color:#fff;font-weight:600;background:var(--ink);cursor:pointer}
+.btn:disabled{opacity:.45}
+.btn.o{background:#fff;color:var(--acc);border:1px solid var(--acc);font-weight:500;font-size:14px;padding:9px}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.tabs{display:flex;border:1px solid #d1d5db;border-radius:10px;overflow:hidden;background:#fff}
+.tabs button{flex:1;padding:10px;border:none;background:#fff;color:var(--ink);font-weight:500;cursor:pointer}
+.tabs button.on{background:var(--acc);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:14px;cursor:pointer}
+.chip.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.card h2{margin:0 0 10px;font-size:20px}
+.card h3{margin:14px 0 4px;font-size:16px;color:var(--acc)}
+.card p{margin:0 0 8px;line-height:1.6;color:#374151;white-space:pre-line}
+mark{background:var(--mark);color:var(--ink);padding:0 4px;border-radius:2px;font-weight:600}
+.ex{background:#F3F5F9;border-radius:10px;padding:10px;font-size:14px}
+.sum{font-style:italic;border-top:1px solid #e5e7eb;padding-top:10px;color:#4b5563;font-size:14px}
+.verify{background:#FFF8E1;border:1px solid #F5C518;border-radius:10px;padding:10px;font-size:14px;margin-top:10px}
+.verify b{color:#8A6100}.verify ul{margin:4px 0 0;padding-inline-start:20px}
+.flag{background:none;border:none;color:#9ca3af;font-size:12px;cursor:pointer;padding:0}
+.flag:hover{color:#dc2626}
+.sec-h{display:flex;justify-content:space-between;align-items:center}
+.flagbox{display:flex;gap:6px;margin:6px 0}.flagbox input{flex:1;padding:6px 8px;border:1px solid #d1d5db;border-radius:8px}
+.flagbox .fx{background:#dc2626;color:#fff;border:none;border-radius:8px;padding:6px 10px}
+.flagbox .cn{background:none;border:none;color:#6b7280}
+.spin{display:flex;align-items:center;gap:8px;color:#6b7280;font-size:14px;padding:12px 0}
+.spin i{width:16px;height:16px;border-radius:50%;border:2px solid #d1d5db;border-top-color:#374151;animation:r 1s linear infinite;display:inline-block}
+@keyframes r{to{transform:rotate(360deg)}}
+.err{color:#dc2626;font-size:14px}
+.chat{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.msg{font-size:14px;border-radius:10px;padding:8px 12px;max-width:85%;line-height:1.5}
+.msg.u{color:#fff;margin-inline-start:auto;background:var(--acc)}
+.msg.a{background:#fff;border:1px solid #e5e7eb;color:#1f2937}
+.q{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:14px;margin-bottom:12px}
+.q.ok{border-color:#16A34A}.q.bad{border-color:#DC2626}
+.q .qt{display:flex;gap:8px;align-items:flex-start;font-weight:500}
+.q .n{font-family:ui-monospace,monospace;font-size:12px;color:#9ca3af;margin-top:2px}
+.opt{display:block;width:100%;text-align:start;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;margin-top:8px;font-size:14px;cursor:pointer}
+.opt.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.fb{font-size:14px;border-top:1px solid #f3f4f6;padding-top:8px;margin-top:8px;color:#4b5563}
+.score{text-align:center;border:2px solid var(--acc);border-radius:14px;padding:14px;background:#fff;margin-bottom:12px}
+.score .big{font-size:40px;font-weight:700;color:var(--acc)}
+.photo{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:8px;margin-top:8px}
+.photo img{width:64px;height:64px;object-fit:cover;border-radius:6px}
+.photo button{background:none;border:none;text-align:start;padding:0;font-size:14px;cursor:pointer;display:block}
+.dash{width:100%;margin-top:8px;padding:9px;border:1px dashed #9ca3af;border-radius:10px;background:#fff;font-size:14px;color:#374151;cursor:pointer}
+.hint{font-size:12px;color:#6b7280;margin:4px 0 0}
+.stack>*+*{margin-top:16px}
+.pdfbar{position:sticky;top:0;background:#fff;border-bottom:1px solid #d1d5db;padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;z-index:10}
+.pdfbar .b{padding:8px 12px;border-radius:8px;border:1px solid #9ca3af;background:#fff;font-size:14px;cursor:pointer;text-decoration:none;color:var(--ink)}
+.pdfbar .b.p{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pages{padding:12px;display:flex;flex-direction:column;gap:12px;background:#f3f4f6;min-height:100vh}
+.pages img{width:100%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2);border-radius:4px}
+.hidden{display:none!important}
+.setbox{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px}
+.setbox ol{padding-inline-start:20px;font-size:14px;line-height:1.7;color:#374151}
+a{color:var(--acc)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<input type="file" id="file" accept="image/*" class="hidden">
+<script>
+// ================= DATA =================
+const SUBJECTS=[
+ {id:"english",en:"English",ar:"الإنجليزية",color:"#2563EB",lang:"en"},
+ {id:"arabic",en:"Arabic",ar:"العربية",color:"#059669",lang:"ar"},
+ {id:"math",en:"Math",ar:"الرياضيات",color:"#DC2626",lang:"en"},
+ {id:"physics",en:"Physics",ar:"الفيزياء",color:"#7C3AED",lang:"en"},
+ {id:"chemistry",en:"Chemistry",ar:"الكيمياء",color:"#EA580C",lang:"en"},
+ {id:"biology",en:"Biology",ar:"الأحياء",color:"#16A34A",lang:"en"},
+ {id:"french",en:"French",ar:"الفرنسية",color:"#DB2777",lang:"en"},
+ {id:"geography",en:"Geography",ar:"الجغرافيا",color:"#0891B2",lang:"ar"},
+ {id:"history",en:"History",ar:"التاريخ",color:"#92400E",lang:"ar"},
+ {id:"civics",en:"Civics",ar:"التربية",color:"#4B5563",lang:"ar"},
+ {id:"philosophy",en:"Philosophy",ar:"الفلسفة",color:"#6D28D9",lang:"ar"},
+ {id:"social",en:"Social Studies",ar:"الاجتماعيات",color:"#B45309",lang:"ar"},
+];
+const T={
+ en:{appName:"Lesson Buddy",tagline:"Pick a subject, name your lesson, learn it your way.",lessonLabel:"Which lesson did you take?",lessonPh:"e.g. Newton's second law, The water cycle…",explain:"Explain",exam:"Exam",styleLabel:"Explain it…",
+  styles:[["simple","Simply"],["steps","Step by step"],["examples","With examples"],["kid","Like I'm 10"],["summary","Short summary"]],
+  goExplain:"Explain this lesson",askFollow:"Ask anything about this lesson…",keyTerms:"Key terms",example:"Example",summary:"In one line",
+  customExam:"Describe the exam you want (optional)",customExamPh:"e.g. 10 questions, focus on the second part, essay style…",makeExam:"Create exam",submit:"Submit answers",grading:"Grading…",score:"Your score",newExam:"New exam",tryAgain:"Try again",thinking:"Working on it…",reviewing:"Reviewing for accuracy…",
+  error:"Something went wrong. Check your connection and API key, then try again.",needLesson:"Type the lesson name or add a photo first.",yourAnswer:"Your answer",correctAnswer:"Correct answer",trueL:"True",falseL:"False",back:"Back",
+  addPhoto:"📷 Add a photo of the lesson",changePhoto:"Change photo",removePhoto:"Remove",photoHint:"Take a picture of your book or notes and I'll use it.",
+  pdf:"Save as PDF",pdfQuestions:"PDF: questions only",pdfAnswers:"PDF: with answers",share:"Share / Save PDF",download:"Download PDF",close:"Close",answerKey:"Answer key",name:"Name",date:"Date",
+  verify:"Double-check with your teacher",flag:"Report a mistake",flagPh:"What's wrong? (optional)",fix:"Fix it",cancel:"Cancel",
+  settings:"Settings",apiKey:"Gemini API key",apiKeyPh:"Paste your key here",model:"Model",save:"Save",saved:"Saved",noKey:"Add your free Gemini API key in Settings to start.",
+  howKey:"How to get a free key",steps:["Open aistudio.google.com and sign in with Google.","Tap “Get API key” → “Create API key”.","Copy the key and paste it above. Don't share it with anyone."],
+  uiLang:"App language"},
+ ar:{appName:"رفيق الدروس",tagline:"اختر المادة، اكتب اسم الدرس، وتعلّم بطريقتك.",lessonLabel:"ما هو الدرس الذي أخذته؟",lessonPh:"مثال: قانون نيوتن الثاني، دورة الماء…",explain:"شرح",exam:"امتحان",styleLabel:"اشرحه…",
+  styles:[["simple","ببساطة"],["steps","خطوة بخطوة"],["examples","مع أمثلة"],["kid","كأنني في العاشرة"],["summary","ملخّص قصير"]],
+  goExplain:"اشرح هذا الدرس",askFollow:"اسأل أي شيء عن هذا الدرس…",keyTerms:"المصطلحات الأساسية",example:"مثال",summary:"في سطر واحد",
+  customExam:"اكتب كيف تريد الامتحان (اختياري)",customExamPh:"مثال: ١٠ أسئلة، ركّز على الجزء الثاني، أسئلة مقالية…",makeExam:"أنشئ الامتحان",submit:"أرسل الإجابات",grading:"جارٍ التصحيح…",score:"نتيجتك",newExam:"امتحان جديد",tryAgain:"حاول مجدداً",thinking:"جارٍ العمل…",reviewing:"جارٍ مراجعة الدقة…",
+  error:"حدث خطأ. تأكد من الاتصال ومن مفتاح API ثم حاول مجدداً.",needLesson:"اكتب اسم الدرس أو أضف صورة أولاً.",yourAnswer:"إجابتك",correctAnswer:"الإجابة الصحيحة",trueL:"صح",falseL:"خطأ",back:"رجوع",
+  addPhoto:"📷 أضف صورة للدرس",changePhoto:"غيّر الصورة",removePhoto:"احذف",photoHint:"صوّر الكتاب أو دفترك وسأعتمد عليه.",
+  pdf:"احفظ كـ PDF",pdfQuestions:"PDF: الأسئلة فقط",pdfAnswers:"PDF: مع الإجابات",share:"مشاركة / حفظ PDF",download:"تنزيل PDF",close:"إغلاق",answerKey:"مفتاح الإجابات",name:"الاسم",date:"التاريخ",
+  verify:"راجع مع أستاذك",flag:"هذا خطأ",flagPh:"ما الخطأ؟ (اختياري)",fix:"صحّحه",cancel:"إلغاء",
+  settings:"الإعدادات",apiKey:"مفتاح Gemini API",apiKeyPh:"الصق المفتاح هنا",model:"النموذج",save:"حفظ",saved:"تم الحفظ",noKey:"أضف مفتاح Gemini المجاني في الإعدادات للبدء.",
+  howKey:"كيف تحصل على مفتاح مجاني",steps:["افتح aistudio.google.com وسجّل الدخول بحساب Google.","اضغط «Get API key» ثم «Create API key».","انسخ المفتاح والصقه في الأعلى. لا تشاركه مع أحد."],
+  uiLang:"لغة التطبيق"},
+};
+const MODELS=["gemini-2.5-flash","gemini-2.5-flash-lite","gemini-3-flash"];
+
+// ================= STATE =================
+const S={
+ lang:localStorage.getItem("lang")||"ar",
+ apiKey:localStorage.getItem("apiKey")||"",
+ model:localStorage.getItem("model")||MODELS[0],
+ screen:"home", subject:null, lesson:"", mode:"explain", style:"simple",
+ explanation:null, chat:[], customExam:"", exam:null, answers:{}, result:null, examUncertain:[],
+ photo:null, corrections:[], flagging:null, loading:false, loadLabel:"", error:"",
+ printTarget:null, pdfUrl:null, pdfBlob:null, pdfPages:[], pdfBusy:false,
+};
+const t=()=>T[S.lang];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const langName=l=>l==="ar"?"Arabic":"English";
+
+// ================= GEMINI =================
+async function askAI(system,userText,history=[]){
+ if(!S.apiKey) throw new Error("nokey");
+ const contents=history.map(m=>({role:m.role==="assistant"?"model":"user",parts:[{text:m.content}]}));
+ const parts=[{text:userText}];
+ if(S.photo) parts.push({inlineData:{mimeType:S.photo.mediaType,data:S.photo.data}});
+ if(contents.length&&contents[0].role==="user"&&S.photo) contents[0].parts.push({inlineData:{mimeType:S.photo.mediaType,data:S.photo.data}});
+ contents.push({role:"user",parts});
+ const url=`https://generativelanguage.googleapis.com/v1beta/models/${S.model}:generateContent?key=${encodeURIComponent(S.apiKey)}`;
+ const res=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,generationConfig:{temperature:0.3,maxOutputTokens:4000}})});
+ if(!res.ok){const e=await res.text();throw new Error(e);}
+ const data=await res.json();
+ return (data.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("\n");
+}
+function parseJSON(text){const c=text.replace(/```json|```/g,"").trim();const a=c.indexOf("{"),b=c.lastIndexOf("}");return JSON.parse(c.slice(a,b+1));}
+const photoNote=()=>S.photo?" The student attached a photo of the lesson from their book or notes: rely on its content first.":"";
+function baseSystem(){
+ const s=S.subject;
+ return `You are a patient school tutor for the subject "${s.en}". The student is studying the lesson "${S.lesson}". Always answer in ${langName(s.lang)} only, regardless of the language the student writes in. Keep everything clear, accurate and at school level. Accuracy matters more than completeness: never invent dates, numbers, names or formulas; if unsure, say so.`
+ +(S.corrections.length?` The student previously reported these mistakes in your answers; do not repeat them: ${S.corrections.map(c=>`"${c}"`).join("; ")}.`:"");
+}
+async function reviewPass(kind,obj){
+ setLoad(true,t().reviewing);
+ try{
+  const text=await askAI(baseSystem()+` You are now a strict reviewer. Check this ${kind} for factual, scientific, mathematical and language errors, and for anything that contradicts the attached photo if there is one. Fix every error. Respond ONLY with the corrected JSON in exactly the same shape, plus one extra field "uncertain": an array of short strings (max 4) naming specific facts the student should double-check with their teacher (dates, numbers, names, formulas). Use [] if everything is standard knowledge.`,JSON.stringify(obj));
+  const f=parseJSON(text);return f&&typeof f==="object"?f:obj;
+ }catch(e){return obj;}
+}
+
+// ================= ACTIONS =================
+function setLoad(v,label=""){S.loading=v;S.loadLabel=label;render();}
+function fail(e){S.error=(e&&e.message==="nokey")?t().noKey:t().error;S.loading=false;S.loadLabel="";render();}
+async function doExplain(){
+ if(!S.lesson.trim()&&!S.photo){S.error=t().needLesson;return render();}
+ S.error="";S.explanation=null;S.chat=[];setLoad(true,t().thinking);
+ const styleMap={simple:"in very simple, plain words",steps:"as a numbered sequence of steps, one idea per step",examples:"with a concrete real-life example for every idea",kid:"as if explaining to a 10-year-old, with a fun comparison",summary:"as a compact summary a student can revise in 2 minutes"};
+ try{
+  const text=await askAI(baseSystem()+` Explain the lesson ${styleMap[S.style]}.${photoNote()} Respond ONLY with JSON, no markdown: {"title":"","overview":"","sections":[{"heading":"","text":""}],"keyTerms":[{"term":"","meaning":""}],"example":"","summary":""}. Use 3 to 5 sections, 3 to 6 key terms.`,`Explain: ${S.lesson||"the lesson in the photo"}`);
+  const draft=parseJSON(text);
+  S.explanation=await reviewPass("lesson explanation",draft);
+  setLoad(false);
+ }catch(e){fail(e);}
+}
+async function doFollowUp(q){
+ q=q.trim();if(!q)return;
+ S.chat.push({role:"user",content:q});setLoad(true,t().thinking);
+ try{
+  const ctx=S.explanation?` Context you already explained: ${JSON.stringify(S.explanation).slice(0,3000)}`:"";
+  const hist=S.chat.slice(0,-1);
+  const text=await askAI(baseSystem()+" Answer the student's question briefly (under 150 words), plain text, no markdown."+photoNote()+ctx,q,hist);
+  S.chat.push({role:"assistant",content:text.trim()});setLoad(false);
+ }catch(e){fail(e);}
+}
+async function doExam(){
+ if(!S.lesson.trim()&&!S.photo){S.error=t().needLesson;return render();}
+ S.error="";S.exam=null;S.answers={};S.result=null;setLoad(true,t().thinking);
+ const c=S.customExam.trim();
+ const spec=c?` The student described the exam they want in their own words: "${c}". Follow their description exactly (number of questions, types, focus, difficulty). Where they didn't specify, default to medium difficulty, 5 questions, a mix of mcq, tf and short types. Never exceed 15 questions.`:` Write a medium-difficulty exam of 5 questions, a mix of mcq, tf and short types.`;
+ try{
+  const text=await askAI(baseSystem()+spec+photoNote()+` Respond ONLY with JSON, no markdown: {"questions":[{"id":1,"type":"mcq|tf|short","q":"","options":["","","",""],"answer":""}]}. For mcq give 4 options and put the correct option text in "answer". For tf, options must be ["true","false"] and answer "true" or "false". For short (also for essay/open questions), options is [] and answer is a model answer under 30 words.`,`Make the exam on: ${S.lesson||"the lesson in the photo"}`);
+  const draft=parseJSON(text);
+  const rev=await reviewPass("exam with answer key",draft);
+  S.exam=rev.questions||draft.questions;S.examUncertain=rev.uncertain||[];setLoad(false);
+ }catch(e){fail(e);}
+}
+async function doGrade(){
+ setLoad(true,t().grading);S.error="";
+ try{
+  const payload=S.exam.map(q=>({id:q.id,type:q.type,q:q.q,correct:q.answer,student:S.answers[q.id]||""}));
+  const text=await askAI(baseSystem()+` Grade the exam fairly. For mcq/tf the student is correct only if the answer matches. For short answers accept equivalent meaning. Respond ONLY with JSON: {"score":0,"total":0,"items":[{"id":1,"correct":true,"feedback":""}]}. Feedback under 25 words each.`,JSON.stringify(payload));
+  S.result=parseJSON(text);setLoad(false);
+ }catch(e){fail(e);}
+}
+async function submitFlag(){
+ const f=S.flagging;if(!f)return;S.flagging=null;setLoad(true,t().reviewing);
+ try{
+  if(f.kind==="section"){
+   const sec=S.explanation.sections[f.idx];
+   const text=await askAI(baseSystem()+` The student says this part of your explanation contains a mistake${f.note?`: "${f.note}"`:""}. Find and fix it carefully. Respond ONLY with JSON {"heading":"","text":"","whatWasWrong":""}.`,JSON.stringify(sec));
+   const x=parseJSON(text);S.explanation.sections[f.idx]={heading:x.heading,text:x.text};S.corrections.push(f.note||x.whatWasWrong);
+  }else{
+   const q=S.exam[f.idx];
+   const text=await askAI(baseSystem()+` The student says this exam question or its answer is wrong${f.note?`: "${f.note}"`:""}. Fix it or replace it with a correct question of the same type and id. Respond ONLY with JSON {"id":${q.id},"type":"${q.type}","q":"","options":[],"answer":"","whatWasWrong":""}.`,JSON.stringify(q));
+   const x=parseJSON(text);S.exam[f.idx]={id:q.id,type:q.type,q:x.q,options:x.options||[],answer:x.answer};delete S.answers[q.id];S.result=null;S.corrections.push(f.note||x.whatWasWrong);
+  }
+  setLoad(false);
+ }catch(e){fail(e);}
+}
+function pickSubject(s){Object.assign(S,{subject:s,screen:"subject",lesson:"",explanation:null,chat:[],exam:null,answers:{},result:null,examUncertain:[],photo:null,customExam:"",corrections:[],flagging:null,error:""});render();}
+function goHome(){S.subject=null;S.screen="home";render();}
+document.getElementById("file").addEventListener("change",e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ const r=new FileReader();r.onload=()=>{S.photo={data:r.result.split(",")[1],mediaType:file.type||"image/jpeg",preview:r.result};render();};r.readAsDataURL(file);e.target.value="";
+});
+
+// ================= PDF =================
+const A4W=1240,A4H=1754,PM=90;
+function makeDoc(rtl){
+ const pages=[];let c,ctx,y;
+ const np=()=>{c=document.createElement("canvas");c.width=A4W;c.height=A4H;ctx=c.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,A4W,A4H);ctx.direction=rtl?"rtl":"ltr";ctx.textAlign=rtl?"right":"left";ctx.textBaseline="top";pages.push(c);y=PM;};
+ np();
+ const ensure=h=>{if(y+h>A4H-PM)np();};
+ const font=(s,b,i)=>{ctx.font=`${i?"italic ":""}${b?"bold ":""}${s}px sans-serif`;};
+ const text=(str,{size=30,bold=false,italic=false,color="#111",indent=0,gap=12}={})=>{
+  font(size,bold,italic);const maxW=A4W-2*PM-indent;const lines=[];
+  for(const para of String(str||"").split("\n")){let line="";for(const w of para.split(" ")){const tst=line?line+" "+w:w;if(ctx.measureText(tst).width>maxW&&line){lines.push(line);line=w;}else line=tst;}lines.push(line);}
+  const lh=size*1.5;for(const l of lines){ensure(lh);font(size,bold,italic);ctx.fillStyle=color;ctx.fillText(l,rtl?A4W-PM-indent:PM+indent,y);y+=lh;}y+=gap;};
+ const rule=(color,h=4)=>{ensure(h+24);ctx.fillStyle=color;ctx.fillRect(PM,y,A4W-2*PM,h);y+=h+24;};
+ const aline=()=>{ensure(70);ctx.fillStyle="#999";ctx.fillRect(PM+40,y+50,A4W-2*PM-40,2);y+=70;};
+ return{text,rule,aline,space:h=>{y+=h},pageBreak:np,pages:()=>pages};
+}
+function canvasesToPdf(cvs){
+ const enc=s=>{const u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i)&255;return u;};
+ const parts=[];let len=0;const off=[];const push=u=>{parts.push(u);len+=u.length;};const ps=s=>push(enc(s));
+ ps("%PDF-1.4\n");const n=cvs.length,total=2+3*n;
+ off[1]=len;ps("1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n");
+ off[2]=len;ps(`2 0 obj\n<< /Type /Pages /Kids [${cvs.map((_,i)=>`${3+i*3} 0 R`).join(" ")}] /Count ${n} >>\nendobj\n`);
+ cvs.forEach((cv,i)=>{const p=3+i*3,ct=p+1,im=p+2;
+  off[p]=len;ps(`${p} 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /XObject << /Im ${im} 0 R >> >> /Contents ${ct} 0 R >>\nendobj\n`);
+  const cs="q 595 0 0 842 0 0 cm /Im Do Q";off[ct]=len;ps(`${ct} 0 obj\n<< /Length ${cs.length} >>\nstream\n${cs}\nendstream\nendobj\n`);
+  const bytes=enc(atob(cv.toDataURL("image/jpeg",0.9).split(",")[1]));
+  off[im]=len;ps(`${im} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${cv.width} /Height ${cv.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${bytes.length} >>\nstream\n`);push(bytes);ps("\nendstream\nendobj\n");});
+ const xref=len;let x=`xref\n0 ${total+1}\n0000000000 65535 f \n`;for(let i=1;i<=total;i++)x+=String(off[i]).padStart(10,"0")+" 00000 n \n";
+ ps(x+`trailer\n<< /Size ${total+1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);
+ const out=new Uint8Array(len);let o=0;for(const p of parts){out.set(p,o);o+=p.length;}return new Blob([out],{type:"application/pdf"});
+}
+function pdfName(){return `${S.subject.en}-${(S.lesson||"lesson").slice(0,30).replace(/\s+/g,"_")}${S.printTarget==="examKey"?"-answers":S.printTarget==="exam"?"-exam":""}.pdf`;}
+function openPdf(target){
+ S.printTarget=target;S.pdfBusy=true;S.pdfUrl=null;S.pdfPages=[];render();
+ setTimeout(()=>{
+  const tr=t(),s=S.subject,rtl=s.lang==="ar",d=makeDoc(rtl),col=s.color,ex=S.explanation;
+  const fmt=q=>q.type==="tf"?(q.answer==="true"?tr.trueL:tr.falseL):q.answer;
+  d.text(s[S.lang],{size:24,color:"#666",gap:4});
+  if(target==="explain"&&ex){
+   d.text(ex.title||S.lesson,{size:46,bold:true,gap:8});d.rule(col);d.text(ex.overview);
+   (ex.sections||[]).forEach(x=>{d.text(x.heading,{size:34,bold:true,color:col,gap:4});d.text(x.text);});
+   if(ex.keyTerms?.length){d.text(tr.keyTerms,{size:34,bold:true,gap:4});ex.keyTerms.forEach(k=>d.text(`• ${k.term} — ${k.meaning}`,{indent:20,gap:4}));d.space(12);}
+   if(ex.example)d.text(`${tr.example}: ${ex.example}`,{color:"#333",indent:20});
+   if(ex.summary)d.text(ex.summary,{italic:true,color:"#444"});
+   if(S.chat.length){d.rule("#ccc",2);S.chat.forEach(m=>d.text(`${m.role==="user"?"Q":"A"}: ${m.content}`,{size:28,bold:m.role==="user"}));}
+  }else if(S.exam){
+   d.text(S.lesson||tr.exam,{size:46,bold:true,gap:8});d.text(`${tr.name}: ____________________      ${tr.date}: ____________`,{size:26,color:"#444"});d.rule(col);
+   S.exam.forEach((q,i)=>{d.text(`${i+1}. ${q.q}`,{bold:true,gap:6});
+    if(q.type==="short"){d.aline();d.aline();}else (q.type==="tf"?["true","false"]:q.options).forEach(o=>d.text(`☐  ${q.type==="tf"?(o==="true"?tr.trueL:tr.falseL):o}`,{size:29,indent:40,gap:2}));d.space(22);});
+   if(target==="examKey"){d.pageBreak();d.text(tr.answerKey,{size:40,bold:true,gap:8});d.rule(col);S.exam.forEach((q,i)=>d.text(`${i+1}. ${fmt(q)}`,{gap:6}));}
+  }
+  S.pdfBlob=canvasesToPdf(d.pages());S.pdfPages=d.pages().map(c=>c.toDataURL("image/jpeg",0.85));S.pdfUrl=URL.createObjectURL(S.pdfBlob);S.pdfBusy=false;render();
+ },50);
+}
+async function sharePdf(){
+ try{const file=new File([S.pdfBlob],pdfName(),{type:"application/pdf"});
+  if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:pdfName()});
+  else{const a=document.createElement("a");a.href=S.pdfUrl;a.download=pdfName();a.click();}
+ }catch(e){}
+}
+
+// ================= RENDER =================
+const app=document.getElementById("app");
+function render(){
+ const tr=t();document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";
+ if(S.printTarget)return app.innerHTML=viewPdf(tr);
+ if(S.screen==="settings")return app.innerHTML=viewSettings(tr);
+ if(!S.subject)return app.innerHTML=viewHome(tr);
+ app.innerHTML=viewSubject(tr);
+ const fu=document.getElementById("fu");if(fu){fu.addEventListener("keydown",e=>{if(e.key==="Enter"){doFollowUp(fu.value);fu.value="";}});}
+ const fn=document.getElementById("flagnote");if(fn){fn.focus();fn.addEventListener("input",e=>S.flagging.note=e.target.value);fn.addEventListener("keydown",e=>e.key==="Enter"&&submitFlag());}
+}
+function header(tr,title,back){
+ return `<div class="hdr"><div class="title">${back?`<button class="ib plain" onclick="${back}">${S.lang==="ar"?"→":"←"}</button>`:""}${title}</div>
+ <div style="display:flex;gap:6px"><button class="ib" onclick="S.lang=S.lang==='en'?'ar':'en';localStorage.setItem('lang',S.lang);render()">${S.lang==="en"?"عربي":"EN"}</button><button class="ib plain" onclick="S.screen='settings';render()" title="${tr.settings}">⚙️</button></div></div>`;
+}
+function viewHome(tr){
+ return header(tr,tr.appName)+`<div class="wrap">
+ ${!S.apiKey?`<p class="err" style="margin-bottom:12px">${tr.noKey} <a href="#" onclick="S.screen='settings';render();return false">${tr.settings} ←</a></p>`:""}
+ <p style="color:#4b5563;margin:4px 0 16px">${tr.tagline}</p>
+ <div class="grid">${SUBJECTS.map(s=>`<button class="tile" style="background:${s.color}" onclick="pickSubject(SUBJECTS.find(x=>x.id==='${s.id}'))"><b>${s[S.lang]}</b><small>${S.lang==="en"?s.ar:s.en}</small></button>`).join("")}</div></div>`;
+}
+function viewSettings(tr){
+ return header(tr,tr.settings,"S.screen='home';render()")+`<div class="wrap stack">
+ <div class="setbox stack">
+  <div><p class="lbl">${tr.apiKey}</p><input class="inp" id="key" type="password" dir="ltr" value="${esc(S.apiKey)}" placeholder="${tr.apiKeyPh}"></div>
+  <div><p class="lbl">${tr.model}</p><div class="chips">${MODELS.map(m=>`<button class="chip ${S.model===m?"on":""}" onclick="S.model='${m}';localStorage.setItem('model','${m}');render()" dir="ltr">${m}</button>`).join("")}</div></div>
+  <div><p class="lbl">${tr.uiLang}</p><div class="chips"><button class="chip ${S.lang==="ar"?"on":""}" onclick="S.lang='ar';localStorage.setItem('lang','ar');render()">العربية</button><button class="chip ${S.lang==="en"?"on":""}" onclick="S.lang='en';localStorage.setItem('lang','en');render()">English</button></div></div>
+  <button class="btn" onclick="S.apiKey=document.getElementById('key').value.trim();localStorage.setItem('apiKey',S.apiKey);S.screen='home';render()">${tr.save}</button>
+ </div>
+ <div class="setbox"><b>${tr.howKey}</b><ol>${tr.steps.map(s=>`<li>${s}</li>`).join("")}</ol><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey ↗</a></div></div>`;
+}
+function spinner(l){return `<div class="spin"><i></i>${l}</div>`;}
+function viewSubject(tr){
+ const s=S.subject,col=s.color,cdir=s.lang==="ar"?"rtl":"ltr";
+ const title=`<span class="sw" style="background:${col}"></span>${s[S.lang]}`;
+ let h=header(tr,title,"goHome()")+`<div class="wrap stack" dir="${cdir}" style="--acc:${col}">
+ <div><p class="lbl">${tr.lessonLabel}</p><input class="inp" value="${esc(S.lesson)}" placeholder="${tr.lessonPh}" oninput="S.lesson=this.value">
+ ${S.photo?`<div class="photo"><img src="${S.photo.preview}" alt=""><div><button style="color:${col};font-weight:500" onclick="document.getElementById('file').click()">${tr.changePhoto}</button><button style="color:#6b7280" onclick="S.photo=null;render()">${tr.removePhoto}</button></div></div>`
+  :`<button class="dash" onclick="document.getElementById('file').click()">${tr.addPhoto}</button><p class="hint">${tr.photoHint}</p>`}</div>
+ <div class="tabs"><button class="${S.mode==="explain"?"on":""}" onclick="S.mode='explain';render()">📖 ${tr.explain}</button><button class="${S.mode==="exam"?"on":""}" onclick="S.mode='exam';render()">📝 ${tr.exam}</button></div>
+ ${S.error?`<p class="err">${S.error}</p>`:""}`;
+ if(S.mode==="explain"){
+  h+=`<div><p class="lbl">${tr.styleLabel}</p><div class="chips">${tr.styles.map(([id,l])=>`<button class="chip ${S.style===id?"on":""}" onclick="S.style='${id}';render()">${l}</button>`).join("")}</div></div>
+  <button class="btn" onclick="doExplain()" ${S.loading?"disabled":""}>${tr.goExplain}</button>
+  ${S.loading&&!S.explanation?spinner(S.loadLabel||tr.thinking):""}`;
+  const ex=S.explanation;
+  if(ex){
+   h+=`<div class="card"><h2><mark>${esc(ex.title)}</mark></h2><p>${esc(ex.overview)}</p>
+   ${(ex.sections||[]).map((x,i)=>`<div class="sec-h"><h3>${esc(x.heading)}</h3><button class="flag" onclick="S.flagging={kind:'section',idx:${i},note:''};render()">⚑ ${tr.flag}</button></div><p>${esc(x.text)}</p>${flagBox("section",i,tr)}`).join("")}
+   ${S.loading&&!S.flagging?spinner(S.loadLabel||tr.thinking):""}
+   ${verify(ex.uncertain,tr)}
+   ${ex.keyTerms?.length?`<p class="lbl" style="margin-top:12px">${tr.keyTerms}</p>${ex.keyTerms.map(k=>`<p style="font-size:14px;margin:0 0 4px"><mark>${esc(k.term)}</mark> — ${esc(k.meaning)}</p>`).join("")}`:""}
+   ${ex.example?`<div class="ex" style="margin-top:10px"><span class="lbl">${tr.example}</span>${esc(ex.example)}</div>`:""}
+   ${ex.summary?`<p class="sum" style="margin-top:10px"><span class="lbl" style="display:inline;font-style:normal">${tr.summary}: </span>${esc(ex.summary)}</p>`:""}
+   <button class="btn o" style="margin-top:12px" onclick="openPdf('explain')">📄 ${tr.pdf}</button></div>
+   <div class="chat">${S.chat.map(m=>`<div class="msg ${m.role==="user"?"u":"a"}">${esc(m.content)}</div>`).join("")}
+   ${S.loading&&S.chat.length&&S.chat[S.chat.length-1].role==="user"?spinner(tr.thinking):""}
+   <div class="row" style="gap:8px"><input class="inp" id="fu" placeholder="${tr.askFollow}" style="flex:1"><button class="btn" style="flex:0 0 auto;width:auto;background:${col}" onclick="const i=document.getElementById('fu');doFollowUp(i.value);i.value=''" ${S.loading?"disabled":""}>➤</button></div></div>`;
+  }
+ }else{
+  if(!S.exam){
+   h+=`<div><p class="lbl">${tr.customExam}</p><textarea class="inp" rows="4" placeholder="${tr.customExamPh}" oninput="S.customExam=this.value">${esc(S.customExam)}</textarea></div>
+   <button class="btn" onclick="doExam()" ${S.loading?"disabled":""}>${tr.makeExam}</button>${S.loading?spinner(S.loadLabel||tr.thinking):""}`;
+  }else{
+   const r=S.result;
+   h+=`<div class="row"><button class="btn o" onclick="openPdf('exam')">📄 ${tr.pdfQuestions}</button><button class="btn o" onclick="openPdf('examKey')">📄 ${tr.pdfAnswers}</button></div>${verify(S.examUncertain,tr)}
+   ${r?`<div class="score"><p class="lbl">${tr.score}</p><div class="big">${r.score} / ${r.total}</div></div>`:""}
+   <div>${S.exam.map((q,idx)=>{const it=r?.items?.find(i=>i.id===q.id);const cls=it?(it.correct?"ok":"bad"):"";
+    return `<div class="q ${cls}"><div class="qt"><span class="n">${idx+1}</span><span style="flex:1">${esc(q.q)}</span>${it?(it.correct?"✅":"❌"):""}</div>${flagBox("question",idx,tr)}
+    ${q.type==="short"?`<input class="inp" style="margin-top:8px" ${r?"disabled":""} value="${esc(S.answers[q.id]||"")}" placeholder="${tr.yourAnswer}" oninput="S.answers[${q.id}]=this.value">`
+     :(q.type==="tf"?["true","false"]:q.options).map(o=>`<button class="opt ${S.answers[q.id]===o?"on":""}" ${r?"disabled":""} onclick="S.answers[${q.id}]=${JSON.stringify(o).replace(/"/g,"&quot;")};render()">${esc(q.type==="tf"?(o==="true"?tr.trueL:tr.falseL):o)}</button>`).join("")}
+    ${it?`<div class="fb">${!it.correct?`<span class="lbl" style="display:inline">${tr.correctAnswer}: </span><mark>${esc(q.type==="tf"?(q.answer==="true"?tr.trueL:tr.falseL):q.answer)}</mark><br>`:""}${esc(it.feedback)}</div>`:""}
+    <div style="text-align:end;margin-top:6px"><button class="flag" onclick="S.flagging={kind:'question',idx:${idx},note:''};render()">⚑ ${tr.flag}</button></div></div>`;}).join("")}</div>
+   ${S.loading?spinner(S.loadLabel||tr.thinking):""}
+   ${!r?`<button class="btn" onclick="doGrade()" ${S.loading||Object.keys(S.answers).filter(k=>S.answers[k]).length<S.exam.length?"disabled":""}>${tr.submit}</button>`
+    :`<div class="row"><button class="btn o" style="color:var(--ink);border-color:#d1d5db" onclick="S.answers={};S.result=null;render()">↺ ${tr.tryAgain}</button><button class="btn" style="background:${col}" onclick="S.exam=null;S.answers={};S.result=null;render()">${tr.newExam}</button></div>`}`;
+  }
+ }
+ return h+"</div>";
+}
+function flagBox(kind,idx,tr){const f=S.flagging;if(!f||f.kind!==kind||f.idx!==idx)return"";
+ return `<div class="flagbox"><input id="flagnote" value="${esc(f.note)}" placeholder="${tr.flagPh}"><button class="fx" onclick="submitFlag()">${tr.fix}</button><button class="cn" onclick="S.flagging=null;render()">${tr.cancel}</button></div>`;}
+function verify(items,tr){return items&&items.length?`<div class="verify"><b>⚠️ ${tr.verify}</b><ul>${items.map(u=>`<li>${esc(u)}</li>`).join("")}</ul></div>`:"";}
+function viewPdf(tr){
+ return `<div class="pdfbar"><button class="b" onclick="S.printTarget=null;S.pdfUrl=null;S.pdfPages=[];render()">${tr.close}</button>
+ ${S.pdfBusy?spinner(tr.thinking):""}
+ ${S.pdfUrl?`<button class="b p" onclick="sharePdf()">📤 ${tr.share}</button><a class="b" href="${S.pdfUrl}" download="${pdfName()}">⬇️ ${tr.download}</a>`:""}</div>
+ <div class="pages">${S.pdfPages.map((p,i)=>`<img src="${p}" alt="page ${i+1}">`).join("")}</div>`;
+}
+render();
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
