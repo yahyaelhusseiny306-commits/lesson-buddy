@@ -130,7 +130,7 @@ const T={
   howKey:"كيف تحصل على مفتاح مجاني",steps:["افتح aistudio.google.com وسجّل الدخول بحساب Google.","اضغط «Get API key» ثم «Create API key».","انسخ المفتاح والصقه في الأعلى. لا تشاركه مع أحد."],
   uiLang:"لغة التطبيق"},
 };
-const MODELS=["gemini-2.5-flash","gemini-2.5-flash-lite","gemini-3-flash"];
+const MODELS=["gemini-2.5-flash","gemini-2.5-flash-lite","gemini-2.0-flash","gemini-3-flash"];
 
 // ================= STATE =================
 const S={
@@ -154,14 +154,29 @@ async function askAI(system,userText,history=[]){
  if(S.photo) parts.push({inlineData:{mimeType:S.photo.mediaType,data:S.photo.data}});
  if(contents.length&&contents[0].role==="user"&&S.photo) contents[0].parts.push({inlineData:{mimeType:S.photo.mediaType,data:S.photo.data}});
  contents.push({role:"user",parts});
- const url=`https://generativelanguage.googleapis.com/v1beta/models/${S.model}:generateContent?key=${encodeURIComponent(S.apiKey)}`;
- const res=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,generationConfig:{temperature:0.3,maxOutputTokens:4000}})});
- if(!res.ok){const e=await res.text();throw new Error(e);}
- const data=await res.json();
- return (data.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("\n");
+ const tryModels=[S.model,...MODELS.filter(m=>m!==S.model)];
+ let lastErr="";
+ for(const model of tryModels){
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(S.apiKey)}`;
+  let res;
+  try{res=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,generationConfig:{temperature:0.3,maxOutputTokens:4000}})});}
+  catch(e){throw new Error("network: "+e.message);}
+  if(res.ok){
+   const data=await res.json();
+   const txt=(data.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("\n");
+   if(!txt) throw new Error("empty response: "+JSON.stringify(data).slice(0,200));
+   if(model!==S.model){S.model=model;localStorage.setItem("model",model);}
+   return txt;
+  }
+  let msg="";try{const j=await res.json();msg=j.error?.message||JSON.stringify(j);}catch(e){msg=await res.text();}
+  lastErr=`HTTP ${res.status} (${model}): ${msg}`;
+  // 404 = model not available for this key -> try next model; other errors stop
+  if(res.status!==404&&res.status!==400) break;
+ }
+ throw new Error(lastErr);
 }
-function parseJSON(text){const c=text.replace(/```json|```/g,"").trim();const a=c.indexOf("{"),b=c.lastIndexOf("}");return JSON.parse(c.slice(a,b+1));}
+function parseJSON(text){const c=text.replace(/```json|```/g,"").trim();const a=c.indexOf("{"),b=c.lastIndexOf("}");try{return JSON.parse(c.slice(a,b+1));}catch(e){throw new Error("parse: "+c.slice(0,120));}}
 const photoNote=()=>S.photo?" The student attached a photo of the lesson from their book or notes: rely on its content first.":"";
 function baseSystem(){
  const s=S.subject;
@@ -178,7 +193,7 @@ async function reviewPass(kind,obj){
 
 // ================= ACTIONS =================
 function setLoad(v,label=""){S.loading=v;S.loadLabel=label;render();}
-function fail(e){S.error=(e&&e.message==="nokey")?t().noKey:t().error;S.loading=false;S.loadLabel="";render();}
+function fail(e){const m=e&&e.message||"";S.error=(m==="nokey")?t().noKey:(t().error+(m?" ["+m.slice(0,300)+"]":""));S.loading=false;S.loadLabel="";render();}
 async function doExplain(){
  if(!S.lesson.trim()&&!S.photo){S.error=t().needLesson;return render();}
  S.error="";S.explanation=null;S.chat=[];setLoad(true,t().thinking);
