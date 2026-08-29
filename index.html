@@ -144,14 +144,14 @@ const T={
   verify:"Double-check with your teacher",flag:"Report a mistake",flagPh:"What's wrong? (optional)",fix:"Fix it",cancel:"Cancel",
   settings:"Settings",apiKey:"Gemini API key",apiKeyPh:"Paste your key here",model:"Model",save:"Save",noKey:"Add your free Gemini API key in Settings to start.",
   howKey:"How to get a free key",steps:["Open aistudio.google.com and sign in with Google.","Tap “Get API key” → “Create API key”.","Copy the key and paste it above. Don't share it with anyone."],
-  uiLang:"App language",features:"Optional features",featFlash:"Flashcards after each lesson",featGrades:"Grades log",test:"Test connection",
+  uiLang:"App language",features:"Optional features",featFlash:"Flashcards after each lesson",featGrades:"Grades log",featReview:"Self-review (more accurate, slower)",featFast:"Fast mode (lighter model)",test:"Test connection",
   history:"Saved",historyEmpty:"Nothing saved yet. Every lesson and exam is saved here automatically.",deleteSaved:"Delete",
   flash:"Review with flashcards",flashTap:"Tap the card to flip",known:"I knew it ✅",unknown:"Didn't know ❌",flashDone:"Done! You know all the terms.",again:"Start again",round:"Round",
   grades:"Grades log",gradesEmpty:"No grades yet. Take an exam and your score will appear here.",avg:"Average",
   tools:"Tools",imgTool:"Image maker",docTool:"File maker",imgTitle:"Make an image",imgPh:"Describe the image you want… (e.g. a poster about water pollution for a school project)",imgGo:"Generate image",imgRef:"📷 Add a reference photo (optional)",imgNote:"Uses Gemini when available, otherwise the free Pollinations service. Generation takes 10–30 seconds.",
   docTitle:"Make a file",docType:"File type",docWord:"Word",docPpt:"PowerPoint",docXls:"Excel",docPh:"Describe what you want… (e.g. a 6-slide presentation about volcanoes / a weekly study schedule table / a report on the French revolution)",docGo:"Create file",docUseLesson:"Use the current lesson as the topic",docReady:"Your file is ready",
   imgStyle:"Style",imgStyles:[["poster","Poster"],["realistic","Realistic"],["cartoon","Cartoon"],["diagram","Scientific drawing"],["art","Art"]],pick:"Choose",
-  docTheme:"Color theme",docImages:"Add images (slower)",stWriting:"Writing content…",stReview:"Reviewing content…",stImages:"Making images…",stBuild:"Building file…",
+  docTheme:"Color theme",docImages:"Add images (slower)",docLang:"File language",docLangs:[["auto","Auto"],["ar","العربية"],["en","English"]],docImgDesc:"Image description (optional)",docImgDescPh:"e.g. a young man lowering his gaze in a busy street",stWriting:"Writing content…",stReview:"Reviewing content…",stImages:"Making images…",stBuild:"Building file…",
  },
  ar:{appName:"رفيق الدروس",tagline:"اختر المادة، اكتب اسم الدرس، وتعلّم بطريقتك.",lessonLabel:"ما هو الدرس الذي أخذته؟",lessonPh:"مثال: قانون نيوتن الثاني، دورة الماء…",explain:"شرح",exam:"امتحان",styleLabel:"اشرحه…",
   styles:[["simple","ببساطة"],["steps","خطوة بخطوة"],["examples","مع أمثلة"],["kid","كأنني في العاشرة"],["summary","ملخّص قصير"]],
@@ -163,14 +163,14 @@ const T={
   verify:"راجع مع أستاذك",flag:"هذا خطأ",flagPh:"ما الخطأ؟ (اختياري)",fix:"صحّحه",cancel:"إلغاء",
   settings:"الإعدادات",apiKey:"مفتاح Gemini API",apiKeyPh:"الصق المفتاح هنا",model:"النموذج",save:"حفظ",noKey:"أضف مفتاح Gemini المجاني في الإعدادات للبدء.",
   howKey:"كيف تحصل على مفتاح مجاني",steps:["افتح aistudio.google.com وسجّل الدخول بحساب Google.","اضغط «Get API key» ثم «Create API key».","انسخ المفتاح والصقه في الأعلى. لا تشاركه مع أحد."],
-  uiLang:"لغة التطبيق",features:"ميزات اختيارية",featFlash:"بطاقات مراجعة بعد كل درس",featGrades:"سجل الدرجات",test:"اختبار الاتصال",
+  uiLang:"لغة التطبيق",features:"ميزات اختيارية",featFlash:"بطاقات مراجعة بعد كل درس",featGrades:"سجل الدرجات",featReview:"المراجعة الذاتية (أدق لكن أبطأ)",featFast:"الوضع السريع (نموذج أخف)",test:"اختبار الاتصال",
   history:"المحفوظات",historyEmpty:"لا شيء محفوظ بعد. كل درس وامتحان يُحفظ هنا تلقائياً.",deleteSaved:"حذف",
   flash:"راجع بالبطاقات",flashTap:"اضغط البطاقة لتقلبها",known:"عرفتها ✅",unknown:"لم أعرفها ❌",flashDone:"أحسنت! حفظت كل المصطلحات.",again:"ابدأ من جديد",round:"جولة",
   grades:"سجل الدرجات",gradesEmpty:"لا درجات بعد. قدّم امتحاناً وستظهر نتيجتك هنا.",avg:"المعدل",
   tools:"أدوات",imgTool:"صانع الصور",docTool:"صانع الملفات",imgTitle:"اصنع صورة",imgPh:"صف الصورة التي تريدها… (مثال: ملصق عن تلوث المياه لمشروع مدرسي)",imgGo:"أنشئ الصورة",imgRef:"📷 أضف صورة مرجعية (اختياري)",imgNote:"يستخدم Gemini إن كان متاحاً، وإلا فخدمة Pollinations المجانية. يستغرق الإنشاء ١٠–٣٠ ثانية.",
   docTitle:"اصنع ملفاً",docType:"نوع الملف",docWord:"Word",docPpt:"PowerPoint",docXls:"Excel",docPh:"صف ما تريده… (مثال: عرض من ٦ شرائح عن البراكين / جدول مذاكرة أسبوعي / تقرير عن الثورة الفرنسية)",docGo:"أنشئ الملف",docUseLesson:"استخدم الدرس الحالي كموضوع",docReady:"ملفك جاهز",
   imgStyle:"الأسلوب",imgStyles:[["poster","ملصق"],["realistic","واقعي"],["cartoon","كرتون"],["diagram","رسم علمي"],["art","فني"]],pick:"اختر",
-  docTheme:"لون التصميم",docImages:"أضف صوراً (أبطأ)",stWriting:"جارٍ كتابة المحتوى…",stReview:"جارٍ مراجعة المحتوى…",stImages:"جارٍ صنع الصور…",stBuild:"جارٍ بناء الملف…",
+  docTheme:"لون التصميم",docImages:"أضف صوراً (أبطأ)",docLang:"لغة الملف",docLangs:[["auto","تلقائي"],["ar","العربية"],["en","English"]],docImgDesc:"وصف الصور (اختياري)",docImgDescPh:"مثال: شاب يخفض بصره في شارع مزدحم",stWriting:"جارٍ كتابة المحتوى…",stReview:"جارٍ مراجعة المحتوى…",stImages:"جارٍ صنع الصور…",stBuild:"جارٍ بناء الملف…",
  },
 };
 const THEMES={blue:{a:"1F3A8A",b:"0B1F4B",c:"3B82F6"},green:{a:"166534",b:"052E16",c:"22C55E"},purple:{a:"5B21B6",b:"2E1065",c:"A78BFA"},orange:{a:"C2410C",b:"431407",c:"FB923C"},gray:{a:"374151",b:"111827",c:"9CA3AF"}};
@@ -184,7 +184,7 @@ const S={
  lang:localStorage.getItem("lang")||"ar",
  apiKey:localStorage.getItem("apiKey")||"",
  model:localStorage.getItem("model")||MODELS[0],
- feat:LS("feat",{flash:true,grades:true}),
+ feat:Object.assign({flash:true,grades:true,review:true,fast:false},LS("feat",{})),
  sessions:LS("sessions",[]), grades:LS("grades",[]),
  screen:"home", subject:null, lesson:"", mode:"explain", style:"simple",
  explanation:null, chat:[], customExam:"", exam:null, answers:{}, result:null, examUncertain:[],
@@ -192,7 +192,7 @@ const S={
  printTarget:null, pdfUrl:null, pdfBlob:null, pdfPages:[], pdfBusy:false,
  fc:null,
  img:{prompt:"",ref:null,out:null,outs:[],busy:false,err:"",style:"poster"},
- doc:{type:"word",prompt:"",useLesson:false,busy:false,err:"",url:null,name:"",blob:null,theme:"blue",images:true,status:""},
+ doc:{type:"word",prompt:"",useLesson:false,busy:false,err:"",url:null,name:"",blob:null,theme:"blue",images:true,status:"",lang:"auto",imgDesc:""},
  curSession:null,
 };
 const t=()=>T[S.lang];
@@ -224,22 +224,24 @@ async function askAI(system,userText,history=[],imgOverride){
  contents.push({role:"user",parts});
  const avail=await listModels();
  if(!avail.length) throw new Error("no models available for this key");
- const tryModels=[...new Set([...(avail.includes(S.model)?[S.model]:[]),...avail])].slice(0,6);
+ const lite=avail.filter(n=>/lite/.test(n));
+ const tryModels=[...new Set([...(S.feat.fast?lite:[]),...(avail.includes(S.model)?[S.model]:[]),...avail])].slice(0,6);
  const errs=[];const sleep=ms=>new Promise(r=>setTimeout(r,ms));
  for(const model of tryModels){
-  const body=JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,generationConfig:{temperature:0.3,maxOutputTokens:6000}});
+  const mk=think=>JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,generationConfig:Object.assign({temperature:0.3,maxOutputTokens:6000},think?{}:{thinkingConfig:{thinkingBudget:0}})});
   let res=null,netErr="";
   for(let attempt=0;attempt<3&&!res;attempt++){
-   try{res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(S.apiKey)}`,{method:"POST",headers:{"Content-Type":"application/json"},body});netErr="";}
+   try{res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(S.apiKey)}`,{method:"POST",headers:{"Content-Type":"application/json"},body:mk(false)});netErr="";}
    catch(e){netErr=e.message;res=null;await sleep(1500*(attempt+1));}
   }
   if(!res){errs.push(`${model}: network ${netErr}`);continue;}
+  if(res.status===400){try{const j=await res.clone().json();if(/thinking/i.test(j.error?.message||""))res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(S.apiKey)}`,{method:"POST",headers:{"Content-Type":"application/json"},body:mk(true)});}catch(e){}}
   if(res.status===429||res.status===503){let m="";try{m=(await res.json()).error?.message||"";}catch(e){}errs.push(`${model}: HTTP ${res.status} ${m.slice(0,80)}`);await sleep(1200);continue;}
   if(res.ok){
    const data=await res.json();
    const txt=(data.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("\n");
    if(!txt){errs.push(`${model}: empty`);continue;}
-   if(model!==S.model){S.model=model;localStorage.setItem("model",model);}
+   if(model!==S.model&&!S.feat.fast){S.model=model;localStorage.setItem("model",model);}
    return txt;
   }
   let msg="";try{const j=await res.json();msg=j.error?.message||JSON.stringify(j);}catch(e){msg=await res.text();}
@@ -263,9 +265,9 @@ async function genImage(prompt,ref){
  }
  // Free path: expand the prompt professionally, then 4 variations in parallel
  let en=prompt;
- try{en=(await askAI(`You are an expert prompt writer for AI image generators. Turn the user's request into ONE detailed English prompt (40-70 words): subject, composition, colors, lighting, mood, and "${style}". If the request needs text inside the image, keep the text very short and put it in quotes. Output only the prompt.`,prompt+(ref?" (a reference photo was attached; match its style)":""),[],ref||null)).trim();}catch(e){}
+ try{en=(await askAI(`You are an expert prompt writer for AI image generators. Turn the user's request into ONE English prompt (max 35 words) that shows the subject concretely: who/what is in the picture, what they are doing, setting, then "${style}". Never replace the subject with a generic landscape or mood scene. If text must appear in the image, keep it to 1-3 words in quotes. Output only the prompt.`,prompt+(ref?" (a reference photo was attached; match its style)":""),[],ref||null)).trim();}catch(e){}
  const seeds=[0,1,2,3].map(()=>Math.floor(Math.random()*1e6));
- const outs=await Promise.all(seeds.map(sd=>polliB64(en,1024,1024,sd).then(o=>({...o,src:"pollinations",promptEn:en})).catch(()=>null)));
+ const outs=await Promise.all(seeds.map(sd=>polliB64(en,768,768,sd).then(o=>({...o,src:"pollinations",promptEn:en})).catch(()=>null)));
  const ok=outs.filter(Boolean);
  if(!ok.length)throw new Error("image service unavailable, try again");
  return ok;
@@ -278,6 +280,7 @@ function baseSystem(){
  +(S.corrections.length?` The student previously reported these mistakes in your answers; do not repeat them: ${S.corrections.map(c=>`"${c}"`).join("; ")}.`:"");
 }
 async function reviewPass(kind,obj){
+ if(!S.feat.review)return obj;
  setLoad(true,t().reviewing);
  try{
   const text=await askAI(baseSystem()+` You are now a strict reviewer. Check this ${kind} for factual, scientific, mathematical and language errors, and for anything that contradicts the attached photo if there is one. Fix every error. Respond ONLY with the corrected JSON in exactly the same shape, plus one extra field "uncertain": an array of short strings (max 4) naming specific facts the student should double-check with their teacher. Use [] if everything is standard knowledge.`,JSON.stringify(obj));
@@ -309,7 +312,7 @@ async function doExplain(){
  S.error="";S.explanation=null;S.chat=[];S.fc=null;S.curSession=null;setLoad(true,t().thinking);
  const styleMap={simple:"in very simple, plain words",steps:"as a numbered sequence of steps, one idea per step",examples:"with a concrete real-life example for every idea",kid:"as if explaining to a 10-year-old, with a fun comparison",summary:"as a compact summary a student can revise in 2 minutes"};
  try{
-  const text=await askAI(baseSystem()+` Explain the lesson ${styleMap[S.style]}.${photoNote()} Respond ONLY with JSON, no markdown: {"title":"","overview":"","sections":[{"heading":"","text":""}],"keyTerms":[{"term":"","meaning":""}],"example":"","summary":""}. Use 3 to 5 sections, 4 to 8 key terms.`,`Explain: ${S.lesson||"the lesson in the photo"}`);
+  const text=await askAI(baseSystem()+` Explain the lesson ${styleMap[S.style]}.${photoNote()} Respond ONLY with JSON, no markdown: {"title":"","overview":"","sections":[{"heading":"","text":""}],"keyTerms":[{"term":"","meaning":""}],"example":"","summary":""}. Use 3 to 5 sections, 4 to 8 key terms. Be concise.`,`Explain: ${S.lesson||"the lesson in the photo"}`);
   const draft=parseJSON(text);
   S.explanation=await reviewPass("lesson explanation",draft);
   if(!S.lesson.trim()&&S.explanation.title)S.lesson=S.explanation.title;
@@ -388,7 +391,7 @@ async function shareBlob(blob,name){
  }catch(e){}
 }
 async function polliB64(promptEn,w=1024,h=1024,seed=null){
- const url=`https://image.pollinations.ai/prompt/${encodeURIComponent(promptEn)}?width=${w}&height=${h}&nologo=true&seed=${seed??Math.floor(Math.random()*1e6)}`;
+ const url=`https://image.pollinations.ai/prompt/${encodeURIComponent(promptEn)}?model=flux&enhance=false&width=${w}&height=${h}&nologo=true&seed=${seed??Math.floor(Math.random()*1e6)}`;
  const r=await fetch(url);if(!r.ok)throw new Error("image HTTP "+r.status);
  const blob=await r.blob();
  const b64=await new Promise((res,rej)=>{
@@ -472,6 +475,7 @@ async function buildXlsx(doc){
  const wb=XLSX.utils.book_new();
  for(const sh of doc.sheets||[]){
   const headers=sh.headers||[],rows=sh.rows||[];
+  const isAr=/[\u0600-\u06FF]/.test(JSON.stringify(headers));
   const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
   const n=rows.length;
   // numeric columns -> add totals & average rows with real formulas
@@ -480,7 +484,7 @@ async function buildXlsx(doc){
    if(numCols.some(Boolean)){
     const L=c=>XLSX.utils.encode_col(c);
     const sumRow=n+2,avgRow=n+3;
-    const lab0=sh.totalLabel||(S.lang==="ar"?"المجموع":"Total"),lab1=sh.averageLabel||(S.lang==="ar"?"المتوسط":"Average");
+    const lab0=sh.totalLabel||(isAr?"المجموع":"Total"),lab1=sh.averageLabel||(isAr?"المتوسط":"Average");
     XLSX.utils.sheet_add_aoa(ws,[[lab0],[lab1]],{origin:`A${sumRow}`});
     headers.forEach((_,c)=>{if(c===0||!numCols[c])return;
      ws[`${L(c)}${sumRow}`]={t:"n",f:`SUM(${L(c)}2:${L(c)}${n+1})`};
@@ -490,7 +494,7 @@ async function buildXlsx(doc){
   }
   if(sh.formulas)for(const f of sh.formulas){if(f.cell&&f.formula){ws[f.cell]={t:"n",f:String(f.formula).replace(/^=/,"")};const r=XLSX.utils.decode_range(ws["!ref"]),c=XLSX.utils.decode_cell(f.cell);r.e.r=Math.max(r.e.r,c.r);r.e.c=Math.max(r.e.c,c.c);ws["!ref"]=XLSX.utils.encode_range(r);}}
   ws["!cols"]=headers.map((h,c)=>({wch:Math.min(40,Math.max(12,...[String(h),...rows.map(r=>String(r[c]??""))].map(x=>x.length+3)))}));
-  ws["!freeze"]={xSplit:0,ySplit:1};ws["!views"]=[{state:"frozen",ySplit:1,rightToLeft:S.lang==="ar"}];
+  ws["!freeze"]={xSplit:0,ySplit:1};ws["!views"]=[{state:"frozen",ySplit:1,rightToLeft:isAr}];
   XLSX.utils.book_append_sheet(wb,ws,String(sh.name||"Sheet").slice(0,28));
  }
  const out=XLSX.write(wb,{bookType:"xlsx",type:"array"});
@@ -502,29 +506,40 @@ async function doDoc(){
  if(d.useLesson&&S.explanation)p=(p?p+". ":"")+`Topic: ${S.lesson}. Base it on this explanation: ${JSON.stringify(S.explanation).slice(0,2500)}`;
  if(!p){d.err=t().docPh;return render();}
  d.busy=true;d.err="";d.url=null;render();
- const lang=langName(S.lang),tr=t();
+ const docLang=d.lang==="auto"?(/[\u0600-\u06FF]/.test(d.prompt+(d.useLesson?S.lesson:""))?"ar":"en"):d.lang;
+ const lang=langName(docLang),tr=t();
  const shapes={
-  word:`{"title":"","subtitle":"","coverImagePrompt":"","sections":[{"heading":"","text":"","bullets":[],"table":{"headers":[],"rows":[[]]},"imagePrompt":""}],"conclusion":""} — 4 to 8 sections with real paragraphs (80-150 words each); include a table only where data fits; imagePrompt for 2-3 sections max. IMAGE PROMPTS: in English, 20-40 words, must depict the topic itself explicitly and concretely (name the topic in the prompt, show its symbols/scene/objects/people; for abstract or religious topics use clear symbolic scenes, e.g. a person modestly lowering their gaze, an open Quran with soft light) — never generic landscapes or decorations`,
-  ppt:`{"title":"","subtitle":"","coverImagePrompt":"","slides":[{"title":"","bullets":["",""],"note":"","imagePrompt":""}],"closing":"","closingSub":""} — 6 to 10 slides, 3 to 5 short bullets each, every slide has an imagePrompt. IMAGE PROMPTS: in English, 20-40 words, must depict that slide's specific content explicitly (name the topic and the slide idea, show its symbols/scene/objects/people; for abstract or religious topics use clear symbolic scenes) — never generic landscapes or decorations`,
+  word:`{"title":"","subtitle":"","coverImagePrompt":"","sections":[{"heading":"","text":"","bullets":[],"table":{"headers":[],"rows":[[]]},"imagePrompt":""}],"conclusion":""} — 4 to 8 sections with real paragraphs (80-150 words each); include a table only where data fits; imagePrompt for 2-3 sections max. IMAGE PROMPTS: English, max 25 words, ONE concrete scene directly showing the topic: who/what is in the picture and what they are doing (e.g. "a young man in a busy street looking down modestly, eyes lowered"). Forbidden: landscapes, gardens, paths, abstract light, decorations`,
+  ppt:`{"title":"","subtitle":"","coverImagePrompt":"","slides":[{"title":"","bullets":["",""],"note":"","imagePrompt":""}],"closing":"","closingSub":""} — 6 to 10 slides, 3 to 5 short bullets each, every slide has an imagePrompt. IMAGE PROMPTS: English, max 25 words, ONE concrete scene directly showing that slide's idea: who/what is in the picture and what they are doing. Forbidden: landscapes, gardens, paths, abstract light, decorations`,
   xls:`{"title":"","sheets":[{"name":"","headers":["",""],"rows":[["",""]],"totalLabel":"","averageLabel":"","formulas":[{"cell":"E2","formula":"=B2*C2"}]}]} — realistic complete data (8-25 rows); numbers as JSON numbers not strings; add useful formulas where they make sense (per-row calculations, percentages)`,
  };
  try{
   setDocStatus(tr.stWriting);
-  const draft=parseJSON(await askAI(`You create high-quality school documents. Write in ${lang} unless the user asks otherwise. Respond ONLY with JSON in this shape: ${shapes[d.type]}. No markdown.`,p,[],null));
-  setDocStatus(tr.stReview);
+  const draft=parseJSON(await askAI(`You create high-quality school documents. Write ALL content in ${lang} (image prompts stay in English). Also add a field "titleEn": the title translated to English. Respond ONLY with JSON in this shape: ${shapes[d.type]}. No markdown.`,p,[],null));
   let json=draft;
-  try{const r=parseJSON(await askAI(`You are a strict editor. Improve this ${d.type==="ppt"?"presentation":d.type==="xls"?"spreadsheet":"report"} JSON: fix factual, language and structure errors, make text clearer and richer, keep the exact same JSON shape and language (${lang}). Respond ONLY with the JSON.`,JSON.stringify(draft),[],null));if(r&&typeof r==="object")json=r;}catch(e){}
-  const th=THEMES[d.theme]||THEMES.blue,rtl=S.lang==="ar";
+  const th=THEMES[d.theme]||THEMES.blue,rtl=docLang==="ar";
+  const imgs={};
+  let imgJob=Promise.resolve();
   if(d.images&&d.type!=="xls"){
    setDocStatus(tr.stImages);
-   const st="clean educational illustration, flat colors, no text, no watermark";
-   const topic=`Illustration about "${json.title||p.slice(0,80)}": `;
-   const jobs=[];
-   if(json.coverImagePrompt)jobs.push(polliB64(topic+json.coverImagePrompt+", "+st,1024,640).then(o=>{json.coverImage=o.data;}).catch(()=>{}));
-   const list=d.type==="ppt"?(json.slides||[]):(json.sections||[]);
-   list.forEach(x=>{if(x.imagePrompt)jobs.push(polliB64(topic+(x.title||x.heading?`(${x.title||x.heading}) `:"")+x.imagePrompt+", "+st,768,768).then(o=>{x.image=o.data;}).catch(()=>{}));});
-   await Promise.all(jobs);
+   imgJob=(async()=>{
+    const st="clean educational illustration, flat colors, no text, no watermark";
+    let userDesc=d.imgDesc.trim();
+    if(userDesc&&/[\u0600-\u06FF]/.test(userDesc)){try{userDesc=(await askAI("Translate to English, output only the translation.",userDesc,[],null)).trim();}catch(e){}}
+    const topic=`Illustration about "${draft.titleEn||draft.title||p.slice(0,80)}": `;
+    const jobs=[];
+    const cp=userDesc||draft.coverImagePrompt;
+    if(cp)jobs.push(polliB64(topic+cp+", "+st,896,560).then(o=>{imgs.cover=o.data;}).catch(()=>{}));
+    const list=d.type==="ppt"?(draft.slides||[]):(draft.sections||[]);
+    list.forEach((x,i)=>{const ip=userDesc?(userDesc+(x.imagePrompt?", "+x.imagePrompt:"")):x.imagePrompt;if(ip)jobs.push(polliB64(topic+ip+", "+st,640,640).then(o=>{imgs[i]=o.data;}).catch(()=>{}));});
+    await Promise.all(jobs);
+   })();
   }
+  if(S.feat.review){setDocStatus(tr.stReview);
+  try{const r=parseJSON(await askAI(`You are a strict editor. Improve this ${d.type==="ppt"?"presentation":d.type==="xls"?"spreadsheet":"report"} JSON: fix factual, language and structure errors, make text clearer and richer, keep the exact same JSON shape and language (${lang}). Respond ONLY with the JSON.`,JSON.stringify(draft),[],null));if(r&&typeof r==="object")json=r;}catch(e){}}
+  await imgJob;
+  if(imgs.cover)json.coverImage=imgs.cover;
+  {const list=d.type==="ppt"?(json.slides||[]):(json.sections||[]);list.forEach((x,i)=>{if(imgs[i])x.image=imgs[i];});}
   setDocStatus(tr.stBuild);
   let blob,ext;
   if(d.type==="word"){blob=await buildDocx(json,rtl,th,d.images);ext="docx";}
@@ -635,7 +650,7 @@ function viewSettings(tr){
   <div><p class="lbl">${tr.apiKey}</p><input class="inp" id="key" type="password" dir="ltr" value="${esc(S.apiKey)}" placeholder="${tr.apiKeyPh}"></div>
   <div><p class="lbl">${tr.model}</p><div class="chips">${[...new Set([S.model,...(MODEL_CACHE||MODELS)])].slice(0,6).map(m=>`<button class="chip ${S.model===m?"on":""}" onclick="S.model='${m}';localStorage.setItem('model','${m}');render()" dir="ltr">${m}</button>`).join("")}</div></div>
   <div><p class="lbl">${tr.uiLang}</p><div class="chips"><button class="chip ${S.lang==="ar"?"on":""}" onclick="S.lang='ar';localStorage.setItem('lang','ar');render()">العربية</button><button class="chip ${S.lang==="en"?"on":""}" onclick="S.lang='en';localStorage.setItem('lang','en');render()">English</button></div></div>
-  <div><p class="lbl">${tr.features}</p>${tog("flash",tr.featFlash)}${tog("grades",tr.featGrades)}${S.feat.grades?`<button class="btn o" style="margin-top:8px" onclick="S.screen='grades';render()">📊 ${tr.grades}</button>`:""}</div>
+  <div><p class="lbl">${tr.features}</p>${tog("fast",tr.featFast)}${tog("review",tr.featReview)}${tog("flash",tr.featFlash)}${tog("grades",tr.featGrades)}${S.feat.grades?`<button class="btn o" style="margin-top:8px" onclick="S.screen='grades';render()">📊 ${tr.grades}</button>`:""}</div>
   <button class="btn" onclick="S.apiKey=document.getElementById('key').value.trim();localStorage.setItem('apiKey',S.apiKey);MODEL_CACHE=null;S.screen='home';render()">${tr.save}</button>
   <button class="btn o" onclick="runDiag()">🔧 ${tr.test}</button>
   <pre id="diag" dir="ltr" style="white-space:pre-wrap;font-size:12px;background:#f3f4f6;border-radius:8px;padding:8px;margin:0;display:none"></pre>
@@ -689,8 +704,10 @@ function viewDoc(tr){
  return header(tr,tr.docTitle,"S.screen=S.subject?'subject':'home';render()")+`<div class="wrap stack">
  <div><p class="lbl">${tr.docType}</p><div class="chips">${types.map(([id,l])=>`<button class="chip ${d.type===id?"on":""}" onclick="S.doc.type='${id}';render()">${l}</button>`).join("")}</div></div>
  <textarea class="inp" rows="4" placeholder="${tr.docPh}" oninput="S.doc.prompt=this.value">${esc(d.prompt)}</textarea>
+ <div><p class="lbl">${tr.docLang}</p><div class="chips">${tr.docLangs.map(([id,l])=>`<button class="chip ${d.lang===id?"on":""}" onclick="S.doc.lang='${id}';render()">${l}</button>`).join("")}</div></div>
  ${d.type!=="xls"?`<div><p class="lbl">${tr.docTheme}</p><div class="chips">${Object.keys(THEMES).map(k=>`<button class="chip ${d.theme===k?"on":""}" style="border-color:#${THEMES[k].c};${d.theme===k?`background:#${THEMES[k].a}`:""}" onclick="S.doc.theme='${k}';render()"><span class="sw" style="background:#${THEMES[k].c};margin-inline-end:6px"></span>${k}</button>`).join("")}</div></div>
- <label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" ${d.images?"checked":""} onchange="S.doc.images=this.checked"> ${tr.docImages}</label>`:""}
+ <label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" ${d.images?"checked":""} onchange="S.doc.images=this.checked"> ${tr.docImages}</label>
+ ${d.images?`<div><p class="lbl">${tr.docImgDesc}</p><input class="inp" value="${esc(d.imgDesc)}" placeholder="${tr.docImgDescPh}" oninput="S.doc.imgDesc=this.value"></div>`:""}`:""}
  ${S.explanation?`<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" ${d.useLesson?"checked":""} onchange="S.doc.useLesson=this.checked"> ${tr.docUseLesson} (${esc(S.lesson)})</label>`:""}
  <button class="btn" onclick="doDoc()" ${d.busy?"disabled":""}>📄 ${tr.docGo}</button>
  ${d.busy?spinner(d.status||tr.thinking):""}
