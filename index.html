@@ -124,7 +124,7 @@ a{color:#9DC1FF}.setbox a{color:var(--acc)}
 .srcs{font-size:12px;margin-top:6px;color:#4B5A7A}.srcs a{color:var(--acc);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .imggrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}.imggrid img{width:100%;border-radius:10px;background:#eee;aspect-ratio:1;object-fit:cover}
 .chatbar{position:sticky;bottom:0;background:rgba(11,31,75,.92);backdrop-filter:blur(8px);padding:10px 0 6px;margin-top:10px}
-.pv{background:#fff;color:#111;border-radius:12px;padding:18px;margin-bottom:12px;box-shadow:0 8px 24px rgba(0,0,0,.3);font-size:12px;line-height:1.5;position:relative}
+.pv{font-family:inherit;background:#fff;color:#111;border-radius:12px;padding:18px;margin-bottom:12px;box-shadow:0 8px 24px rgba(0,0,0,.3);font-size:12px;line-height:1.5;position:relative}
 .pv.a4{aspect-ratio:210/297;overflow:hidden}
 .pv h1{font-size:22px;margin:0 0 6px}.pv h2{font-size:15px;margin:10px 0 4px}.pv p{margin:0 0 6px;white-space:pre-line}
 .pv table{border-collapse:collapse;width:100%;margin:6px 0}.pv td,.pv th{border:1px solid #cbd5e1;padding:3px 6px;font-size:11px}.pv th{color:#fff}
@@ -682,7 +682,8 @@ async function buildDocx(doc,rtl,th,images){
  await loadLibs();
  const D=window.docx;
  const al=a=>a==="center"?D.AlignmentType.CENTER:(rtl?D.AlignmentType.RIGHT:D.AlignmentType.LEFT);
- const run=(text,o={})=>new D.TextRun({text:String(text??""),bold:!!o.bold,italics:!!o.italic,color:o.color||"000000",size:o.size||24,font:"Arial",rightToLeft:rtl});
+ const fs=th.size?Math.round(th.size*2):0;
+ const run=(text,o={})=>new D.TextRun({text:String(text??""),bold:!!o.bold,italics:!!o.italic,color:o.color||"000000",size:(o.size||24)+(fs&&!o.size?fs-24:0),font:th.font||"Arial",rightToLeft:rtl});
  const para=(text,o={})=>new D.Paragraph({children:[run(text,o)],alignment:al(o.align),bidirectional:rtl,spacing:{after:o.after??160,before:o.before??0},heading:o.heading});
  const bullet=text=>new D.Paragraph({children:[run(text)],bullet:{level:0},bidirectional:rtl,spacing:{after:80}});
  const img=(b64,w,h)=>{try{const bin=atob(b64);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new D.Paragraph({children:[new D.ImageRun({type:"jpg",data:u,transformation:{width:w,height:h}})],alignment:D.AlignmentType.CENTER,spacing:{after:200}});}catch(e){return null;}};
@@ -726,9 +727,11 @@ async function buildPptx(doc,rtl,th,images){
   p.addShape(pptx.ShapeType.rect,{x:0,y:0.95,w:10,h:0.06,fill:{color:th.c}});
   p.addText(sl.title||"",{x:0.4,y:0.12,w:9.2,h:0.7,fontSize:24,bold:true,color:"FFFFFF",align,rtlMode:rtl});
   const hasImg=images&&sl.image;
+  const imgLeft=th.imgSide==="left"||(th.imgSide==="auto"&&rtl);
+  const fsz=th.size||18;
   const items=(sl.bullets||[]).map(b=>({text:String(b),options:{bullet:{code:"25CF"},breakLine:true,paraSpaceAfter:8}}));
-  if(items.length)p.addText(items,{x:rtl&&hasImg?3.9:0.5,y:1.25,w:hasImg?5.6:9,h:3.7,fontSize:18,color:"1F2937",align,rtlMode:rtl,valign:"top"});
-  if(hasImg)p.addImage({data:"image/jpeg;base64,"+sl.image,x:rtl?0.4:6.3,y:1.3,w:3.3,h:3.3,rounding:true});
+  if(items.length)p.addText(items,{x:imgLeft&&hasImg?3.9:0.5,y:1.25,w:hasImg?5.6:9,h:3.7,fontSize:fsz,fontFace:th.font||"Arial",color:"1F2937",align,rtlMode:rtl,valign:"top"});
+  if(hasImg)p.addImage({data:"image/jpeg;base64,"+sl.image,x:imgLeft?0.4:6.3,y:1.3,w:3.3,h:3.3,rounding:th.style!=="classic"});
   if(sl.note)p.addText(sl.note,{x:0.5,y:5.0,w:9,h:0.45,fontSize:12,italic:true,color:"6B7280",align,rtlMode:rtl});
   p.addText(String(i+2),{x:9.2,y:5.2,w:0.6,h:0.3,fontSize:10,color:"9CA3AF",align:"right"});
  });
@@ -784,7 +787,7 @@ async function doDoc(){
   setDocStatus(tr.stWriting);
   const draft=parseJSON(await askAI(`You create high-quality school documents. Write ALL content in ${lang} (image prompts stay in English). If files or photos are attached, base the content on them faithfully. Also add a field "titleEn": the title translated to English. Respond ONLY with JSON in this shape: ${shapes[d.type]}. No markdown.`,p,[],S.attach.length?S.attach:null));
   let json=draft;
-  const th=THEMES[d.theme]||THEMES.blue,rtl=docLang==="ar";
+  const th=themeOf({theme:d.theme,json:draft}),rtl=docLang==="ar";
   const imgs={};
   let imgJob=Promise.resolve();
   if(d.images&&d.type!=="xls"){
@@ -821,7 +824,7 @@ async function doDoc(){
 
 function docPreview(tr){
  const d=S.doc,j=d.json;if(!j)return"";
- const th=THEMES[d.theme]||THEMES.blue,rtl=d.docLang==="ar",dir=rtl?"rtl":"ltr";
+ const th=themeOf(d),rtl=d.docLang==="ar",dir=rtl?"rtl":"ltr";
  const im=(b64,key)=>b64?`<div style="position:relative"><img src="data:image/jpeg;base64,${b64}" alt=""><button class="regen" style="top:10px;inset-inline-end:6px" onclick="regenImg('${key}')">${tr.pvRegen}</button></div>`:"";
  let h=`<div class="row" style="margin-bottom:8px"><p class="pvlbl" style="margin:0;flex:1">👁 ${tr.pvTitle}</p><button class="btn g" style="flex:0 0 auto;width:auto;padding:6px 10px;font-size:12px" onclick="S.doc.pv=!S.doc.pv;render()">${d.pv?tr.pvHide:tr.pvShow}</button></div>`;
  if(!d.pv)return h;
@@ -847,8 +850,9 @@ async function regenImg(key){
  try{const o=await polliB64(topic+pr+", "+st,key==="cover"?896:640,key==="cover"?560:640);d.imgs[key]=o.data;if(key==="cover")j.coverImage=o.data;else{const x=(d.type==="ppt"?(j.slides||[]):(j.sections||[]))[+key];if(x)x.image=o.data;}setDocStatus(t().stBuild);await rebuildDoc();}catch(e){d.err=e.message;}
  d.busy=false;d.status="";render();
 }
+function themeOf(d){const base=THEMES[d.theme]||THEMES.blue;const ds=d.json&&d.json.design||{};const hx=v=>typeof v==="string"&&/^#?[0-9a-fA-F]{6}$/.test(v)?v.replace("#",""):null;return{a:hx(ds.primary)||base.a,b:hx(ds.secondary)||base.b,c:hx(ds.accent)||base.c,font:ds.font||"Arial",size:+ds.fontSize||0,imgSide:ds.imageSide||"auto",style:ds.style||"modern"};}
 async function rebuildDoc(){
- const d=S.doc,json=d.json,th=THEMES[d.theme]||THEMES.blue,rtl=d.docLang==="ar";
+ const d=S.doc,json=d.json,th=themeOf(d),rtl=d.docLang==="ar";
  if(d.imgs.cover)json.coverImage=d.imgs.cover;
  const list=d.type==="ppt"?(json.slides||[]):(json.sections||[]);list.forEach((x,i)=>{if(d.imgs[i]&&!x.image)x.image=d.imgs[i];});
  let blob,ext;
@@ -864,7 +868,8 @@ async function doDocChat(msg){
  try{
   setDocStatus(t().stWriting);
   const kind=d.type==="ppt"?"presentation":d.type==="xls"?"spreadsheet":"report";
-  const txt=await askAI(`You are editing a ${kind} JSON together with the user. Apply the user's instruction to the JSON below and return the COMPLETE updated JSON in exactly the same shape and language (${langName(d.docLang)}), plus one extra field "reply": a short sentence (in the user's language) saying what you changed. Keep everything the user did not ask to change. Existing image prompts may stay. Respond ONLY with JSON.\n\nCURRENT JSON:\n${JSON.stringify(d.json).slice(0,14000)}`,msg,d.chat.slice(0,-1).slice(-6),S.attach.length?S.attach:null);
+  const txt=await askAI(`You are editing a ${kind} JSON together with the user. Apply the user's instruction to the JSON below and return the COMPLETE updated JSON in exactly the same shape and language (${langName(d.docLang)}), plus one extra field "reply": a short sentence (in the user's language) saying exactly what you changed. Keep everything the user did not ask to change. Existing image prompts may stay.
+WHAT YOU CAN CHANGE: (1) any text/content, add/remove/reorder ${d.type==="ppt"?"slides":d.type==="xls"?"rows/columns/sheets":"sections/tables"}; (2) VISUAL DESIGN through a top-level "design" object: {"primary":"#hex" (headings/title bar), "secondary":"#hex" (dark cover background), "accent":"#hex" (thin accent line), "font":"Arial|Calibri|Georgia|Tahoma|Times New Roman", "fontSize":number, "imageSide":"left|right|auto", "style":"modern|classic"}; (3) image prompts ("imagePrompt"/"coverImagePrompt", English) to change what pictures show. If the user asks for "colors/design/make it beautiful", CHOOSE a concrete harmonious palette and set the design object (do not just say you did). WHAT YOU CANNOT DO: animations, transitions, charts, custom fonts beyond the list, exact positioning. If a request is impossible, do not pretend — say so in "reply" and change nothing else. Respond ONLY with JSON.\n\nCURRENT JSON:\n${JSON.stringify(d.json).slice(0,14000)}`,msg,d.chat.slice(0,-1).slice(-6),S.attach.length?S.attach:null);
   const j=parseJSON(txt);const reply=j.reply||t().docChanged;delete j.reply;
   // images for new items if needed
   if(d.images&&d.type!=="xls"){const list=d.type==="ppt"?(j.slides||[]):(j.sections||[]);const st="clean educational illustration, flat colors, no text, no watermark";const topic=`Illustration about "${j.titleEn||j.title||""}": `;
