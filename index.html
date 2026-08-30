@@ -539,13 +539,23 @@ async function askChat(chat,userText,attach){
    let res;try{res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(S.apiKey)}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});}catch(e){errs.push(`${model}: ${e.message}`);continue;}
    if(res.ok){const d=await res.json();const c=d.candidates?.[0];const txt=(c?.content?.parts||[]).map(p=>p.text||"").join("");if(!txt){errs.push(`${model}: empty`);continue;}
     const src=(c?.groundingMetadata?.groundingChunks||[]).map(g=>g.web).filter(Boolean).slice(0,6);
+    if(useTools)S.ai.searchFailed=0;
     S.lastModel=model;
     return {text:txt,sources:src};}
    let msg="";try{msg=(await res.json()).error?.message||"";}catch(e){}errs.push(`${model}${useTools?"+search":""}: HTTP ${res.status} ${msg.slice(0,100)}`);
-   if(res.status===429||res.status===503){await new Promise(r=>setTimeout(r,1200));break;}
+   if(useTools){S.ai.searchFailed=(S.ai.searchFailed||0)+1;if(S.ai.searchFailed>=2){S.ai.diy=true;S.ai.note=S.lang==="ar"?"بحث Google المدمج غير متاح لمفتاحك؛ أستخدم بحثاً مجانياً بديلاً.":"Built-in Google search isn't available on your key; using a free fallback search.";}continue;}
+   if(res.status===429||res.status===503){await new Promise(r=>setTimeout(r,1200));}
   }
  }
  throw new Error(errs.join(" | "));
+}
+async function diySearch(q,lang){
+ const out=[];const strip=x=>x.replace(/<[^>]+>/g,"").replace(/&amp;/g,"&").replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\s+/g," ").trim();
+ const ddg=async(u)=>{const r=await fetch(u);if(!r.ok)throw 0;const h=await r.text();const re=/<a[^>]*class="result__a"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>[\s\S]*?<a[^>]*class="result__snippet"[^>]*>([\s\S]*?)<\/a>/g;let m;while((m=re.exec(h))&&out.length<8){let url=m[1];const uu=url.match(/uddg=([^&]+)/);if(uu)url=decodeURIComponent(uu[1]);out.push({title:strip(m[2]),url,snippet:strip(m[3])});}};
+ const target=`https://html.duckduckgo.com/html/?q=${encodeURIComponent(q)}`;
+ for(const prox of [`https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,`https://corsproxy.io/?${encodeURIComponent(target)}`]){try{await ddg(prox);if(out.length)break;}catch(e){}}
+ try{const wl=lang==="ar"?"ar":"en";const r=await fetch(`https://${wl}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}&srlimit=3&format=json&origin=*`);const j=await r.json();(j.query?.search||[]).forEach(x=>out.push({title:x.title,url:`https://${wl}.wikipedia.org/wiki/${encodeURIComponent(x.title.replace(/ /g,"_"))}`,snippet:strip(x.snippet)}));}catch(e){}
+ return out;
 }
 async function webImages(q){
  const out=[];
@@ -568,7 +578,20 @@ async function sendChat(){
    const imgs=await webImages(q);
    chat.msgs.push({role:"assistant",content:imgs.length?`🔎 ${q}`:(S.lang==="ar"?"لم أجد صوراً.":"No images found."),webimgs:imgs});
   }else{
-   const r=await askChat(chat,txt||"Describe / use the attached file.",att);
+   let r=null;
+   if(S.ai.search){try{r=await askChat(chat,txt||"Describe / use the attached file.",att);}catch(e){if(!/429|quota|400|tool/i.test(e.message))throw e;}}
+   if(!r||(!r.sources.length&&S.ai.search&&(S.ai.searchFailed||0)>=1)){
+    // DIY web search (free): fetch results and let the model answer from them
+    let q=txt;const isAr=/[\u0600-\u06FF]/.test(txt);
+    try{q=(await askAI("Turn the user's message into ONE short web search query (keep the user's language; add the current year if it asks about recent events). Output only the query.",txt,[],null)).trim().replace(/^["']|["']$/g,"");}catch(e){}
+    const res=await diySearch(q,isAr?"ar":"en");
+    if(res.length){
+     const ctx=res.map((x,i)=>`[${i+1}] ${x.title}\n${x.url}\n${x.snippet}`).join("\n\n");
+     const saveSearch=S.ai.search;S.ai.search=false;
+     try{r=await askChat(chat,`${txt}\n\n(Web search results for "${q}", today ${new Date().toISOString().slice(0,10)}. Use them to answer accurately and mention which sources [n] you used; if they are insufficient say so.)\n\n${ctx}`,att);}finally{S.ai.search=saveSearch;}
+     r.sources=res.slice(0,6).map(x=>({uri:x.url,title:x.title}));S.ai.note="";
+    }else if(!r){const saveSearch=S.ai.search;S.ai.search=false;try{r=await askChat(chat,txt||"Describe / use the attached file.",att);}finally{S.ai.search=saveSearch;}}
+   }
    chat.msgs.push({role:"assistant",content:r.text,sources:r.sources});
   }
   saveChats();
@@ -596,7 +619,7 @@ function viewAI(tr){
  <div class="row" style="margin-bottom:8px"><button class="btn g" onclick="S.ai.cur=null;S.attach=[];render()">＋ ${tr.aiNew}</button></div>
  ${list}
  <div class="chat" dir="auto" style="min-height:40vh">${msgs.length?msgs.map((m,i)=>`<div class="cmsg ${m.role==="user"?"u":"a"}" dir="auto">${m.role==="user"?esc(m.content)+(m.attNames&&m.attNames.length?`<div style="font-size:12px;opacity:.8">📎 ${esc(m.attNames.join(", "))}</div>`:""):mdToHtml(m.content)}${imgs(m)}${web(m)}${srcs(m)}${acts(m,i)}</div>`).join(""):`<p style="color:var(--muted)">${tr.aiEmptyChat}</p>`}
- ${S.ai.busy?spinner(tr.thinking):""}${S.ai.err?`<p class="err">${esc(S.ai.err)}</p>`:""}<div id="chatEnd"></div></div>
+ ${S.ai.busy?spinner(tr.thinking):""}${S.ai.err?`<p class="err">${esc(S.ai.err)}</p>`:""}${S.ai.note?`<p class="hint">ℹ️ ${esc(S.ai.note)}</p>`:""}<div id="chatEnd"></div></div>
  <div class="chatbar">${modeBar}${attachChips()}
  <div style="display:flex;gap:8px;direction:ltr;align-items:flex-end">${plusMenu()}<textarea class="inp" id="aiIn" rows="1" placeholder="${tr.aiPh}" style="flex:1;direction:${S.lang==="ar"?"rtl":"ltr"};min-height:44px;max-height:140px" oninput="S.ai.input=this.value;this.style.height='auto';this.style.height=Math.min(140,this.scrollHeight)+'px'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}">${esc(S.ai.input)}</textarea>${micBtn("aiIn")}<button class="btn" style="flex:0 0 auto;width:52px;box-shadow:none" onclick="sendChat()" ${S.ai.busy?"disabled":""}>➤</button></div></div>
  </div>`;
@@ -1000,7 +1023,7 @@ function viewSettings(tr){
   <button class="btn o" onclick="runDiag()">🔧 ${tr.test}</button>
   <pre id="diag" dir="ltr" style="white-space:pre-wrap;font-size:12px;background:#f3f4f6;border-radius:8px;padding:8px;margin:0;display:none"></pre>
  </div>
- <p class="hint" style="text-align:center">Lesson Buddy v32</p>
+ <p class="hint" style="text-align:center">Lesson Buddy v34</p>
  <div class="setbox"><b>${tr.howKey}</b><ol>${tr.steps.map(s=>`<li>${s}</li>`).join("")}</ol><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey ↗</a></div></div>`;
 }
 function viewHistory(tr){
