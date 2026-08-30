@@ -281,7 +281,7 @@ async function askAI(system,userText,history=[],imgOverride){
  const tryModels=[...new Set([...(S.feat.fast?lite:[]),...(avail.includes(S.model)?[S.model]:[]),...avail])].slice(0,6);
  const errs=[];const sleep=ms=>new Promise(r=>setTimeout(r,ms));
  for(const model of tryModels){
-  const mk=think=>JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,generationConfig:Object.assign({temperature:0.3,maxOutputTokens:6000},think?{}:{thinkingConfig:{thinkingBudget:0}})});
+  const mk=think=>JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,generationConfig:Object.assign({temperature:0.3,maxOutputTokens:16000},think?{}:{thinkingConfig:{thinkingBudget:0}})});
   let res=null,netErr="";
   for(let attempt=0;attempt<3&&!res;attempt++){
    try{res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(S.apiKey)}`,{method:"POST",headers:{"Content-Type":"application/json"},body:mk(false)});netErr="";}
@@ -824,18 +824,18 @@ async function doDoc(){
 
 function docPreview(tr){
  const d=S.doc,j=d.json;if(!j)return"";
- const th=themeOf(d),rtl=d.docLang==="ar",dir=rtl?"rtl":"ltr";
+ const th=themeOf(d),rtl=d.docLang==="ar",dir=rtl?"rtl":"ltr";const fstyle=`font-family:${th.font||"inherit"};${th.size?`font-size:${Math.max(10,Math.min(16,th.size))}px`:""}`;
  const im=(b64,key)=>b64?`<div style="position:relative"><img src="data:image/jpeg;base64,${b64}" alt=""><button class="regen" style="top:10px;inset-inline-end:6px" onclick="regenImg('${key}')">${tr.pvRegen}</button></div>`:"";
  let h=`<div class="row" style="margin-bottom:8px"><p class="pvlbl" style="margin:0;flex:1">👁 ${tr.pvTitle}</p><button class="btn g" style="flex:0 0 auto;width:auto;padding:6px 10px;font-size:12px" onclick="S.doc.pv=!S.doc.pv;render()">${d.pv?tr.pvHide:tr.pvShow}</button></div>`;
  if(!d.pv)return h;
  if(d.type==="ppt"){
   h+=`<div class="slide" dir="${dir}" style="background:#${th.b};color:#fff;justify-content:center;align-items:center;text-align:center;padding:14px">${d.imgs.cover?`<div style="position:relative;width:38%"><img src="data:image/jpeg;base64,${d.imgs.cover}" style="width:100%;height:auto;border-radius:10px"><button class="regen" style="top:6px;inset-inline-end:6px" onclick="regenImg('cover')">${tr.pvRegen}</button></div>`:""}<div><div style="font-size:18px;font-weight:800">${esc(j.title)}</div><div style="font-size:12px;opacity:.85">${esc(j.subtitle||"")}</div></div></div>`;
-  (j.slides||[]).forEach((sl,i)=>{h+=`<div class="slide" dir="${dir}"><div class="bar" style="background:#${th.a};border-bottom:3px solid #${th.c}">${esc(sl.title)}</div><div class="body"><ul>${(sl.bullets||[]).map(b=>`<li>${esc(b)}</li>`).join("")}</ul>${d.imgs[i]?`<div style="position:relative;width:38%"><img src="data:image/jpeg;base64,${d.imgs[i]}" style="width:100%;height:100%"><button class="regen" style="top:6px;inset-inline-end:6px" onclick="regenImg('${i}')">${tr.pvRegen}</button></div>`:""}</div>${sl.note?`<div style="padding:0 12px 6px;font-size:10px;color:#6B7280;font-style:italic">${esc(sl.note)}</div>`:""}<span class="num">${i+2}</span></div>`;});
+  (j.slides||[]).forEach((sl,i)=>{h+=`<div class="slide" dir="${dir}" style="${fstyle}"><div class="bar" style="background:#${th.a};border-bottom:3px solid #${th.c}">${esc(sl.title)}</div><div class="body"><ul>${(sl.bullets||[]).map(b=>`<li>${esc(b)}</li>`).join("")}</ul>${d.imgs[i]?`<div style="position:relative;width:38%"><img src="data:image/jpeg;base64,${d.imgs[i]}" style="width:100%;height:100%"><button class="regen" style="top:6px;inset-inline-end:6px" onclick="regenImg('${i}')">${tr.pvRegen}</button></div>`:""}</div>${sl.note?`<div style="padding:0 12px 6px;font-size:10px;color:#6B7280;font-style:italic">${esc(sl.note)}</div>`:""}<span class="num">${i+2}</span></div>`;});
   h+=`<div class="slide" dir="${dir}" style="background:#${th.b};color:#fff;justify-content:center;align-items:center;font-size:18px;font-weight:800">${esc(j.closing||(rtl?"شكراً لكم":"Thank you"))}</div>`;
  }else if(d.type==="word"){
-  h+=`<div class="pv a4" dir="${dir}" style="text-align:center;display:flex;flex-direction:column;justify-content:center"><h1 style="color:#${th.a};font-size:26px">${esc(j.title)}</h1><p style="color:#555">${esc(j.subtitle||"")}</p>${im(d.imgs.cover,"cover")}<p style="color:#777;font-size:11px">${new Date().toLocaleDateString(rtl?"ar":"en")}</p></div>`;
+  h+=`<div class="pv a4" dir="${dir}" style="${fstyle};text-align:center;display:flex;flex-direction:column;justify-content:center"><h1 style="color:#${th.a};font-size:26px">${esc(j.title)}</h1><p style="color:#555">${esc(j.subtitle||"")}</p>${im(d.imgs.cover,"cover")}<p style="color:#777;font-size:11px">${new Date().toLocaleDateString(rtl?"ar":"en")}</p></div>`;
   h+=`<div class="pv" dir="${dir}"><h2 style="color:#${th.a}">${rtl?"المحتويات":"Contents"}</h2>${(j.sections||[]).map((x,i)=>`<p>${i+1}. ${esc(x.heading)}</p>`).join("")}</div>`;
-  (j.sections||[]).forEach((x,i)=>{h+=`<div class="pv" dir="${dir}"><h2 style="color:#${th.a}">${i+1}. ${esc(x.heading)}</h2><p>${esc(x.text)}</p>${(x.bullets||[]).length?`<ul>${x.bullets.map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`:""}${x.table&&x.table.headers?`<table><tr>${x.table.headers.map(c=>`<th style="background:#${th.a}">${esc(c)}</th>`).join("")}</tr>${(x.table.rows||[]).map(r=>`<tr>${(r||[]).map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table>`:""}${im(d.imgs[i],String(i))}</div>`;});
+  (j.sections||[]).forEach((x,i)=>{h+=`<div class="pv" dir="${dir}" style="${fstyle}"><h2 style="color:#${th.a}">${i+1}. ${esc(x.heading)}</h2><p>${esc(x.text)}</p>${(x.bullets||[]).length?`<ul>${x.bullets.map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`:""}${x.table&&x.table.headers?`<table><tr>${x.table.headers.map(c=>`<th style="background:#${th.a}">${esc(c)}</th>`).join("")}</tr>${(x.table.rows||[]).map(r=>`<tr>${(r||[]).map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table>`:""}${im(d.imgs[i],String(i))}</div>`;});
   if(j.conclusion)h+=`<div class="pv" dir="${dir}"><h2 style="color:#${th.a}">${rtl?"الخاتمة":"Conclusion"}</h2><p>${esc(j.conclusion)}</p></div>`;
  }else{
   (j.sheets||[]).forEach(sh=>{h+=`<div class="pv" dir="${/[\u0600-\u06FF]/.test(JSON.stringify(sh.headers||[]))?"rtl":"ltr"}" style="overflow:auto"><h2 style="color:#1F3A8A">${esc(sh.name)}</h2><table><tr>${(sh.headers||[]).map(c=>`<th style="background:#1F3A8A">${esc(c)}</th>`).join("")}</tr>${(sh.rows||[]).slice(0,30).map(r=>`<tr>${(r||[]).map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table>${(sh.rows||[]).length>30?`<p class="hint">…</p>`:""}</div>`;});
@@ -869,8 +869,18 @@ async function doDocChat(msg){
   setDocStatus(t().stWriting);
   const kind=d.type==="ppt"?"presentation":d.type==="xls"?"spreadsheet":"report";
   const txt=await askAI(`You are editing a ${kind} JSON together with the user. Apply the user's instruction to the JSON below and return the COMPLETE updated JSON in exactly the same shape and language (${langName(d.docLang)}), plus one extra field "reply": a short sentence (in the user's language) saying exactly what you changed. Keep everything the user did not ask to change. Existing image prompts may stay.
-WHAT YOU CAN CHANGE: (1) any text/content, add/remove/reorder ${d.type==="ppt"?"slides":d.type==="xls"?"rows/columns/sheets":"sections/tables"}; (2) VISUAL DESIGN through a top-level "design" object: {"primary":"#hex" (headings/title bar), "secondary":"#hex" (dark cover background), "accent":"#hex" (thin accent line), "font":"Arial|Calibri|Georgia|Tahoma|Times New Roman", "fontSize":number, "imageSide":"left|right|auto", "style":"modern|classic"}; (3) image prompts ("imagePrompt"/"coverImagePrompt", English) to change what pictures show. If the user asks for "colors/design/make it beautiful", CHOOSE a concrete harmonious palette and set the design object (do not just say you did). WHAT YOU CANNOT DO: animations, transitions, charts, custom fonts beyond the list, exact positioning. If a request is impossible, do not pretend — say so in "reply" and change nothing else. Respond ONLY with JSON.\n\nCURRENT JSON:\n${JSON.stringify(d.json).slice(0,14000)}`,msg,d.chat.slice(0,-1).slice(-6),S.attach.length?S.attach:null);
+WHAT YOU CAN CHANGE: (1) any text/content, add/remove/reorder ${d.type==="ppt"?"slides":d.type==="xls"?"rows/columns/sheets":"sections/tables"}; (2) VISUAL DESIGN through a top-level "design" object: {"primary":"#hex" (headings/title bar), "secondary":"#hex" (dark cover background), "accent":"#hex" (thin accent line), "font":"Arial|Calibri|Georgia|Tahoma|Times New Roman", "fontSize":number, "imageSide":"left|right|auto", "style":"modern|classic"}; (3) image prompts ("imagePrompt"/"coverImagePrompt", English) to change what pictures show. If the user asks for "colors/design/make it beautiful", you MUST put a top-level "design" object in the returned JSON with real hex values, for example: "design":{"primary":"#7C3AED","secondary":"#2E1065","accent":"#F59E0B","font":"Calibri","fontSize":13,"imageSide":"right","style":"modern"} — choose a palette that fits the topic, different from the current one; never just describe it in "reply". WHAT YOU CANNOT DO: animations, transitions, charts, custom fonts beyond the list, exact positioning. If a request is impossible, do not pretend — say so in "reply" and change nothing else. Respond ONLY with JSON.\n\nCURRENT JSON:\n${JSON.stringify(d.json).slice(0,30000)}`,msg,d.chat.slice(0,-1).slice(-6),S.attach.length?S.attach:null);
   const j=parseJSON(txt);const reply=j.reply||t().docChanged;delete j.reply;
+  // normalize any design-like object the model produced into j.design
+  (function(){const hex=v=>typeof v==="string"&&/^#?[0-9a-fA-F]{6}$/.test(v.trim())?"#"+v.trim().replace("#",""):null;
+   const found=[];const walk=(o,depth)=>{if(!o||typeof o!=="object"||depth>3)return;for(const k in o){const v=o[k];const h=hex(v);if(h)found.push([k.toLowerCase(),h]);else if(v&&typeof v==="object"&&/design|theme|color|palette|style/i.test(k))walk(v,depth+1);}};
+   walk(j,0);if(!j.design)j.design={};
+   const pick=re=>{const f=found.find(([k])=>re.test(k));return f?f[1]:null;};
+   j.design.primary=hex(j.design.primary)||pick(/primary|heading|title|main/)||found[0]?.[1]||j.design.primary;
+   j.design.secondary=hex(j.design.secondary)||pick(/secondary|background|cover|dark/)||found[1]?.[1]||j.design.secondary;
+   j.design.accent=hex(j.design.accent)||pick(/accent|highlight|line/)||found[2]?.[1]||j.design.accent;
+   const fonts=["Arial","Calibri","Georgia","Tahoma","Times New Roman"];const ff=JSON.stringify(j).match(/"(Arial|Calibri|Georgia|Tahoma|Times New Roman)"/);if(!j.design.font&&ff)j.design.font=ff[1];
+  })();
   // images for new items if needed
   if(d.images&&d.type!=="xls"){const list=d.type==="ppt"?(j.slides||[]):(j.sections||[]);const st="clean educational illustration, flat colors, no text, no watermark";const topic=`Illustration about "${j.titleEn||j.title||""}": `;
    const jobs=[];list.forEach((x,i)=>{const old=(d.type==="ppt"?(d.json.slides||[]):(d.json.sections||[]))[i];if(old&&(old.title||old.heading)===(x.title||x.heading)&&d.imgs[i])return;if(x.imagePrompt)jobs.push(polliB64(topic+x.imagePrompt+", "+st,640,640).then(o=>{d.imgs[i]=o.data;}).catch(()=>{}));});
@@ -878,7 +888,7 @@ WHAT YOU CAN CHANGE: (1) any text/content, add/remove/reorder ${d.type==="ppt"?"
   d.json=j;setDocStatus(t().stBuild);await rebuildDoc();
   d.chat.push({role:"assistant",content:reply});
  }catch(e){d.err=(e.message==="nokey"?t().noKey:(friendly(e.message)||e.message));}
- d.busy=false;d.status="";render();
+ d.busy=false;d.status="";render();setTimeout(()=>{const el=document.getElementById("docChat");if(el)el.scrollIntoView({block:"end"});},50);
 }
 // ================= PDF =================
 const A4W=1240,A4H=1754,PM=90;
@@ -990,6 +1000,7 @@ function viewSettings(tr){
   <button class="btn o" onclick="runDiag()">🔧 ${tr.test}</button>
   <pre id="diag" dir="ltr" style="white-space:pre-wrap;font-size:12px;background:#f3f4f6;border-radius:8px;padding:8px;margin:0;display:none"></pre>
  </div>
+ <p class="hint" style="text-align:center">Lesson Buddy v32</p>
  <div class="setbox"><b>${tr.howKey}</b><ol>${tr.steps.map(s=>`<li>${s}</li>`).join("")}</ol><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey ↗</a></div></div>`;
 }
 function viewHistory(tr){
@@ -1107,6 +1118,7 @@ function viewDoc(tr){
  ${d.err?`<p class="err">${esc(d.err)}</p>`:""}
  ${d.url?`${docPreview(tr)}<div class="card"><b>✅ ${tr.docReady}:</b> <span dir="ltr">${esc(d.name)}</span><div class="row" style="margin-top:10px"><button class="btn o" onclick="shareBlob(S.doc.blob,S.doc.name)">📤 ${tr.share}</button><a class="btn o" style="text-align:center;text-decoration:none" href="${d.url}" download="${esc(d.name)}">⬇️ ${tr.download}</a></div></div>
  <div class="chat">${d.chat.map(m=>`<div class="msg ${m.role==="user"?"u":"a"}">${esc(m.content)}</div>`).join("")}
+ ${d.busy&&d.chat.length?spinner(d.status||tr.thinking):""}${d.err&&d.chat.length?`<p class="err">${esc(d.err)}</p>`:""}
  <div class="row" style="gap:8px"><input class="inp" id="docChat" placeholder="${tr.docChatPh}" style="flex:1" onkeydown="if(event.key==='Enter'){doDocChat(this.value);this.value='';}">${micBtn("docChat")}${plusMenu()}<button class="btn" style="flex:0 0 auto;width:auto;box-shadow:none" onclick="const i=document.getElementById('docChat');doDocChat(i.value);i.value=''" ${d.busy?"disabled":""}>➤</button></div></div>`:""}
  </div>`;
 }
