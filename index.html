@@ -124,6 +124,17 @@ a{color:#9DC1FF}.setbox a{color:var(--acc)}
 .srcs{font-size:12px;margin-top:6px;color:#4B5A7A}.srcs a{color:var(--acc);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .imggrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}.imggrid img{width:100%;border-radius:10px;background:#eee;aspect-ratio:1;object-fit:cover}
 .chatbar{position:sticky;bottom:0;background:rgba(11,31,75,.92);backdrop-filter:blur(8px);padding:10px 0 6px;margin-top:10px}
+.pv{background:#fff;color:#111;border-radius:12px;padding:18px;margin-bottom:12px;box-shadow:0 8px 24px rgba(0,0,0,.3);font-size:12px;line-height:1.5;position:relative}
+.pv.a4{aspect-ratio:210/297;overflow:hidden}
+.pv h1{font-size:22px;margin:0 0 6px}.pv h2{font-size:15px;margin:10px 0 4px}.pv p{margin:0 0 6px;white-space:pre-line}
+.pv table{border-collapse:collapse;width:100%;margin:6px 0}.pv td,.pv th{border:1px solid #cbd5e1;padding:3px 6px;font-size:11px}.pv th{color:#fff}
+.pv img{width:100%;border-radius:6px;display:block;margin:6px 0}.pv .regen{position:absolute;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:8px;padding:4px 8px;font-size:11px;cursor:pointer}
+.slide{aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#fff;color:#1F2937;margin-bottom:10px;box-shadow:0 8px 24px rgba(0,0,0,.3);position:relative;display:flex;flex-direction:column}
+.slide .bar{color:#fff;padding:8px 12px;font-weight:700;font-size:14px}
+.slide .body{display:flex;gap:10px;padding:10px 12px;flex:1;min-height:0}
+.slide ul{margin:0;padding-inline-start:18px;font-size:12px;flex:1;overflow:hidden}.slide img{width:38%;object-fit:cover;border-radius:8px;height:100%}
+.slide .num{position:absolute;bottom:4px;inset-inline-end:8px;font-size:10px;color:#9CA3AF}
+.pvlbl{font-family:ui-monospace,monospace;font-size:11px;color:var(--muted);margin:10px 0 6px}
 .mic{flex:0 0 auto;width:44px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.1);color:#fff;border-radius:10px;cursor:pointer;font-size:18px}
 .mic.on{background:#DC2626;border-color:#DC2626;animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
@@ -182,7 +193,7 @@ const T={
   shareLesson:"Share lesson",exportAll:"Export saved lessons",importAll:"Import lessons",
   docTitle:"Make a file",docType:"File type",docWord:"Word",docPpt:"PowerPoint",docXls:"Excel",docPh:"Describe what you want… (e.g. a 6-slide presentation about volcanoes / a weekly study schedule table / a report on the French revolution)",docGo:"Create file",docUseLesson:"Use the current lesson as the topic",docReady:"Your file is ready",
   imgStyle:"Style",imgStyles:[["poster","Poster"],["realistic","Realistic"],["cartoon","Cartoon"],["diagram","Scientific drawing"],["art","Art"]],pick:"Choose",
-  docTheme:"Color theme",docImages:"Add images (slower)",docLang:"File language",docLangs:[["auto","Auto"],["ar","العربية"],["en","English"]],attCam:"Camera",attPhoto:"Photo",attFiles:"Files",attBad:"Unsupported file type. Use images, PDF, Word, PowerPoint, Excel, text or audio.",attReading:"Reading file…",docChatPh:"Tell me what to change… (e.g. add a slide about causes, make it shorter, change the title)",docChanged:"Updated",docImgDesc:"Image description (optional)",docImgDescPh:"e.g. a young man lowering his gaze in a busy street",stWriting:"Writing content…",stReview:"Reviewing content…",stImages:"Making images…",stBuild:"Building file…",
+  docTheme:"Color theme",docImages:"Add images (slower)",docLang:"File language",docLangs:[["auto","Auto"],["ar","العربية"],["en","English"]],attCam:"Camera",attPhoto:"Photo",attFiles:"Files",attBad:"Unsupported file type. Use images, PDF, Word, PowerPoint, Excel, text or audio.",attReading:"Reading file…",pvTitle:"Preview",pvRegen:"🔄 Another image",pvHide:"Hide preview",pvShow:"Show preview",docChatPh:"Tell me what to change… (e.g. add a slide about causes, make it shorter, change the title)",docChanged:"Updated",docImgDesc:"Image description (optional)",docImgDescPh:"e.g. a young man lowering his gaze in a busy street",stWriting:"Writing content…",stReview:"Reviewing content…",stImages:"Making images…",stBuild:"Building file…",
  },
  ar:{appName:"رفيق الدروس",tagline:"اختر المادة، اكتب اسم الدرس، وتعلّم بطريقتك.",lessonLabel:"ما هو الدرس الذي أخذته؟",lessonPh:"مثال: قانون نيوتن الثاني، دورة الماء…",explain:"شرح",exam:"امتحان",styleLabel:"اشرحه…",
   styles:[["simple","ببساطة"],["steps","خطوة بخطوة"],["examples","مع أمثلة"],["kid","كأنني في العاشرة"],["summary","ملخّص قصير"]],
@@ -206,7 +217,7 @@ const T={
   shareLesson:"شارك الدرس",exportAll:"تصدير الدروس المحفوظة",importAll:"استيراد دروس",
   docTitle:"اصنع ملفاً",docType:"نوع الملف",docWord:"Word",docPpt:"PowerPoint",docXls:"Excel",docPh:"صف ما تريده… (مثال: عرض من ٦ شرائح عن البراكين / جدول مذاكرة أسبوعي / تقرير عن الثورة الفرنسية)",docGo:"أنشئ الملف",docUseLesson:"استخدم الدرس الحالي كموضوع",docReady:"ملفك جاهز",
   imgStyle:"الأسلوب",imgStyles:[["poster","ملصق"],["realistic","واقعي"],["cartoon","كرتون"],["diagram","رسم علمي"],["art","فني"]],pick:"اختر",
-  docTheme:"لون التصميم",docImages:"أضف صوراً (أبطأ)",docLang:"لغة الملف",docLangs:[["auto","تلقائي"],["ar","العربية"],["en","English"]],attCam:"الكاميرا",attPhoto:"صورة",attFiles:"ملفات",attBad:"نوع غير مدعوم. استخدم صورة أو PDF أو Word أو PowerPoint أو Excel أو نصاً أو تسجيلاً صوتياً.",attReading:"جارٍ قراءة الملف…",docChatPh:"قل لي ماذا أغيّر… (مثال: أضف شريحة عن الأسباب، اختصره، غيّر العنوان)",docChanged:"تم التعديل",docImgDesc:"وصف الصور (اختياري)",docImgDescPh:"مثال: شاب يخفض بصره في شارع مزدحم",stWriting:"جارٍ كتابة المحتوى…",stReview:"جارٍ مراجعة المحتوى…",stImages:"جارٍ صنع الصور…",stBuild:"جارٍ بناء الملف…",
+  docTheme:"لون التصميم",docImages:"أضف صوراً (أبطأ)",docLang:"لغة الملف",docLangs:[["auto","تلقائي"],["ar","العربية"],["en","English"]],attCam:"الكاميرا",attPhoto:"صورة",attFiles:"ملفات",attBad:"نوع غير مدعوم. استخدم صورة أو PDF أو Word أو PowerPoint أو Excel أو نصاً أو تسجيلاً صوتياً.",attReading:"جارٍ قراءة الملف…",pvTitle:"معاينة",pvRegen:"🔄 صورة أخرى",pvHide:"إخفاء المعاينة",pvShow:"إظهار المعاينة",docChatPh:"قل لي ماذا أغيّر… (مثال: أضف شريحة عن الأسباب، اختصره، غيّر العنوان)",docChanged:"تم التعديل",docImgDesc:"وصف الصور (اختياري)",docImgDescPh:"مثال: شاب يخفض بصره في شارع مزدحم",stWriting:"جارٍ كتابة المحتوى…",stReview:"جارٍ مراجعة المحتوى…",stImages:"جارٍ صنع الصور…",stBuild:"جارٍ بناء الملف…",
  },
 };
 const THEMES={blue:{a:"1F3A8A",b:"0B1F4B",c:"3B82F6"},green:{a:"166534",b:"052E16",c:"22C55E"},purple:{a:"5B21B6",b:"2E1065",c:"A78BFA"},orange:{a:"C2410C",b:"431407",c:"FB923C"},gray:{a:"374151",b:"111827",c:"9CA3AF"}};
@@ -228,7 +239,7 @@ const S={
  printTarget:null, pdfUrl:null, pdfBlob:null, pdfPages:[], pdfBusy:false,
  fc:null,
  img:{prompt:"",ref:null,out:null,outs:[],busy:false,err:"",style:"poster"},
- doc:{type:"word",prompt:"",useLesson:false,busy:false,err:"",url:null,name:"",blob:null,theme:"blue",images:true,status:"",lang:"auto",imgDesc:"",json:null,imgs:{},chat:[],docLang:"en"},
+ doc:{type:"word",prompt:"",useLesson:false,busy:false,err:"",url:null,name:"",blob:null,theme:"blue",images:true,status:"",lang:"auto",imgDesc:"",json:null,imgs:{},chat:[],docLang:"en",pv:true},
  attach:[],plusOpen:false,
  ai:{chats:LS("aichats",[]),cur:null,busy:false,err:"",search:true,mode:"ask",input:""},
  curSession:null,
@@ -808,6 +819,34 @@ async function doDoc(){
  d.busy=false;d.status="";render();
 }
 
+function docPreview(tr){
+ const d=S.doc,j=d.json;if(!j)return"";
+ const th=THEMES[d.theme]||THEMES.blue,rtl=d.docLang==="ar",dir=rtl?"rtl":"ltr";
+ const im=(b64,key)=>b64?`<div style="position:relative"><img src="data:image/jpeg;base64,${b64}" alt=""><button class="regen" style="top:10px;inset-inline-end:6px" onclick="regenImg('${key}')">${tr.pvRegen}</button></div>`:"";
+ let h=`<div class="row" style="margin-bottom:8px"><p class="pvlbl" style="margin:0;flex:1">👁 ${tr.pvTitle}</p><button class="btn g" style="flex:0 0 auto;width:auto;padding:6px 10px;font-size:12px" onclick="S.doc.pv=!S.doc.pv;render()">${d.pv?tr.pvHide:tr.pvShow}</button></div>`;
+ if(!d.pv)return h;
+ if(d.type==="ppt"){
+  h+=`<div class="slide" dir="${dir}" style="background:#${th.b};color:#fff;justify-content:center;align-items:center;text-align:center;padding:14px">${d.imgs.cover?`<div style="position:relative;width:38%"><img src="data:image/jpeg;base64,${d.imgs.cover}" style="width:100%;height:auto;border-radius:10px"><button class="regen" style="top:6px;inset-inline-end:6px" onclick="regenImg('cover')">${tr.pvRegen}</button></div>`:""}<div><div style="font-size:18px;font-weight:800">${esc(j.title)}</div><div style="font-size:12px;opacity:.85">${esc(j.subtitle||"")}</div></div></div>`;
+  (j.slides||[]).forEach((sl,i)=>{h+=`<div class="slide" dir="${dir}"><div class="bar" style="background:#${th.a};border-bottom:3px solid #${th.c}">${esc(sl.title)}</div><div class="body"><ul>${(sl.bullets||[]).map(b=>`<li>${esc(b)}</li>`).join("")}</ul>${d.imgs[i]?`<div style="position:relative;width:38%"><img src="data:image/jpeg;base64,${d.imgs[i]}" style="width:100%;height:100%"><button class="regen" style="top:6px;inset-inline-end:6px" onclick="regenImg('${i}')">${tr.pvRegen}</button></div>`:""}</div>${sl.note?`<div style="padding:0 12px 6px;font-size:10px;color:#6B7280;font-style:italic">${esc(sl.note)}</div>`:""}<span class="num">${i+2}</span></div>`;});
+  h+=`<div class="slide" dir="${dir}" style="background:#${th.b};color:#fff;justify-content:center;align-items:center;font-size:18px;font-weight:800">${esc(j.closing||(rtl?"شكراً لكم":"Thank you"))}</div>`;
+ }else if(d.type==="word"){
+  h+=`<div class="pv a4" dir="${dir}" style="text-align:center;display:flex;flex-direction:column;justify-content:center"><h1 style="color:#${th.a};font-size:26px">${esc(j.title)}</h1><p style="color:#555">${esc(j.subtitle||"")}</p>${im(d.imgs.cover,"cover")}<p style="color:#777;font-size:11px">${new Date().toLocaleDateString(rtl?"ar":"en")}</p></div>`;
+  h+=`<div class="pv" dir="${dir}"><h2 style="color:#${th.a}">${rtl?"المحتويات":"Contents"}</h2>${(j.sections||[]).map((x,i)=>`<p>${i+1}. ${esc(x.heading)}</p>`).join("")}</div>`;
+  (j.sections||[]).forEach((x,i)=>{h+=`<div class="pv" dir="${dir}"><h2 style="color:#${th.a}">${i+1}. ${esc(x.heading)}</h2><p>${esc(x.text)}</p>${(x.bullets||[]).length?`<ul>${x.bullets.map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`:""}${x.table&&x.table.headers?`<table><tr>${x.table.headers.map(c=>`<th style="background:#${th.a}">${esc(c)}</th>`).join("")}</tr>${(x.table.rows||[]).map(r=>`<tr>${(r||[]).map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table>`:""}${im(d.imgs[i],String(i))}</div>`;});
+  if(j.conclusion)h+=`<div class="pv" dir="${dir}"><h2 style="color:#${th.a}">${rtl?"الخاتمة":"Conclusion"}</h2><p>${esc(j.conclusion)}</p></div>`;
+ }else{
+  (j.sheets||[]).forEach(sh=>{h+=`<div class="pv" dir="${/[\u0600-\u06FF]/.test(JSON.stringify(sh.headers||[]))?"rtl":"ltr"}" style="overflow:auto"><h2 style="color:#1F3A8A">${esc(sh.name)}</h2><table><tr>${(sh.headers||[]).map(c=>`<th style="background:#1F3A8A">${esc(c)}</th>`).join("")}</tr>${(sh.rows||[]).slice(0,30).map(r=>`<tr>${(r||[]).map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table>${(sh.rows||[]).length>30?`<p class="hint">…</p>`:""}</div>`;});
+ }
+ return h;
+}
+async function regenImg(key){
+ const d=S.doc,j=d.json;if(!j||d.busy)return;
+ const st="clean educational illustration, flat colors, no text, no watermark";const topic=`Illustration about "${j.titleEn||j.title||""}": `;
+ let pr;if(key==="cover")pr=d.imgDesc.trim()||j.coverImagePrompt;else{const x=(d.type==="ppt"?(j.slides||[]):(j.sections||[]))[+key];pr=x&&(d.imgDesc.trim()||x.imagePrompt);}
+ if(!pr)return;d.busy=true;setDocStatus(t().stImages);
+ try{const o=await polliB64(topic+pr+", "+st,key==="cover"?896:640,key==="cover"?560:640);d.imgs[key]=o.data;if(key==="cover")j.coverImage=o.data;else{const x=(d.type==="ppt"?(j.slides||[]):(j.sections||[]))[+key];if(x)x.image=o.data;}setDocStatus(t().stBuild);await rebuildDoc();}catch(e){d.err=e.message;}
+ d.busy=false;d.status="";render();
+}
 async function rebuildDoc(){
  const d=S.doc,json=d.json,th=THEMES[d.theme]||THEMES.blue,rtl=d.docLang==="ar";
  if(d.imgs.cover)json.coverImage=d.imgs.cover;
@@ -1061,7 +1100,7 @@ function viewDoc(tr){
  <button class="btn" onclick="doDoc()" ${d.busy?"disabled":""}>📄 ${tr.docGo}</button>
  ${d.busy?spinner(d.status||tr.thinking):""}
  ${d.err?`<p class="err">${esc(d.err)}</p>`:""}
- ${d.url?`<div class="card"><b>✅ ${tr.docReady}:</b> <span dir="ltr">${esc(d.name)}</span><div class="row" style="margin-top:10px"><button class="btn o" onclick="shareBlob(S.doc.blob,S.doc.name)">📤 ${tr.share}</button><a class="btn o" style="text-align:center;text-decoration:none" href="${d.url}" download="${esc(d.name)}">⬇️ ${tr.download}</a></div></div>
+ ${d.url?`${docPreview(tr)}<div class="card"><b>✅ ${tr.docReady}:</b> <span dir="ltr">${esc(d.name)}</span><div class="row" style="margin-top:10px"><button class="btn o" onclick="shareBlob(S.doc.blob,S.doc.name)">📤 ${tr.share}</button><a class="btn o" style="text-align:center;text-decoration:none" href="${d.url}" download="${esc(d.name)}">⬇️ ${tr.download}</a></div></div>
  <div class="chat">${d.chat.map(m=>`<div class="msg ${m.role==="user"?"u":"a"}">${esc(m.content)}</div>`).join("")}
  <div class="row" style="gap:8px"><input class="inp" id="docChat" placeholder="${tr.docChatPh}" style="flex:1" onkeydown="if(event.key==='Enter'){doDocChat(this.value);this.value='';}">${micBtn("docChat")}${plusMenu()}<button class="btn" style="flex:0 0 auto;width:auto;box-shadow:none" onclick="const i=document.getElementById('docChat');doDocChat(i.value);i.value=''" ${d.busy?"disabled":""}>➤</button></div></div>`:""}
  </div>`;
