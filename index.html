@@ -222,6 +222,7 @@ const T={
 };
 const THEMES={blue:{a:"1F3A8A",b:"0B1F4B",c:"3B82F6"},green:{a:"166534",b:"052E16",c:"22C55E"},purple:{a:"5B21B6",b:"2E1065",c:"A78BFA"},orange:{a:"C2410C",b:"431407",c:"FB923C"},gray:{a:"374151",b:"111827",c:"9CA3AF"}};
 const STYLE_HINT={poster:"clean educational poster style, bold shapes, flat colors, minimal text",realistic:"photorealistic, high detail, natural lighting",cartoon:"friendly cartoon illustration, bright colors, simple shapes",diagram:"clear scientific textbook illustration, labeled parts, white background",art:"digital painting, artistic, expressive"};
+const STYLE_MODEL={poster:"flux",realistic:"flux-realism",cartoon:"flux-anime",diagram:"sd3",art:"sdxl"};
 const MODELS=["gemini-2.5-pro","gemini-2.5-flash","gemini-2.5-flash-lite","gemini-2.0-flash"];
 const LS=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}};
 const SV=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}};
@@ -307,7 +308,9 @@ async function genImage(prompt,ref){
  if(!S.apiKey) throw new Error("nokey");
  await listModels();
  const style=STYLE_HINT[S.img.style]||"";
- let cands=ALL_MODELS.filter(n=>/image/.test(n)&&!/imagen/.test(n)).slice(0,1);
+ let cands=ALL_MODELS.filter(n=>/image/.test(n)&&!/imagen/.test(n));
+ cands.sort((a,b)=>(parseFloat((b.match(/(\d+\.?\d*)/)||[0,0])[1])||0)-(parseFloat((a.match(/(\d+\.?\d*)/)||[0,0])[1])||0));
+ cands=cands.slice(0,2);
  const parts=[{text:prompt+". Style: "+style}];if(ref)parts.push({inlineData:{mimeType:ref.mediaType,data:ref.data}});
  for(const model of cands){
   try{
@@ -318,9 +321,10 @@ async function genImage(prompt,ref){
  }
  // Free path: expand the prompt professionally, then 4 variations in parallel
  let en=prompt;
- try{en=(await askAI(`You are an expert prompt writer for AI image generators. Turn the user's request into ONE English prompt (max 35 words) that shows the subject concretely: who/what is in the picture, what they are doing, setting, then "${style}". Never replace the subject with a generic landscape or mood scene. If text must appear in the image, keep it to 1-3 words in quotes. Output only the prompt.`,prompt+(ref?" (a reference photo was attached; match its style)":""),[],ref||null)).trim();}catch(e){}
+ try{en=(await askAI(`You are an expert prompt writer for AI image generators (Flux/SDXL). Turn the user's request (translate if needed) into ONE detailed English prompt (35-60 words) that shows the subject concretely: who/what is in the picture, what they are doing, setting, composition, lighting, then "${style}". Add concrete visual detail (colors, materials, camera angle) so the result looks polished, not generic. Never replace the subject with a generic landscape or mood scene. If text must appear in the image, keep it to 1-3 words in quotes. Output only the prompt, nothing else.`,prompt+(ref?" (a reference photo was attached; match its style)":""),[],ref||null)).trim();}catch(e){}
+ const pm=STYLE_MODEL[S.img.style]||"flux";
  const seeds=[0,1,2,3].map(()=>Math.floor(Math.random()*1e6));
- const outs=await Promise.all(seeds.map(sd=>polliB64(en,768,768,sd).then(o=>({...o,src:"pollinations",promptEn:en})).catch(()=>null)));
+ const outs=await Promise.all(seeds.map(sd=>polliB64(en,1024,1024,sd,pm).then(o=>({...o,src:"pollinations",promptEn:en})).catch(()=>null)));
  const ok=outs.filter(Boolean);
  if(!ok.length)throw new Error("image service unavailable, try again");
  return ok;
@@ -681,8 +685,8 @@ async function shareBlob(blob,name){
   else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();}
  }catch(e){}
 }
-async function polliB64(promptEn,w=1024,h=1024,seed=null){
- const url=`https://image.pollinations.ai/prompt/${encodeURIComponent(promptEn)}?model=flux&enhance=false&width=${w}&height=${h}&nologo=true&seed=${seed??Math.floor(Math.random()*1e6)}`;
+async function polliB64(promptEn,w=1024,h=1024,seed=null,model="flux"){
+ const url=`https://image.pollinations.ai/prompt/${encodeURIComponent(promptEn)}?model=${model}&enhance=true&width=${w}&height=${h}&nologo=true&seed=${seed??Math.floor(Math.random()*1e6)}`;
  const r=await fetch(url);if(!r.ok)throw new Error("image HTTP "+r.status);
  const blob=await r.blob();
  const b64=await new Promise((res,rej)=>{
