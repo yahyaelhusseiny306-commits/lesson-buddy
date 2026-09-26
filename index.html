@@ -193,6 +193,7 @@ const T={
   shareLesson:"Share lesson",exportAll:"Export saved lessons",importAll:"Import lessons",
   docTitle:"Make a file",docType:"File type",docWord:"Word",docPpt:"PowerPoint",docXls:"Excel",docPh:"Describe what you want… (e.g. a 6-slide presentation about volcanoes / a weekly study schedule table / a report on the French revolution)",docGo:"Create file",docUseLesson:"Use the current lesson as the topic",docReady:"Your file is ready",
   imgStyle:"Style",imgStyles:[["poster","Poster"],["realistic","Realistic"],["cartoon","Cartoon"],["diagram","Scientific drawing"],["art","Art"]],pick:"Choose",
+  imgEditPh:"Want a change? e.g. \"add a hat\", \"make the sky sunset orange\"",imgEditGo:"Apply edit",
   docTheme:"Color theme",docImages:"Add images (slower)",docLang:"File language",docLangs:[["auto","Auto"],["ar","العربية"],["en","English"]],attCam:"Camera",attPhoto:"Photo",attFiles:"Files",attBad:"Unsupported file type. Use images, PDF, Word, PowerPoint, Excel, text or audio.",attReading:"Reading file…",pvTitle:"Preview",pvRegen:"🔄 Another image",pvHide:"Hide preview",pvShow:"Show preview",docChatPh:"Tell me what to change… (e.g. add a slide about causes, make it shorter, change the title)",docChanged:"Updated",docImgDesc:"Image description (optional)",docImgDescPh:"e.g. a young man lowering his gaze in a busy street",stWriting:"Writing content…",stReview:"Reviewing content…",stImages:"Making images…",stBuild:"Building file…",
  },
  ar:{appName:"رفيق الدروس",tagline:"اختر المادة، اكتب اسم الدرس، وتعلّم بطريقتك.",lessonLabel:"ما هو الدرس الذي أخذته؟",lessonPh:"مثال: قانون نيوتن الثاني، دورة الماء…",explain:"شرح",exam:"امتحان",styleLabel:"اشرحه…",
@@ -217,6 +218,7 @@ const T={
   shareLesson:"شارك الدرس",exportAll:"تصدير الدروس المحفوظة",importAll:"استيراد دروس",
   docTitle:"اصنع ملفاً",docType:"نوع الملف",docWord:"Word",docPpt:"PowerPoint",docXls:"Excel",docPh:"صف ما تريده… (مثال: عرض من ٦ شرائح عن البراكين / جدول مذاكرة أسبوعي / تقرير عن الثورة الفرنسية)",docGo:"أنشئ الملف",docUseLesson:"استخدم الدرس الحالي كموضوع",docReady:"ملفك جاهز",
   imgStyle:"الأسلوب",imgStyles:[["poster","ملصق"],["realistic","واقعي"],["cartoon","كرتون"],["diagram","رسم علمي"],["art","فني"]],pick:"اختر",
+  imgEditPh:"تبي تعديل؟ مثلاً: \"أضف قبعة\"، \"خلي السماء برتقالية غروب\"",imgEditGo:"طبّق التعديل",
   docTheme:"لون التصميم",docImages:"أضف صوراً (أبطأ)",docLang:"لغة الملف",docLangs:[["auto","تلقائي"],["ar","العربية"],["en","English"]],attCam:"الكاميرا",attPhoto:"صورة",attFiles:"ملفات",attBad:"نوع غير مدعوم. استخدم صورة أو PDF أو Word أو PowerPoint أو Excel أو نصاً أو تسجيلاً صوتياً.",attReading:"جارٍ قراءة الملف…",pvTitle:"معاينة",pvRegen:"🔄 صورة أخرى",pvHide:"إخفاء المعاينة",pvShow:"إظهار المعاينة",docChatPh:"قل لي ماذا أغيّر… (مثال: أضف شريحة عن الأسباب، اختصره، غيّر العنوان)",docChanged:"تم التعديل",docImgDesc:"وصف الصور (اختياري)",docImgDescPh:"مثال: شاب يخفض بصره في شارع مزدحم",stWriting:"جارٍ كتابة المحتوى…",stReview:"جارٍ مراجعة المحتوى…",stImages:"جارٍ صنع الصور…",stBuild:"جارٍ بناء الملف…",
  },
 };
@@ -239,7 +241,7 @@ const S={
  photo:null, corrections:[], flagging:null, loading:false, loadLabel:"", error:"",
  printTarget:null, pdfUrl:null, pdfBlob:null, pdfPages:[], pdfBusy:false,
  fc:null,
- img:{prompt:"",ref:null,out:null,outs:[],busy:false,err:"",style:"poster"},
+ img:{prompt:"",ref:null,out:null,outs:[],busy:false,err:"",style:"poster",editPrompt:""},
  doc:{type:"word",prompt:"",useLesson:false,busy:false,err:"",url:null,name:"",blob:null,theme:"blue",images:true,status:"",lang:"auto",imgDesc:"",json:null,imgs:{},chat:[],docLang:"en",pv:true},
  attach:[],plusOpen:false,
  ai:{chats:LS("aichats",[]),cur:null,busy:false,err:"",search:true,mode:"ask",input:""},
@@ -675,6 +677,18 @@ function fcAnswer(known){const fc=S.fc;if(!known)fc.unknown.push(fc.cards[fc.idx
 async function doImage(){
  const p=S.img.prompt.trim();if(!p)return;S.img.busy=true;S.img.err="";S.img.out=null;S.img.outs=[];render();
  try{S.img.outs=await genImage(p,S.img.ref||S.attach.find(a=>a.preview)||null);S.img.out=S.img.outs.length===1?S.img.outs[0]:null;}catch(e){S.img.err=(e.message==="nokey"?t().noKey:(friendly(e.message)||e.message));}
+ S.img.busy=false;render();
+}
+async function editImage(){
+ const instr=(S.img.editPrompt||"").trim();if(!instr||!S.img.out)return;
+ S.img.busy=true;S.img.err="";render();
+ const prevOut=S.img.out;
+ const ref={data:prevOut.data,mediaType:prevOut.mediaType};
+ const instruction="Edit the attached image: "+instr+". Keep the rest of the image the same unless the instruction says otherwise.";
+ try{
+  const outs=await genImage(instruction,ref);
+  S.img.out=outs[0];S.img.outs=[outs[0]];S.img.editPrompt="";
+ }catch(e){S.img.err=(e.message==="nokey"?t().noKey:(friendly(e.message)||e.message));}
  S.img.busy=false;render();
 }
 const MIME={docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",pptx:"application/vnd.openxmlformats-officedocument.presentationml.presentation",xlsx:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",pdf:"application/pdf",png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg"};
@@ -1127,6 +1141,7 @@ function viewImg(tr){
  ${im.out?one(im.out):(im.outs.length>1?`<div class="grid" style="grid-template-columns:1fr 1fr">${im.outs.map((o,i)=>`<div style="cursor:pointer" onclick="S.img.out=S.img.outs[${i}];render()"><img class="genimg" src="data:${o.mediaType};base64,${o.data}" alt=""><button class="btn g" style="margin-top:6px">${tr.pick}</button></div>`).join("")}</div>`:"")}
  ${im.out&&im.outs.length>1?`<button class="btn g" onclick="S.img.out=null;render()">↩︎</button>`:""}
  ${(im.out||im.outs.length)?`<p class="hint">${(im.out||im.outs[0]).src==="pollinations"?(S.lang==="ar"?"صُنعت عبر Pollinations (مجاني)":"Made with Pollinations (free)"):"Gemini"}${(im.out||im.outs[0]).promptEn?` · <span dir="ltr">${esc((im.out||im.outs[0]).promptEn)}</span>`:""}</p>`:""}
+ ${im.out&&!im.busy?`<div class="row" style="gap:8px;margin-top:6px"><input class="inp" id="imgEditIn" value="${esc(im.editPrompt||"")}" oninput="S.img.editPrompt=this.value" placeholder="${tr.imgEditPh}" style="flex:1"><button class="btn o" style="flex:0 0 auto" onclick="editImage()" ${(im.editPrompt||"").trim()?"":"disabled"}>✏️ ${tr.imgEditGo}</button></div>`:""}
  <p class="hint">${tr.imgNote}</p></div>`;
 }
 function viewDoc(tr){
