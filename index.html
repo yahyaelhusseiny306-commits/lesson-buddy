@@ -223,7 +223,7 @@ const T={
  },
 };
 const THEMES={blue:{a:"1F3A8A",b:"0B1F4B",c:"3B82F6"},green:{a:"166534",b:"052E16",c:"22C55E"},purple:{a:"5B21B6",b:"2E1065",c:"A78BFA"},orange:{a:"C2410C",b:"431407",c:"FB923C"},gray:{a:"374151",b:"111827",c:"9CA3AF"}};
-const STYLE_HINT={poster:"clean educational poster style, bold shapes, flat colors, minimal text",realistic:"photorealistic, high detail, natural lighting",cartoon:"friendly cartoon illustration, bright colors, simple shapes",diagram:"clear scientific textbook illustration, labeled parts, white background",art:"digital painting, artistic, expressive"};
+const STYLE_HINT={poster:"flat vector poster illustration, bold clean shapes, solid flat colors, minimal text — absolutely NOT a photo, NOT photorealistic, NOT 3D render",realistic:"photorealistic photo, high detail, natural lighting, shot with a real camera",cartoon:"2D cartoon illustration with bold black outlines, flat cel-shaded colors, simplified shapes like a children's book or animated show — absolutely NOT a photo, NOT photorealistic, NOT 3D render",diagram:"flat black-and-white line-art scientific textbook diagram, thin labeled arrows, plain white background, schematic style — absolutely NOT a photo, NOT photorealistic, NOT 3D render",art:"hand-painted digital artwork with visible painterly brushstrokes, expressive artistic colors — absolutely NOT a photo, NOT photorealistic"};
 const STYLE_MODEL={poster:"flux",realistic:"flux-realism",cartoon:"flux-anime",diagram:"sd3",art:"sdxl"};
 const MODELS=["gemini-2.5-pro","gemini-2.5-flash","gemini-2.5-flash-lite","gemini-2.0-flash"];
 const LS=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}};
@@ -313,7 +313,8 @@ async function genImage(prompt,ref){
  let cands=ALL_MODELS.filter(n=>/image/.test(n)&&!/imagen/.test(n));
  cands.sort((a,b)=>(parseFloat((b.match(/(\d+\.?\d*)/)||[0,0])[1])||0)-(parseFloat((a.match(/(\d+\.?\d*)/)||[0,0])[1])||0));
  cands=cands.slice(0,2);
- const parts=[{text:prompt+". Style: "+style}];if(ref)parts.push({inlineData:{mimeType:ref.mediaType,data:ref.data}});
+ const styleTxt=style?`Required visual style (must follow exactly, this overrides any default rendering style): ${style}. `:"";
+ const parts=[{text:styleTxt+"Image content: "+prompt}];if(ref)parts.push({inlineData:{mimeType:ref.mediaType,data:ref.data}});
  for(const model of cands){
   try{
    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(S.apiKey)}`,{method:"POST",headers:{"Content-Type":"application/json"},
@@ -440,17 +441,24 @@ function toggleMic(targetId,langHint){
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!SR){alert(t().micUnsupported);return;}
  const el=document.getElementById(targetId);if(!el)return;
- REC=new SR();REC.lang=(langHint||S.lang)==="ar"?"ar-SA":"en-US";REC.continuous=true;REC.interimResults=true;
- S.rec={active:true,target:targetId,base:el.value?el.value+" ":""};
- let finalTxt="";
- REC.onresult=e=>{let interim="";for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)finalTxt+=r[0].transcript+" ";else interim+=r[0].transcript;}
-  const el2=document.getElementById(S.rec.target);if(el2){el2.value=S.rec.base+finalTxt+interim;el2.dispatchEvent(new Event("input"));}};
- REC.onend=()=>{if(S.rec.active){try{REC.start();}catch(e){}}};
- REC.onerror=e=>{if(e.error==="not-allowed"){stopMic();alert("Microphone permission denied");}};
- try{REC.start();}catch(e){}
+ S.rec={active:true,target:targetId,base:el.value?el.value.replace(/\s+$/,"")+" ":""};
+ startRecSession(langHint);
  render();
 }
-function stopMic(){S.rec.active=false;try{REC&&REC.stop();}catch(e){}REC=null;render();}
+function startRecSession(langHint){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ REC=new SR();REC.lang=(langHint||S.lang)==="ar"?"ar-SA":"en-US";REC.continuous=false;REC.interimResults=true;
+ REC.onresult=e=>{
+  let finalChunk="",interim="";
+  for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)finalChunk+=r[0].transcript;else interim+=r[0].transcript;}
+  if(finalChunk.trim())S.rec.base+=finalChunk.trim()+" ";
+  const el2=document.getElementById(S.rec.target);if(el2){el2.value=S.rec.base+interim;el2.dispatchEvent(new Event("input"));}
+ };
+ REC.onend=()=>{if(S.rec.active){try{startRecSession(langHint);}catch(e){}}};
+ REC.onerror=e=>{if(e.error==="not-allowed"){stopMic();alert("Microphone permission denied");}};
+ try{REC.start();}catch(e){}
+}
+function stopMic(){S.rec.active=false;try{if(REC){REC.onend=null;REC.stop();}}catch(e){}REC=null;render();}
 function micBtn(targetId,langHint){return `<button class="mic ${S.rec.active&&S.rec.target===targetId?"on":""}" title="🎤" onclick="toggleMic('${targetId}','${langHint||""}')">${S.rec.active&&S.rec.target===targetId?"⏹":"🎤"}</button>`;}
 function speak(text,lang){
  if(!("speechSynthesis" in window))return;
@@ -684,7 +692,7 @@ async function editImage(){
  S.img.busy=true;S.img.err="";render();
  const prevOut=S.img.out;
  const ref={data:prevOut.data,mediaType:prevOut.mediaType};
- const instruction="Edit the attached image: "+instr+". Keep the rest of the image the same unless the instruction says otherwise.";
+ const instruction="This is an image-editing task, not a new image. Take the attached image exactly as-is and apply ONLY this change: "+instr+". Keep the subject, composition, background, and art style of the attached image identical — change nothing else. Return the edited image.";
  try{
   const outs=await genImage(instruction,ref);
   S.img.out=outs[0];S.img.outs=[outs[0]];S.img.editPrompt="";
