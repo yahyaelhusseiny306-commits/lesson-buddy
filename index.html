@@ -76,6 +76,10 @@ mark{background:var(--mark);color:var(--ink);padding:0 4px;border-radius:2px;fon
 .opt{display:block;width:100%;text-align:start;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;margin-top:8px;font-size:14px;cursor:pointer;color:var(--ink)}
 .opt.on{background:var(--acc);color:#fff;border-color:var(--acc)}
 .fb{font-size:14px;border-top:1px solid #f3f4f6;padding-top:8px;margin-top:8px;color:#4b5563}
+.cmp{display:flex;gap:8px;margin-bottom:8px}
+.cmpcol{flex:1;padding:8px;border-radius:10px;font-size:13px}
+.cmpcol.bad{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.25)}
+.cmpcol.ok{background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.25)}
 .score{text-align:center;border-radius:16px;padding:14px;background:#fff;color:var(--ink);margin-bottom:12px}
 .score .big{font-size:40px;font-weight:800;color:var(--acc)}
 .photo{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.95);color:var(--ink);border-radius:10px;padding:8px;margin-top:8px}
@@ -192,7 +196,7 @@ const T={
   hwTool:"Homework Solver",hwTitle:"Solve homework from a photo",hwPhoto:"📷 Take a photo of the homework",hwText:"…or type / dictate the question",hwMode:"What do you want?",hwModes:[["full","Full solution"],["hint","Hint only"],["check","Check my answer"]],hwGo:"Solve",hwSteps:"Steps",hwAnswer:"Answer",hwNeed:"Add a photo or type the question first.",
   planTool:"Study Plan",planTitle:"Study plan",planSubjects:"Subjects to study",planDate:"Exam / deadline date",planHours:"Hours per day",planNotes:"Notes (weak topics, busy days…)",planGo:"Build my plan",planCal:"Add to calendar (with reminders)",planXls:"Export to Excel",planShare:"Share",planEmpty:"No plan yet.",planNew:"New plan",
   listen:"Listen",stop:"Stop",recordLesson:"🎙 Record the lesson",recording:"Recording… tap to stop",micUnsupported:"Voice input needs Chrome on Android/desktop.",transcript:"Lesson transcript",useTranscript:"Explain this transcript",summarize:"Summarize transcript",
-  shareLesson:"Share lesson",exportAll:"Export saved lessons",importAll:"Import lessons",
+  shareLesson:"Share lesson",exportAll:"Export saved lessons",importAll:"Import lessons",shareScore:"Share my score",
   docTitle:"Make a file",docType:"File type",docWord:"Word",docPpt:"PowerPoint",docXls:"Excel",docPh:"Describe what you want… (e.g. a 6-slide presentation about volcanoes / a weekly study schedule table / a report on the French revolution)",docGo:"Create file",docUseLesson:"Use the current lesson as the topic",docReady:"Your file is ready",
   imgStyle:"Style",imgStyles:[["poster","Poster"],["realistic","Realistic"],["cartoon","Cartoon"],["diagram","Scientific drawing"],["art","Art"]],pick:"Choose",
   imgEditPh:"Want a change? e.g. \"add a hat\", \"make the sky sunset orange\"",imgEditGo:"Apply edit",
@@ -219,7 +223,7 @@ const T={
   hwTool:"حلّ الواجب",hwTitle:"حلّ الواجب من صورة",hwPhoto:"📷 صوّر الواجب",hwText:"…أو اكتب / أملِ السؤال",hwMode:"ماذا تريد؟",hwModes:[["full","حل كامل"],["hint","تلميح فقط"],["check","تحقّق من حلّي"]],hwGo:"حُلّ",hwSteps:"الخطوات",hwAnswer:"الجواب",hwNeed:"أضف صورة أو اكتب السؤال أولاً.",
   planTool:"خطة مذاكرة",planTitle:"خطة المذاكرة",planSubjects:"المواد التي ستذاكرها",planDate:"تاريخ الامتحان / الموعد",planHours:"ساعات المذاكرة يومياً",planNotes:"ملاحظات (مواضيع ضعيفة، أيام مشغولة…)",planGo:"اصنع خطتي",planCal:"أضف إلى التقويم (مع تنبيهات)",planXls:"تصدير إلى Excel",planShare:"مشاركة",planEmpty:"لا خطة بعد.",planNew:"خطة جديدة",
   listen:"استمع",stop:"إيقاف",recordLesson:"🎙 سجّل الحصة",recording:"جارٍ التسجيل… اضغط للإيقاف",micUnsupported:"الإدخال الصوتي يحتاج متصفح Chrome على Android أو الحاسوب.",transcript:"نص الحصة",useTranscript:"اشرح هذا النص",summarize:"لخّص النص",
-  shareLesson:"شارك الدرس",exportAll:"تصدير الدروس المحفوظة",importAll:"استيراد دروس",
+  shareLesson:"شارك الدرس",exportAll:"تصدير الدروس المحفوظة",importAll:"استيراد دروس",shareScore:"شارك نتيجتك",
   docTitle:"اصنع ملفاً",docType:"نوع الملف",docWord:"Word",docPpt:"PowerPoint",docXls:"Excel",docPh:"صف ما تريده… (مثال: عرض من ٦ شرائح عن البراكين / جدول مذاكرة أسبوعي / تقرير عن الثورة الفرنسية)",docGo:"أنشئ الملف",docUseLesson:"استخدم الدرس الحالي كموضوع",docReady:"ملفك جاهز",
   imgStyle:"الأسلوب",imgStyles:[["poster","ملصق"],["realistic","واقعي"],["cartoon","كرتون"],["diagram","رسم علمي"],["art","فني"]],pick:"اختر",
   imgEditPh:"تبي تعديل؟ مثلاً: \"أضف قبعة\"، \"خلي السماء برتقالية غروب\"",imgEditGo:"طبّق التعديل",
@@ -253,7 +257,7 @@ const S={
  hw:{photo:null,text:"",mode:"full",busy:false,err:"",out:null,history:LS("hw",[])},
  plan:{subjects:[],examDate:"",hours:2,notes:"",busy:false,err:"",out:LS("plan",null),done:LS("planDone",{})},
  rec:{active:false,target:null,base:""},transcriptText:"",
- speaking:false,
+ speaking:false,lessonVoice:false,
 };
 const t=()=>T[S.lang];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -476,6 +480,43 @@ function speak(text,lang,onDone){
  u.onend=()=>{S.speaking=false;render();if(onDone)onDone();};S.speaking=true;speechSynthesis.speak(u);render();
 }
 function voiceMicBtn(){return `<button class="mic ${S.rec.active?"on":""}" title="mic" onclick="${S.rec.active?"stopMic()":"startVoiceTurn()"}">${S.rec.active?"⏹":"🎤"}</button>`;}
+function lessonVoiceToggle(){
+ S.lessonVoice=!S.lessonVoice;
+ if(S.lessonVoice)startLessonVoiceTurn();else stopMic();
+ render();
+}
+function lessonVoiceMicBtn(){return `<button class="mic ${S.rec.active?"on":""}" title="mic" onclick="${S.rec.active?"stopMic()":"startLessonVoiceTurn()"}">${S.rec.active?"⏹":"🎤"}</button>`;}
+function startLessonVoiceTurn(){
+ if(!S.lessonVoice||S.loading)return;
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){alert(t().micUnsupported);S.lessonVoice=false;render();return;}
+ REC=new SR();REC.lang=(S.subject?S.subject.lang:S.lang)==="ar"?"ar-SA":"en-US";REC.continuous=false;REC.interimResults=true;
+ S.rec={active:true,target:"fu",base:""};
+ REC.onresult=e=>{
+  let finalChunk="",interim="";
+  for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)finalChunk+=r[0].transcript;else interim+=r[0].transcript;}
+  if(finalChunk.trim())S.rec.base+=finalChunk.trim()+" ";
+  const el=document.getElementById("fu");if(el)el.value=S.rec.base+interim;
+ };
+ REC.onend=()=>{
+  S.rec.active=false;
+  const said=(S.rec.base||"").trim();
+  if(said){const el=document.getElementById("fu");if(el)el.value="";sendLessonVoice(said);}
+  else if(S.lessonVoice)try{startLessonVoiceTurn();}catch(e){}
+ };
+ REC.onerror=e=>{if(e.error==="not-allowed"){S.lessonVoice=false;S.rec.active=false;alert("Microphone permission denied");render();}};
+ try{REC.start();}catch(e){}
+ render();
+}
+async function sendLessonVoice(said){
+ await doFollowUp(said);
+ if(!S.lessonVoice)return;
+ const last=[...S.chat].reverse().find(m=>m.role==="assistant");
+ if(last&&last.content){
+  const lang=/[\u0600-\u06FF]/.test(last.content)?"ar":"en";
+  speak(last.content.replace(/[*#`|]/g,""),lang,()=>{if(S.lessonVoice)startLessonVoiceTurn();});
+ }else if(S.lessonVoice)startLessonVoiceTurn();
+}
 function voiceModeToggle(){
  S.ai.voiceMode=!S.ai.voiceMode;
  if(S.ai.voiceMode)startVoiceTurn();else stopMic();
@@ -586,7 +627,7 @@ async function askChat(chat,userText,attach){
  const parts=[{text:userText}];
  for(const ph of attach){if(ph.text)parts.push({text:`\n[Attached file "${ph.name}"]:\n${ph.text.slice(0,20000)}`});else{if(ph.audio)parts.push({text:`[Attached audio "${ph.name}"]`});parts.push({inlineData:{mimeType:ph.mediaType,data:ph.data}});}}
  const contents=[...hist,{role:"user",parts}];
- const system=`You are a brilliant, precise, up-to-date assistant inside a student's app. Answer in the user's language (detect it: Arabic, English or any other). Be accurate; if unsure say so. Use Markdown (headings, lists, tables, code) when helpful; keep answers well-structured and not longer than needed. Today is ${new Date().toISOString().slice(0,10)}.`;
+ const system=`You are a brilliant, precise, up-to-date assistant inside a student's app. Answer in the user's language (detect it: Arabic, English or any other). Accuracy matters more than completeness: never invent facts, dates, numbers, names, quotes or sources; if you are not confident, say so plainly instead of guessing. By default be concise — a few sentences, or a short list for steps/comparisons — unless the student explicitly asks for a long or detailed answer, or the question genuinely needs a full explanation (e.g. solving a multi-step problem). Use Markdown (headings, lists, tables, code) only when it truly helps; do not pad the answer. Today is ${new Date().toISOString().slice(0,10)}.`;
  const avail=await listModels();
  const tryModels=[...new Set([...(S.feat.fast?avail.filter(n=>/lite/.test(n)):[]),...(avail.includes(S.model)?[S.model]:[]),...avail])].slice(0,5);
  const errs=[];
@@ -776,6 +817,27 @@ async function editImage(){
 }
 const MIME={docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",pptx:"application/vnd.openxmlformats-officedocument.presentationml.presentation",xlsx:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",pdf:"application/pdf",png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg"};
 const mimeOf=name=>MIME[String(name).split(".").pop().toLowerCase()]||"application/octet-stream";
+async function shareAchievement(score,total,subject,lesson){
+ const pct=total?Math.round(score/total*100):0;
+ const cv=document.createElement("canvas");cv.width=1080;cv.height=1080;const ctx=cv.getContext("2d");
+ const grad=ctx.createLinearGradient(0,0,1080,1080);grad.addColorStop(0,"#4F46E5");grad.addColorStop(1,"#DB2777");
+ ctx.fillStyle=grad;ctx.fillRect(0,0,1080,1080);
+ ctx.textAlign="center";ctx.fillStyle="#fff";
+ ctx.font="700 56px system-ui, sans-serif";ctx.fillText("📇 Lesson Buddy",540,150);
+ ctx.font="800 120px system-ui, sans-serif";ctx.fillText(pct+"%",540,470);
+ ctx.font="500 42px system-ui, sans-serif";ctx.fillText(score+" / "+total,540,540);
+ ctx.font="600 48px system-ui, sans-serif";
+ wrapText(ctx,lesson||subject||"",540,650,900,58);
+ ctx.font="400 34px system-ui, sans-serif";ctx.globalAlpha=.85;ctx.fillText(subject||"",540,900);
+ ctx.globalAlpha=1;
+ const blob=await new Promise(res=>cv.toBlob(res,"image/png"));
+ shareBlob(blob,"score.png");
+}
+function wrapText(ctx,text,x,y,maxW,lh){
+ const words=String(text).split(" ");let line="",yy=y;
+ for(const w of words){const test=line+w+" ";if(ctx.measureText(test).width>maxW&&line){ctx.fillText(line,x,yy);line=w+" ";yy+=lh;}else line=test;}
+ if(line)ctx.fillText(line,x,yy);
+}
 async function shareBlob(blob,name){
  try{const type=mimeOf(name);blob=new Blob([blob],{type});const file=new File([blob],name,{type});
   if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:name});
@@ -1289,9 +1351,10 @@ function viewSubject(tr){
    ${ex.summary?`<p class="sum" style="margin-top:10px"><span class="lbl" style="display:inline;font-style:normal">${tr.summary}: </span>${esc(ex.summary)}</p>`:""}
    <div class="row" style="margin-top:12px"><button class="btn o" onclick="speak(explanationText(S.explanation),'${s.lang}')">${S.speaking?"⏹ "+tr.stop:"🔊 "+tr.listen}</button><button class="btn o" onclick="shareLesson()">📤 ${tr.shareLesson}</button></div>
    <div class="row" style="margin-top:8px"><button class="btn o" onclick="openPdf('explain')">📄 ${tr.pdf}</button><button class="btn o" onclick="S.doc.useLesson=true;S.screen='doc';render()">📝 ${tr.docTool}</button></div></div>
+   <div class="row" style="margin-bottom:6px"><button class="chip ${S.lessonVoice?"on":""}" style="${S.lessonVoice?"background:#DB2777;border-color:#DB2777":""}" onclick="lessonVoiceToggle()">🎙️ ${tr.voiceMode}</button>${S.lessonVoice?`<span class="hint" style="align-self:center;color:#DB2777;font-weight:600">${S.rec.active?"🎙️ "+tr.listening:(S.speaking?"🔊 "+tr.speaking:tr.voiceModeOn)}</span>`:""}</div>
    <div class="chat">${S.chat.map(m=>`<div class="msg ${m.role==="user"?"u":"a"}">${esc(m.content)}</div>`).join("")}
    ${S.loading&&S.chat.length&&S.chat[S.chat.length-1].role==="user"?spinner(tr.thinking):""}
-   <div class="row" style="gap:8px"><input class="inp" id="fu" placeholder="${tr.askFollow}" style="flex:1">${micBtn("fu",s.lang)}${plusMenu()}<button class="btn" style="flex:0 0 auto;width:auto;background:${col};box-shadow:none" onclick="const i=document.getElementById('fu');doFollowUp(i.value);i.value=''" ${S.loading?"disabled":""}>➤</button></div></div>`;
+   <div class="row" style="gap:8px"><input class="inp" id="fu" placeholder="${tr.askFollow}" style="flex:1">${S.lessonVoice?lessonVoiceMicBtn():micBtn("fu",s.lang)}${plusMenu()}<button class="btn" style="flex:0 0 auto;width:auto;background:${col};box-shadow:none" onclick="const i=document.getElementById('fu');doFollowUp(i.value);i.value=''" ${S.loading?"disabled":""}>➤</button></div></div>`;
   }
  }else{
   if(!S.exam){
@@ -1300,12 +1363,12 @@ function viewSubject(tr){
   }else{
    const r=S.result;
    h+=`<div class="row"><button class="btn o" onclick="openPdf('exam')">📄 ${tr.pdfQuestions}</button><button class="btn o" onclick="openPdf('examKey')">📄 ${tr.pdfAnswers}</button></div>${verify(S.examUncertain,tr)}
-   ${r?`<div class="score"><p class="lbl">${tr.score}</p><div class="big">${r.score} / ${r.total}</div></div>`:""}
+   ${r?`<div class="score"><p class="lbl">${tr.score}</p><div class="big">${r.score} / ${r.total}</div><button class="btn o" style="margin-top:10px" onclick="shareAchievement(${r.score},${r.total},'${esc((S.subject?.ar||S.subject?.en||"").replace(/'/g,"\\'"))}','${esc((S.lesson||"").replace(/'/g,"\\'"))}')">📤 ${tr.shareScore}</button></div>`:""}
    <div>${S.exam.map((q,idx)=>{const it=r?.items?.find(i=>i.id===q.id);const cls=it?(it.correct?"ok":"bad"):"";
     return `<div class="q ${cls}"><div class="qt"><span class="n">${idx+1}</span><span style="flex:1">${esc(q.q)}</span>${it?(it.correct?"✅":"❌"):""}</div>${flagBox("question",idx,tr)}
     ${q.type==="short"?`<input class="inp" style="margin-top:8px;border-color:#d1d5db" ${r?"disabled":""} value="${esc(S.answers[q.id]||"")}" placeholder="${tr.yourAnswer}" oninput="S.answers[${q.id}]=this.value">`
      :(q.type==="tf"?["true","false"]:q.options).map(o=>`<button class="opt ${S.answers[q.id]===o?"on":""}" ${r?"disabled":""} onclick="S.answers[${q.id}]=${JSON.stringify(o).replace(/"/g,"&quot;")};render()">${esc(q.type==="tf"?(o==="true"?tr.trueL:tr.falseL):o)}</button>`).join("")}
-    ${it?`<div class="fb">${!it.correct?`<span class="lbl" style="display:inline">${tr.correctAnswer}: </span><mark>${esc(q.type==="tf"?(q.answer==="true"?tr.trueL:tr.falseL):q.answer)}</mark><br>`:""}${esc(it.feedback)}</div>`:""}
+    ${it?`<div class="fb">${!it.correct?`<div class="cmp"><div class="cmpcol bad"><span class="lbl" style="display:inline">${tr.yourAnswer}</span><br>${esc(S.answers[q.id]||"—")}</div><div class="cmpcol ok"><span class="lbl" style="display:inline">${tr.correctAnswer}</span><br><mark>${esc(q.type==="tf"?(q.answer==="true"?tr.trueL:tr.falseL):q.answer)}</mark></div></div>`:""}${esc(it.feedback)}</div>`:""}
     <div style="text-align:end;margin-top:6px"><button class="flag" onclick="S.flagging={kind:'question',idx:${idx},note:''};render()">⚑ ${tr.flag}</button></div></div>`;}).join("")}</div>
    ${S.loading?spinner(S.loadLabel||tr.thinking):""}
    ${!r?`<button class="btn" onclick="doGrade()" ${S.loading||Object.keys(S.answers).filter(k=>S.answers[k]).length<S.exam.length?"disabled":""}>${tr.submit}</button>`
