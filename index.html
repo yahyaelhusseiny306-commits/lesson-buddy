@@ -10,10 +10,12 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
-:root{--bg1:#0B1F4B;--bg2:#143A8A;--ink:#0F1E3F;--txt:#EAF0FF;--muted:#A9B8DF;--line:#D6DEF5;--mark:#FFE066;--acc:#3B82F6;--card:#FFFFFF;--soft:#EEF3FF}
+:root{--bg1:#0B1F4B;--bg2:#143A8A;--ink:#0F1E3F;--txt:#EAF0FF;--muted:#A9B8DF;--line:#D6DEF5;--mark:#FFE066;--acc:#3B82F6;--card:#FFFFFF;--soft:#EEF3FF;--fs:16px}
+html.fs-sm{--fs:14px}html.fs-md{--fs:16px}html.fs-lg{--fs:19px}
+html.sepia{--card:#F5ECD9;--ink:#3B2F1E;--mark:#E3C77A;--soft:#EFE3C8}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
-body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Arabic",Arial,sans-serif;color:var(--txt);
+body{font-size:var(--fs);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Arabic",Arial,sans-serif;color:var(--txt);
 background:radial-gradient(1200px 600px at 80% -10%,#2456C7 0%,transparent 60%),radial-gradient(900px 500px at -10% 110%,#1E3F97 0%,transparent 55%),linear-gradient(160deg,var(--bg1),var(--bg2));background-attachment:fixed;-webkit-tap-highlight-color:transparent}
 button,input,textarea,select{font:inherit}
 .hdr{position:sticky;top:0;z-index:10;background:rgba(11,31,75,.85);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.12);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -190,6 +192,8 @@ const T={
   flash:"Review with flashcards",flashTap:"Tap the card to flip",known:"I knew it ✅",unknown:"Didn't know ❌",flashDone:"Done! You know all the terms.",again:"Start again",round:"Round",
   grades:"Grades log",gradesEmpty:"No grades yet. Take an exam and your score will appear here.",avg:"Average",weakTitle:"Recent weak points",weakSub:"Questions you got wrong — worth reviewing again.",
   featAutoSpeak:"Auto-read lessons & replies aloud",srsDue:"📇 {n} cards due for review",srsDueSub:"Spaced repetition — keep what you learned",srsReview:"Daily review",srsDone:"All done for now! 🎉",srsEmpty:"No cards yet — study a lesson first.",
+  interests:"Your interests (optional)",interestsPh:"e.g. football, gaming, cooking…",relateBtn:"🎯 Relate to my life",relateQ:"Explain it using something from my life",predictBtn:"🔮 What might be on the exam?",predictTitle:"Likely exam focus",predictEmpty:"Study a couple of lessons in this subject first.",studyTimeTitle:"Study time",minutesShort:"min",notesTitle:"📝 My notes",notesPh:"Write your own notes about this lesson…",
+  fontSize:"Text size",readMode:"Easy-reading mode (warm background)",streakLabel:"day streak",levelBeginner:"Beginner",levelProficient:"Proficient",levelExpert:"Expert",translateBtn:"🌐 Translate",infographicBtn:"🖼️ Summary image",
   tools:"Tools",imgTool:"Image maker",docTool:"File maker",imgTitle:"Make an image",imgPh:"Describe the image you want… (e.g. a poster about water pollution for a school project)",imgGo:"Generate image",imgRef:"📷 Add a reference photo (optional)",imgNote:"Uses Gemini when available, otherwise the free Pollinations service. Generation takes 10–30 seconds.",
   aiTitle:"AI Chat",aiSub:"Ask anything · write · search · images · files",aiPh:"Ask anything…",aiNew:"New chat",aiChats:"Chats",aiSearch:"Web search",aiModes:[["ask","💬 Ask"],["image","🎨 Make image"],["web","🔎 Web images"]],aiSources:"Sources",aiCopy:"Copy",aiEmptyChat:"Start a new conversation.",aiCredit:"Free image libraries (Wikimedia / Openverse)",
   voiceMode:"Voice chat",listening:"Listening… speak now",speaking:"Speaking…",voiceModeOn:"Voice chat is on — tap the mic to talk",
@@ -217,6 +221,8 @@ const T={
   flash:"راجع بالبطاقات",flashTap:"اضغط البطاقة لتقلبها",known:"عرفتها ✅",unknown:"لم أعرفها ❌",flashDone:"أحسنت! حفظت كل المصطلحات.",again:"ابدأ من جديد",round:"جولة",
   grades:"سجل الدرجات",gradesEmpty:"لا درجات بعد. قدّم امتحاناً وستظهر نتيجتك هنا.",avg:"المعدل",weakTitle:"نقاط ضعفك الأخيرة",weakSub:"أسئلة أخطأت فيها — تستاهل مراجعة ثانية.",
   featAutoSpeak:"قراءة صوتية تلقائية للدروس والردود",srsDue:"📇 عندك {n} بطاقة للمراجعة",srsDueSub:"تكرار متباعد — عشان ما تنسى اللي تعلمته",srsReview:"المراجعة اليومية",srsDone:"خلصت كل شي الحين! 🎉",srsEmpty:"لا بطاقات بعد — ذاكر درس أول.",
+  interests:"اهتماماتك (اختياري)",interestsPh:"مثال: كرة قدم، ألعاب، طبخ…",relateBtn:"🎯 اربطها بحياتي",relateQ:"اشرحها لي بمثال من حياتي",predictBtn:"🔮 وش يجيني بالاختبار؟",predictTitle:"النقاط المتوقعة بالاختبار",predictEmpty:"ذاكر درسين أو أكثر بهذي المادة أول.",studyTimeTitle:"وقت المذاكرة",minutesShort:"دقيقة",notesTitle:"📝 ملاحظاتي",notesPh:"اكتب ملاحظاتك الخاصة عن هذا الدرس…",
+  fontSize:"حجم الخط",readMode:"وضع القراءة المريحة (خلفية دافئة)",streakLabel:"يوم متتالي",levelBeginner:"مبتدئ",levelProficient:"متمكن",levelExpert:"خبير",translateBtn:"🌐 ترجم",infographicBtn:"🖼️ ملخص بصورة",
   tools:"أدوات",imgTool:"صانع الصور",docTool:"صانع الملفات",imgTitle:"اصنع صورة",imgPh:"صف الصورة التي تريدها… (مثال: ملصق عن تلوث المياه لمشروع مدرسي)",imgGo:"أنشئ الصورة",imgRef:"📷 أضف صورة مرجعية (اختياري)",imgNote:"يستخدم Gemini إن كان متاحاً، وإلا فخدمة Pollinations المجانية. يستغرق الإنشاء ١٠–٣٠ ثانية.",
   aiTitle:"AI Chat",aiSub:"اسأل أي شيء · اكتب · ابحث · صور · ملفات",aiPh:"اسأل أي شيء…",aiNew:"محادثة جديدة",aiChats:"المحادثات",aiSearch:"بحث الإنترنت",aiModes:[["ask","💬 اسأل"],["image","🎨 اصنع صورة"],["web","🔎 صور من الإنترنت"]],aiSources:"المصادر",aiCopy:"نسخ",aiEmptyChat:"ابدأ محادثة جديدة.",aiCredit:"مكتبات صور مجانية (Wikimedia / Openverse)",
   voiceMode:"محادثة صوتية",listening:"يسمعك... تكلم الآن",speaking:"يتكلم...",voiceModeOn:"المحادثة الصوتية شغالة — اضغط المايك وتكلم",
@@ -243,7 +249,8 @@ const S={
  apiKey:localStorage.getItem("apiKey")||"",
  model:localStorage.getItem("model")||MODELS[0],
  feat:Object.assign({flash:true,grades:true,review:true,fast:false,autoSpeak:false},LS("feat",{})),
- sessions:LS("sessions",[]), grades:LS("grades",[]), srs:LS("srs",[]), weak:LS("weak",[]),
+ sessions:LS("sessions",[]), grades:LS("grades",[]), srs:LS("srs",[]), weak:LS("weak",[]), interests:LS("interests",""), studyTime:LS("studyTime",{}), notes:LS("notes",{}),
+ fontSize:LS("fontSize","md"), sepia:LS("sepia",false), streak:LS("streak",{count:0,last:null}),
  screen:"home", subject:null, lesson:"", mode:"explain", style:"simple",
  explanation:null, chat:[], customExam:"", exam:null, answers:{}, result:null, examUncertain:[],
  photo:null, corrections:[], flagging:null, loading:false, loadLabel:"", error:"",
@@ -257,7 +264,7 @@ const S={
  hw:{photo:null,text:"",mode:"full",busy:false,err:"",out:null,history:LS("hw",[])},
  plan:{subjects:[],examDate:"",hours:2,notes:"",busy:false,err:"",out:LS("plan",null),done:LS("planDone",{})},
  rec:{active:false,target:null,base:""},transcriptText:"",
- speaking:false,lessonVoice:false,
+ speaking:false,lessonVoice:false,translated:{},translateBusy:null,
 };
 const t=()=>T[S.lang];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -381,16 +388,34 @@ function friendly(m){if(/429|quota|exceeded/i.test(m))return S.lang==="ar"?"وص
 function fail(e){const m=e&&e.message||"";const f=friendly(m);S.error=(m==="nokey")?t().noKey:(f?f:(t().error+(m?" ["+m.slice(0,300)+"]":"")));S.loading=false;S.loadLabel="";render();}
 async function doExplain(){
  if(!S.lesson.trim()&&!S.photo){S.error=t().needLesson;return render();}
- S.error="";S.explanation=null;S.chat=[];S.fc=null;S.curSession=null;setLoad(true,t().thinking);
+ S.error="";S.explanation=null;S.chat=[];S.fc=null;S.curSession=null;S.translated={};setLoad(true,t().thinking);
  const styleMap={simple:"in very simple, plain words",steps:"as a numbered sequence of steps, one idea per step",examples:"with a concrete real-life example for every idea",kid:"as if explaining to a 10-year-old, with a fun comparison",summary:"as a compact summary a student can revise in 2 minutes"};
  try{
   const text=await askAI(baseSystem()+` Explain the lesson ${styleMap[S.style]}.${photoNote()} Respond ONLY with JSON, no markdown: {"title":"","overview":"","sections":[{"heading":"","text":""}],"keyTerms":[{"term":"","meaning":""}],"example":"","summary":""}. Use 3 to 5 sections, 4 to 8 key terms. Be concise.`,`Explain: ${S.lesson||"the lesson in the photo"}`);
   const draft=parseJSON(text);
   S.explanation=await reviewPass("lesson explanation",draft);
   if(!S.lesson.trim()&&S.explanation.title)S.lesson=S.explanation.title;
-  saveSession();setLoad(false);
+  saveSession();setLoad(false);updateStreak();
   if(S.feat.autoSpeak)speak(explanationText(S.explanation),S.subject?S.subject.lang:S.lang);
  }catch(e){fail(e);}
+}
+async function translateSection(i){
+ if(S.translated[i]){delete S.translated[i];render();return;}
+ const x=(S.explanation?.sections||[])[i];if(!x)return;
+ S.translateBusy=i;render();
+ try{
+  const target=S.subject?.lang==="ar"?"English":"Arabic";
+  const text=await askAI(`Translate the following school text into ${target}. Return ONLY the translation, nothing else.`,x.text,[],null);
+  S.translated[i]=text.trim();
+ }catch(e){}
+ S.translateBusy=null;render();
+}
+function updateStreak(){
+ const today=new Date().toDateString();
+ if(S.streak.last===today)return;
+ const y=new Date();y.setDate(y.getDate()-1);
+ S.streak.count=(S.streak.last===y.toDateString())?S.streak.count+1:1;
+ S.streak.last=today;SV("streak",S.streak);
 }
 async function doFollowUp(q){
  q=q.trim();if(!q)return;
@@ -401,6 +426,41 @@ async function doFollowUp(q){
   S.chat.push({role:"assistant",content:text.trim()});saveSession();setLoad(false);
  }catch(e){fail(e);}
 }
+async function doRelate(){
+ if(!S.explanation)return;
+ const q=t().relateQ;
+ S.chat.push({role:"user",content:q});setLoad(true,t().thinking);
+ try{
+  const ctx=S.explanation?` Context you already explained: ${JSON.stringify(S.explanation).slice(0,3000)}`:"";
+  const interestTxt=S.interests&&S.interests.trim()?`the student's interest(s): ${S.interests.trim()}`:"something a student their age would relate to (sports, games, everyday life)";
+  const text=await askAI(baseSystem()+` Explain the core idea of this lesson again, but this time using a concrete relatable example built around ${interestTxt}. Keep it under 130 words, plain text, no markdown.`+photoNote()+ctx,q,S.chat.slice(0,-1));
+  S.chat.push({role:"assistant",content:text.trim()});saveSession();setLoad(false);
+ }catch(e){fail(e);}
+}
+async function setPredictSubject(id){
+ const sub=SUBJECTS.find(x=>x.id===id);if(!sub)return;
+ await doPredict(sub);
+}
+async function doPredict(sub){
+ const subSessions=S.sessions.filter(s=>s.subject===sub.id&&s.explanation);
+ if(subSessions.length<1){S.predict={subject:sub.id,items:[],empty:true};render();return;}
+ setLoad(true,t().thinking);
+ try{
+  const topics=subSessions.slice(0,15).map(s=>({lesson:s.lesson,keyTerms:(s.explanation?.keyTerms||[]).map(k=>k.term)}));
+  const text=await askAI(`You are an experienced teacher for the subject "${sub.en}". Based on the lessons the student has studied, predict the topics most likely to appear on their next exam and give a short reason for each. Answer in ${langName(sub.lang)}. Respond ONLY with JSON: {"items":[{"topic":"","why":""}]}. Max 6 items.`,JSON.stringify(topics),[],null);
+  S.predict={subject:sub.id,items:(parseJSON(text)?.items||[]),empty:false};setLoad(false);
+ }catch(e){fail(e);}
+}
+function notesKey(){return (S.subject?S.subject.id:"")+"::"+(S.lesson||"").trim().toLowerCase();}
+function saveNote(v){S.notes[notesKey()]=v;SV("notes",S.notes);}
+function studyTimeTick(){
+ try{
+  if(S.screen==="subject"&&S.subject&&document.visibilityState==="visible"){
+   const id=S.subject.id;S.studyTime[id]=(S.studyTime[id]||0)+0.5;SV("studyTime",S.studyTime);
+  }
+ }catch(e){}
+}
+setInterval(studyTimeTick,30000);
 async function doExam(){
  if(!S.lesson.trim()&&!S.photo){S.error=t().needLesson;return render();}
  S.error="";S.exam=null;S.answers={};S.result=null;setLoad(true,t().thinking);
@@ -472,12 +532,50 @@ function startRecSession(langHint){
 }
 function stopMic(){S.rec.active=false;try{if(REC){REC.onend=null;REC.stop();}}catch(e){}REC=null;render();}
 function micBtn(targetId,langHint){return `<button class="mic ${S.rec.active&&S.rec.target===targetId?"on":""}" title="🎤" onclick="toggleMic('${targetId}','${langHint||""}')">${S.rec.active&&S.rec.target===targetId?"⏹":"🎤"}</button>`;}
-function speak(text,lang,onDone){
- if(!("speechSynthesis" in window))return;
- if(S.speaking){speechSynthesis.cancel();S.speaking=false;render();return;}
- const u=new SpeechSynthesisUtterance(String(text).slice(0,4000));u.lang=lang==="ar"?"ar-SA":"en-US";u.rate=0.95;
- const vs=speechSynthesis.getVoices().filter(v=>v.lang.startsWith(lang==="ar"?"ar":"en"));if(vs.length)u.voice=vs[0];
- u.onend=()=>{S.speaking=false;render();if(onDone)onDone();};S.speaking=true;speechSynthesis.speak(u);render();
+let CUR_AUDIO=null;
+function pcmB64ToWavBlob(b64,sampleRate=24000){
+ const bin=atob(b64);const len=bin.length;const pcm=new Uint8Array(len);
+ for(let i=0;i<len;i++)pcm[i]=bin.charCodeAt(i);
+ const numChannels=1,bitsPerSample=16,byteRate=sampleRate*numChannels*bitsPerSample/8,blockAlign=numChannels*bitsPerSample/8;
+ const buf=new ArrayBuffer(44+pcm.length);const view=new DataView(buf);
+ const ws=(o,s)=>{for(let i=0;i<s.length;i++)view.setUint8(o+i,s.charCodeAt(i));};
+ ws(0,"RIFF");view.setUint32(4,36+pcm.length,true);ws(8,"WAVE");ws(12,"fmt ");view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,numChannels,true);view.setUint32(24,sampleRate,true);view.setUint32(28,byteRate,true);view.setUint16(32,blockAlign,true);view.setUint16(34,bitsPerSample,true);ws(36,"data");view.setUint32(40,pcm.length,true);
+ new Uint8Array(buf,44).set(pcm);
+ return new Blob([buf],{type:"audio/wav"});
+}
+async function speakGemini(text){
+ if(!S.apiKey)throw new Error("nokey");
+ const body=JSON.stringify({contents:[{parts:[{text:String(text).slice(0,4000)}]}],generationConfig:{responseModalities:["AUDIO"],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:"Kore"}}}}});
+ const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${encodeURIComponent(S.apiKey)}`,{method:"POST",headers:{"Content-Type":"application/json"},body});
+ if(!res.ok)throw new Error("tts HTTP "+res.status);
+ const data=await res.json();
+ const b64=data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+ if(!b64)throw new Error("tts empty");
+ return b64;
+}
+function fallbackSpeak(text,lang,onDone){
+ if(!("speechSynthesis" in window)){S.speaking=false;render();return;}
+ const u=new SpeechSynthesisUtterance(String(text).slice(0,4000));
+ const code=lang==="ar"?"ar-SA":(lang==="fr"?"fr-FR":"en-US");u.lang=code;u.rate=0.95;
+ const vs=speechSynthesis.getVoices().filter(v=>v.lang.startsWith(code.slice(0,2)));if(vs.length)u.voice=vs[0];
+ u.onend=()=>{S.speaking=false;render();if(onDone)onDone();};speechSynthesis.speak(u);
+}
+async function speak(text,lang,onDone){
+ if(S.speaking){
+  if(CUR_AUDIO){try{CUR_AUDIO.pause();}catch(e){}CUR_AUDIO=null;}
+  if("speechSynthesis" in window)try{speechSynthesis.cancel();}catch(e){}
+  S.speaking=false;render();return;
+ }
+ S.speaking=true;render();
+ try{
+  const b64=await speakGemini(text);
+  const blob=pcmB64ToWavBlob(b64,24000);
+  const url=URL.createObjectURL(blob);
+  const audio=new Audio(url);CUR_AUDIO=audio;
+  audio.onended=()=>{S.speaking=false;URL.revokeObjectURL(url);CUR_AUDIO=null;render();if(onDone)onDone();};
+  audio.onerror=()=>{CUR_AUDIO=null;fallbackSpeak(text,lang,onDone);};
+  await audio.play();
+ }catch(e){fallbackSpeak(text,lang,onDone);}
 }
 function voiceMicBtn(){return `<button class="mic ${S.rec.active?"on":""}" title="mic" onclick="${S.rec.active?"stopMic()":"startVoiceTurn()"}">${S.rec.active?"⏹":"🎤"}</button>`;}
 function lessonVoiceToggle(){
@@ -817,6 +915,32 @@ async function editImage(){
 }
 const MIME={docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",pptx:"application/vnd.openxmlformats-officedocument.presentationml.presentation",xlsx:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",pdf:"application/pdf",png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg"};
 const mimeOf=name=>MIME[String(name).split(".").pop().toLowerCase()]||"application/octet-stream";
+async function shareInfographic(){
+ const ex=S.explanation;if(!ex)return;
+ const sub=S.subject||{};const rtl=sub.lang==="ar";
+ const cv=document.createElement("canvas");cv.width=1080;cv.height=1350;const ctx=cv.getContext("2d");
+ const grad=ctx.createLinearGradient(0,0,0,1350);grad.addColorStop(0,sub.color||"#4F46E5");grad.addColorStop(1,"#111827");
+ ctx.fillStyle=grad;ctx.fillRect(0,0,1080,1350);
+ ctx.direction=rtl?"rtl":"ltr";ctx.textAlign=rtl?"right":"left";
+ const xL=rtl?1020:60,maxW=960;
+ ctx.fillStyle="#fff";ctx.font="500 34px system-ui, sans-serif";ctx.globalAlpha=.85;ctx.fillText(sub[S.lang]||"",xL,90);ctx.globalAlpha=1;
+ ctx.font="800 56px system-ui, sans-serif";let y=170;y=wrapText2(ctx,ex.title||S.lesson||"",xL,y,maxW,64,rtl)+30;
+ ctx.font="400 32px system-ui, sans-serif";ctx.globalAlpha=.9;y=wrapText2(ctx,ex.overview||"",xL,y,maxW,42,rtl)+40;ctx.globalAlpha=1;
+ ctx.fillStyle="rgba(255,255,255,.15)";ctx.fillRect(rtl?60:60,y,960,2);y+=50;
+ (ex.keyTerms||[]).slice(0,6).forEach(k=>{
+  ctx.fillStyle="#FFE066";ctx.font="700 34px system-ui, sans-serif";y=wrapText2(ctx,"• "+(k.term||""),xL,y,maxW,42,rtl)+4;
+  ctx.fillStyle="rgba(255,255,255,.85)";ctx.font="400 28px system-ui, sans-serif";y=wrapText2(ctx,k.meaning||"",xL,y,maxW,36,rtl)+26;
+ });
+ ctx.fillStyle="rgba(255,255,255,.6)";ctx.font="400 26px system-ui, sans-serif";ctx.fillText("Lesson Buddy",xL,1310);
+ const blob=await new Promise(res=>cv.toBlob(res,"image/png"));
+ shareBlob(blob,"summary.png");
+}
+function wrapText2(ctx,text,x,y,maxW,lh,rtl){
+ const words=String(text).split(" ");let line="",yy=y;
+ for(const w of words){const test=line+w+" ";if(ctx.measureText(test).width>maxW&&line){ctx.fillText(line.trim(),x,yy);line=w+" ";yy+=lh;}else line=test;}
+ if(line)ctx.fillText(line.trim(),x,yy);
+ return yy;
+}
 async function shareAchievement(score,total,subject,lesson){
  const pct=total?Math.round(score/total*100):0;
  const cv=document.createElement("canvas");cv.width=1080;cv.height=1080;const ctx=cv.getContext("2d");
@@ -1143,6 +1267,8 @@ async function runDiag(){
 const app=document.getElementById("app");
 function render(){
  const tr=t();document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";
+ document.documentElement.classList.toggle("fs-sm",S.fontSize==="sm");document.documentElement.classList.toggle("fs-md",S.fontSize==="md");document.documentElement.classList.toggle("fs-lg",S.fontSize==="lg");
+ document.documentElement.classList.toggle("sepia",!!S.sepia);
  const views={settings:viewSettings,history:viewHistory,flash:viewFlash,srsReview:viewSrsReview,grades:viewGrades,img:viewImg,doc:viewDoc,hw:viewHw,plan:viewPlan,transcript:viewTranscript,ai:viewAI};
  if(S.printTarget)app.innerHTML=viewPdf(tr);
  else if(views[S.screen])app.innerHTML=views[S.screen](tr);
@@ -1163,6 +1289,7 @@ function viewHome(tr){
  ${!S.apiKey?`<p class="err" style="margin-bottom:12px">${tr.noKey} <a href="#" onclick="S.screen='settings';render();return false">${tr.settings} ←</a></p>`:""}
  <button class="aitile" onclick="S.attach=[];S.screen='ai';render()"><span style="font-size:34px">✨</span><span><b>${tr.aiTitle}</b><small>${tr.aiSub}</small></span></button>
  <p style="color:var(--muted);margin:4px 0 16px">${tr.tagline}</p>
+ ${S.streak.count>0?`<div class="hint" style="text-align:center;margin-bottom:10px;font-weight:600;color:#F59E0B">🔥 ${S.streak.count} ${tr.streakLabel}</div>`:""}
  ${srsDueCount()>0?`<button class="tool" style="width:100%;margin-bottom:14px;background:linear-gradient(135deg,#DB2777,#F472B6);color:#fff;border:none" onclick="startSrsReview()"><b>📇 ${tr.srsDue.replace("{n}",srsDueCount())}</b><small style="display:block;font-size:11px;opacity:.9;margin-top:2px">${tr.srsDueSub}</small></button>`:""}
  <div class="grid">${SUBJECTS.map(s=>`<button class="tile" style="background:linear-gradient(145deg,${s.color},${s.color}CC)" onclick="pickSubject(SUBJECTS.find(x=>x.id==='${s.id}'))"><b>${s[S.lang]}</b><small>${S.lang==="en"?s.ar:s.en}</small></button>`).join("")}</div>
  <p class="lbl" style="margin-top:20px">Tools</p>
@@ -1184,6 +1311,9 @@ function viewSettings(tr){
   <div><p class="lbl">${tr.model} ${S._loadingModels?"…":""} <button class="flag" style="font-size:12px" onclick="MODEL_CACHE=null;render()">↻</button></p><div class="chips">${[...new Set([S.model,...(MODEL_CACHE||MODELS)])].slice(0,14).map(m=>`<button class="chip ${S.model===m?"on":""}" onclick="S.model='${m}';localStorage.setItem('model','${m}');render()" dir="ltr">${m.replace(/^gemini-/,"")}</button>`).join("")}</div><p class="hint" style="color:#6B7A99">${S.lastModel?(S.lang==="ar"?"آخر نموذج أجاب: ":"Last model used: ")+S.lastModel+" · ":""}${S.lang==="ar"?"flash = سريع · pro = أذكى وأبطأ وحدوده أقل · lite = الأخف":"flash = fast · pro = smarter, slower, lower limits · lite = lightest"}</p></div>
   <div><p class="lbl">${tr.uiLang}</p><div class="chips"><button class="chip ${S.lang==="ar"?"on":""}" onclick="S.lang='ar';localStorage.setItem('lang','ar');render()">العربية</button><button class="chip ${S.lang==="en"?"on":""}" onclick="S.lang='en';localStorage.setItem('lang','en');render()">English</button></div></div>
   <div><p class="lbl">${tr.features}</p>${tog("fast",tr.featFast)}${tog("review",tr.featReview)}${tog("flash",tr.featFlash)}${tog("grades",tr.featGrades)}${tog("autoSpeak",tr.featAutoSpeak)}${S.feat.grades?`<button class="btn o" style="margin-top:8px" onclick="S.screen='grades';render()">📊 ${tr.grades}</button>`:""}</div>
+  <div><p class="lbl">${tr.interests}</p><input class="inp" id="interestsIn" value="${esc(S.interests)}" placeholder="${tr.interestsPh}" oninput="S.interests=this.value" onblur="SV('interests',S.interests)"></div>
+  <div><p class="lbl">${tr.fontSize}</p><div class="chips">${[["sm","A-"],["md","A"],["lg","A+"]].map(([k,l])=>`<button class="chip ${S.fontSize===k?"on":""}" onclick="S.fontSize='${k}';SV('fontSize','${k}');render()">${l}</button>`).join("")}</div></div>
+  <div class="tog"><span>${tr.readMode}</span><button class="sw2 ${S.sepia?"on":""}" onclick="S.sepia=!S.sepia;SV('sepia',S.sepia);render()"></button></div>
   <button class="btn" onclick="S.apiKey=document.getElementById('key').value.trim();localStorage.setItem('apiKey',S.apiKey);MODEL_CACHE=null;S.screen='home';render()">${tr.save}</button>
   <button class="btn o" onclick="runDiag()">🔧 ${tr.test}</button>
   <pre id="diag" dir="ltr" style="white-space:pre-wrap;font-size:12px;background:#f3f4f6;border-radius:8px;padding:8px;margin:0;display:none"></pre>
@@ -1204,8 +1334,14 @@ function viewGrades(tr){
  const ids=Object.keys(bySub);
  return header(tr,tr.grades,"S.screen='settings';render()")+`<div class="wrap stack">
  ${!ids.length?`<p style="color:var(--muted)">${tr.gradesEmpty}</p>`:ids.map(id=>{const sub=SUBJECTS.find(x=>x.id===id)||{};const gs=bySub[id];const avg=Math.round(100*gs.reduce((a,g)=>a+g.score/(g.total||1),0)/gs.length);
-  return `<div class="card" style="background:rgba(255,255,255,.08);color:#fff;box-shadow:none;border:1px solid rgba(255,255,255,.15)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b><span class="sw" style="background:${sub.color};margin-inline-end:6px"></span>${sub[S.lang]}</b><span>${tr.avg}: <b>${avg}%</b></span></div><div class="bar"><i style="width:${avg}%"></i></div>
-  ${gs.slice(0,8).map(g=>`<div class="gitem"><span>${esc(g.lesson)}</span><span>${g.score}/${g.total} · ${fmtDate(g.ts)}</span></div>`).join("")}</div>`;}).join("")}
+  const mins=Math.round(S.studyTime[id]||0);
+  const lvl=avg>=80?tr.levelExpert:(avg>=50?tr.levelProficient:tr.levelBeginner);
+  return `<div class="card" style="background:rgba(255,255,255,.08);color:#fff;box-shadow:none;border:1px solid rgba(255,255,255,.15)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b><span class="sw" style="background:${sub.color};margin-inline-end:6px"></span>${sub[S.lang]}</b><span>${tr.avg}: <b>${avg}%</b> · <span style="opacity:.85">${lvl}</span></span></div><div class="bar"><i style="width:${avg}%"></i></div>
+  ${gs.slice(0,8).map(g=>`<div class="gitem"><span>${esc(g.lesson)}</span><span>${g.score}/${g.total} · ${fmtDate(g.ts)}</span></div>`).join("")}
+  ${mins>0?`<p class="hint" style="margin-top:6px">⏱ ${tr.studyTimeTitle}: ${mins} ${tr.minutesShort}</p>`:""}
+  <button class="btn o" style="margin-top:8px;width:100%" onclick="setPredictSubject('${id}')" ${S.loading?"disabled":""}>${tr.predictBtn}</button>
+  ${S.predict&&S.predict.subject===id?(S.predict.empty?`<p class="hint" style="margin-top:6px">${tr.predictEmpty}</p>`:`<div style="margin-top:8px"><p class="lbl">${tr.predictTitle}</p>${(S.predict.items||[]).map(p=>`<div class="gitem" style="flex-direction:column;align-items:flex-start"><b>${esc(p.topic)}</b><span style="color:#9ca3af;font-size:12px">${esc(p.why)}</span></div>`).join("")}</div>`):""}
+  </div>`;}).join("")}
  ${S.weak.length?`<div class="card" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);box-shadow:none"><b>⚠️ ${tr.weakTitle}</b><p class="hint" style="margin:4px 0 8px">${tr.weakSub}</p>${S.weak.slice(0,10).map(w=>`<div class="gitem"><span>${esc(w.q).slice(0,70)}</span><span style="color:#6b7280">${fmtDate(w.ts)}</span></div>`).join("")}</div>`:""}
  </div>`;
 }
@@ -1342,7 +1478,7 @@ function viewSubject(tr){
   const ex=S.explanation;
   if(ex){
    h+=`<div class="card"><h2><mark>${esc(ex.title)}</mark></h2><p>${esc(ex.overview)}</p>
-   ${(ex.sections||[]).map((x,i)=>`<div class="sec-h"><h3>${esc(x.heading)}</h3><button class="flag" onclick="S.flagging={kind:'section',idx:${i},note:''};render()">⚑ ${tr.flag}</button></div><p>${esc(x.text)}</p>${flagBox("section",i,tr)}`).join("")}
+   ${(ex.sections||[]).map((x,i)=>`<div class="sec-h"><h3>${esc(x.heading)}</h3><span style="display:flex;gap:4px"><button class="flag" onclick="translateSection(${i})" ${S.translateBusy===i?"disabled":""}>🌐 ${S.translateBusy===i?"…":tr.translateBtn}</button><button class="flag" onclick="S.flagging={kind:'section',idx:${i},note:''};render()">⚑ ${tr.flag}</button></span></div><p>${esc(x.text)}</p>${S.translated[i]?`<p style="background:rgba(59,130,246,.08);border-radius:10px;padding:8px;font-size:14px" dir="${S.subject?.lang==="ar"?"ltr":"rtl"}">${esc(S.translated[i])}</p>`:""}${flagBox("section",i,tr)}`).join("")}
    ${S.loading&&!S.flagging?spinner(S.loadLabel||tr.thinking):""}
    ${verify(ex.uncertain,tr)}
    ${ex.keyTerms?.length?`<p class="lbl" style="margin-top:12px">${tr.keyTerms}</p>${ex.keyTerms.map(k=>`<p style="font-size:14px;margin:0 0 4px"><mark>${esc(k.term)}</mark> — ${esc(k.meaning)}</p>`).join("")}
@@ -1350,7 +1486,10 @@ function viewSubject(tr){
    ${ex.example?`<div class="ex" style="margin-top:10px"><span class="lbl">${tr.example}</span>${esc(ex.example)}</div>`:""}
    ${ex.summary?`<p class="sum" style="margin-top:10px"><span class="lbl" style="display:inline;font-style:normal">${tr.summary}: </span>${esc(ex.summary)}</p>`:""}
    <div class="row" style="margin-top:12px"><button class="btn o" onclick="speak(explanationText(S.explanation),'${s.lang}')">${S.speaking?"⏹ "+tr.stop:"🔊 "+tr.listen}</button><button class="btn o" onclick="shareLesson()">📤 ${tr.shareLesson}</button></div>
-   <div class="row" style="margin-top:8px"><button class="btn o" onclick="openPdf('explain')">📄 ${tr.pdf}</button><button class="btn o" onclick="S.doc.useLesson=true;S.screen='doc';render()">📝 ${tr.docTool}</button></div></div>
+   <div class="row" style="margin-top:8px"><button class="btn o" onclick="shareInfographic()">${tr.infographicBtn}</button></div>
+   <div class="row" style="margin-top:8px"><button class="btn o" onclick="openPdf('explain')">📄 ${tr.pdf}</button><button class="btn o" onclick="S.doc.useLesson=true;S.screen='doc';render()">📝 ${tr.docTool}</button></div>
+   <div class="row" style="margin-top:8px"><button class="btn o" onclick="doRelate()" ${S.loading?"disabled":""}>${tr.relateBtn}</button></div>
+   <div class="card" style="margin-top:12px;box-shadow:none;background:rgba(255,255,255,.04)"><p class="lbl">${tr.notesTitle}</p><textarea class="inp" rows="3" style="width:100%" placeholder="${tr.notesPh}" oninput="saveNote(this.value)">${esc(S.notes[notesKey()]||"")}</textarea></div></div>
    <div class="row" style="margin-bottom:6px"><button class="chip ${S.lessonVoice?"on":""}" style="${S.lessonVoice?"background:#DB2777;border-color:#DB2777":""}" onclick="lessonVoiceToggle()">🎙️ ${tr.voiceMode}</button>${S.lessonVoice?`<span class="hint" style="align-self:center;color:#DB2777;font-weight:600">${S.rec.active?"🎙️ "+tr.listening:(S.speaking?"🔊 "+tr.speaking:tr.voiceModeOn)}</span>`:""}</div>
    <div class="chat">${S.chat.map(m=>`<div class="msg ${m.role==="user"?"u":"a"}">${esc(m.content)}</div>`).join("")}
    ${S.loading&&S.chat.length&&S.chat[S.chat.length-1].role==="user"?spinner(tr.thinking):""}
